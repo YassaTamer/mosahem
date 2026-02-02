@@ -36,8 +36,12 @@ dependencies:
   cupertino_icons: ^1.0.8
   gap: ^3.0.1
   flutter_svg: ^2.2.3
+<<<<<<< HEAD
   image_picker: ^1.0.4
   dotted_border: ^2.1.0
+=======
+  file_picker: ^10.3.8
+>>>>>>> a38811f22243b910c2edd3f97018856adc150501
 
 dev_dependencies:
   flutter_test:
