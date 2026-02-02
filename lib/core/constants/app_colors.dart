@@ -4,6 +4,7 @@ class AppColors {
   // Primary
   static const Color primary = Color(0xff145D90);
   static const Color primaryDark = Color(0xff125482);
+  static const Color disabledButton = Color(0xffB6CDDD);
 
   // Text
   static const Color textDark = Color(0xff072132);
@@ -17,4 +18,6 @@ class AppColors {
 
   // // Buttons
   // static const Color loginButton = Color(0xff125482);
+
+  static const Color greyLight = Color(0xffB6CDDD); // 👈 جديد
 }

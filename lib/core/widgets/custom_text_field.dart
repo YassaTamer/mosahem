@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mosahem/core/constants/app_colors.dart';
 
 class CustomTextField extends StatelessWidget {
   const CustomTextField({
@@ -19,7 +20,7 @@ class CustomTextField extends StatelessWidget {
     return TextFormField(
       obscureText: obscureText,
       keyboardType: keyboardType,
-      cursorColor: const Color(0xff0F466C),
+      cursorColor: AppColors.primary,
       cursorWidth: 1.3,
       cursorHeight: 20,
       decoration: InputDecoration(
@@ -28,11 +29,11 @@ class CustomTextField extends StatelessWidget {
         hintStyle: const TextStyle(color: Colors.grey),
         suffixIcon: suffixIcon,
         enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Color(0xff0F466C)),
+          borderSide: const BorderSide(color: AppColors.primaryDark),
           borderRadius: BorderRadius.circular(16),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Color(0xff0F466C)),
+          borderSide: const BorderSide(color: AppColors.primaryDark),
           borderRadius: BorderRadius.circular(16),
         ),
       ),
