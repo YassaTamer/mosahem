@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:mosahem/features/splash/presentation/views/splash_view.dart';
+import 'package:flutter/services.dart';
+import 'package:mosahem/features/organization/createOpp/presentation/views/create_opp_view.dart';
+//import 'package:mosahem/features/splash/presentation/views/splash_view.dart';
 
 void main() {
   runApp(const MyApp());
+  SystemChrome.setApplicationSwitcherDescription(
+    const ApplicationSwitcherDescription(label: "Mosahem"),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -15,7 +20,11 @@ class MyApp extends StatelessWidget {
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
       },
-      child: MaterialApp(debugShowCheckedModeBanner: false, home: SplashView()),
+      child: MaterialApp(
+        title: "Mosahem",
+        debugShowCheckedModeBanner: false,
+        home: CreateOppView(),
+      ),
     );
   }
 }

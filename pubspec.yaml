@@ -37,6 +37,8 @@ dependencies:
   gap: ^3.0.1
   flutter_svg: ^2.2.3
   file_picker: ^10.3.8
+  image_picker: ^1.0.4
+  dotted_border: ^2.1.0
 
 dev_dependencies:
   flutter_test:
