@@ -42,7 +42,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
                         ),
                         CustomText(
                           "Add image",
-                          color: AppColors.textDark,
+                          color: AppColors.textBlueDark,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),

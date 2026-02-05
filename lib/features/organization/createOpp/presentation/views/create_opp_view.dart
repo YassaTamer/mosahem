@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/core/widgets/custom_text_field.dart';
+import 'package:mosahem/features/organization/createOpp/presentation/views/add_place_view.dart';
+import 'package:mosahem/features/organization/createOpp/presentation/widgets/custom_title_of_fields.dart';
 import 'package:mosahem/features/organization/createOpp/presentation/widgets/image_upload_widget.dart';
 
 class CreateOppView extends StatelessWidget {
@@ -17,7 +20,7 @@ class CreateOppView extends StatelessWidget {
           child: CustomText(
             'Create Opportunity',
             fontWeight: FontWeight.bold,
-            color: AppColors.primaryDark,
+            color: AppColors.primary,
           ),
         ),
       ),
@@ -34,26 +37,7 @@ class CreateOppView extends StatelessWidget {
             indent: 20,
           ),
           SizedBox(height: 10),
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 30),
-                child: CustomText(
-                  "Title of opportunitiy",
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: AppColors.textDark,
-                ),
-              ),
-              SizedBox(width: 5),
-              CustomText(
-                "*",
-                color: AppColors.red,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ],
-          ),
+          CustomTitleOfFields("Title of opportunitiy", padding: 30),
           SizedBox(height: 5),
           Padding(
             padding: const EdgeInsets.only(left: 25, right: 25),
@@ -65,26 +49,23 @@ class CreateOppView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 30),
                 child: Image.asset(
-                  "assets/logos/location.png",
+                  AppAssets.addPlaceIcon,
                   height: 25,
                   width: 25,
                 ),
               ),
-              SizedBox(width: 5),
-              CustomText(
-                "Place",
-                color: AppColors.textDark,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-              SizedBox(width: 5),
-              CustomText(
-                "*",
-                color: AppColors.red,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              CustomTitleOfFields("Place", padding: 5),
             ],
+          ),
+          SizedBox(height: 5),
+          Padding(
+            padding: const EdgeInsets.only(left: 25, right: 25),
+            child: CustomTextField(
+              readonly: true,
+              hintText: "Select places",
+              suffixIcon: Icon(Icons.add),
+              navigatTo: AddPlaceView(),
+            ),
           ),
         ],
       ),
