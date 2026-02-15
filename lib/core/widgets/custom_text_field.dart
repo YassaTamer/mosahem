@@ -11,6 +11,8 @@ class CustomTextField extends StatelessWidget {
     this.readonly = false,
     this.navigatTo,
     this.numberOfLines,
+    this.onTap,
+    this.controller,
   });
 
   final String? hintText;
@@ -20,18 +22,23 @@ class CustomTextField extends StatelessWidget {
   final bool readonly;
   final Widget? navigatTo;
   final int? numberOfLines;
+  final VoidCallback? onTap;
+  final TextEditingController? controller;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: controller,
       maxLines: numberOfLines,
-      onTap: navigatTo == null
-          ? null
-          : () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => navigatTo!),
-              );
-            },
+      onTap: () {
+        if (onTap != null) {
+          onTap!(); // date picker / custom logic
+        } else if (navigatTo != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => navigatTo!),
+          );
+        }
+      },
       readOnly: readonly,
       obscureText: obscureText,
       keyboardType: keyboardType,
