@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
@@ -6,10 +7,12 @@ import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/core/widgets/custom_text_field.dart';
+import 'package:mosahem/features/auth/logic/cubit/auth_cubit.dart';
 import 'package:mosahem/features/auth/presentation/views/otp_verification_view.dart';
 
 class ForgetPasswordView extends StatelessWidget {
-  const ForgetPasswordView({super.key});
+  ForgetPasswordView({super.key});
+  final TextEditingController emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +54,10 @@ class ForgetPasswordView extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
               Gap(56),
-              CustomText(' Email Or Phone Number', fontWeight: FontWeight.w500),
+              CustomText('Email Or Phone Number', fontWeight: FontWeight.w500),
               Gap(8),
               CustomTextField(
+                textEditingController: emailController,
                 keyboardType: TextInputType.emailAddress,
                 hintText: 'Enter your email or phone',
               ),
@@ -64,13 +68,32 @@ class ForgetPasswordView extends StatelessWidget {
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+        child: BlocConsumer<AuthCubit, AuthState>(
+          listener: (context, state) {
+            if (state is AuthSuccessMessage) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      OtpVerificationView(email: emailController.text),
+                ),
+              );
+            }
 
-        child: CustomButton(
-          text: 'Continue',
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => OtpVerificationView()),
+            if (state is AuthError) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
+            }
+          },
+          builder: (context, state) {
+            return CustomButton(
+              text: state is AuthLoading ? "Loading..." : "Continue",
+              onTap: () {
+                context.read<AuthCubit>().forgotPassword(
+                  email: emailController.text.trim(),
+                );
+              },
             );
           },
         ),

@@ -10,9 +10,11 @@ class CustomPhoneNumberField extends StatelessWidget {
     this.countryCode = '+20',
     this.onCountryTap,
     this.controller,
+     this.errorText,
   });
 
   final String hintText;
+  final String? errorText;
   final String countryCode;
   final VoidCallback? onCountryTap;
   final TextEditingController? controller;
@@ -52,6 +54,7 @@ class CustomPhoneNumberField extends StatelessWidget {
               cursorWidth: 1.3,
               cursorHeight: 20,
               decoration: InputDecoration(
+                errorText: errorText,
                 hintText: hintText,
                 hintStyle: const TextStyle(color: Colors.grey),
                 border: InputBorder.none,
