@@ -1,0 +1,1 @@
+const bool isDevMode = true;

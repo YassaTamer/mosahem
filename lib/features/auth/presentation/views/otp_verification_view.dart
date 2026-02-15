@@ -10,7 +10,7 @@ import 'package:mosahem/features/auth/presentation/views/login_view.dart';
 import 'package:mosahem/features/auth/presentation/views/new_password_view.dart';
 
 class OtpVerificationView extends StatefulWidget {
-  const OtpVerificationView({super.key});
+  const OtpVerificationView({super.key, required String email});
 
   @override
   State<OtpVerificationView> createState() => _OtpVerificationViewState();

@@ -1,4 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mosahem/features/auth/data/api/auth_api_service.dart';
+import 'package:mosahem/features/auth/data/repository/auth_repository.dart';
+import 'package:mosahem/features/auth/logic/cubit/auth_cubit.dart';
 import 'package:mosahem/features/splash/presentation/views/splash_view.dart';
 
 void main() {
@@ -10,12 +15,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () {
-        FocusManager.instance.primaryFocus?.unfocus();
-      },
-      child: MaterialApp(debugShowCheckedModeBanner: false, home: SplashView()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => AuthCubit(AuthRepository(AuthApiService(Dio()))),
+        ),
+      ],
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: SplashView(),
+        ),
+      ),
     );
   }
 }
