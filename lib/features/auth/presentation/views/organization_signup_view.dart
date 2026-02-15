@@ -10,7 +10,7 @@ import 'package:mosahem/core/widgets/custom_text_field.dart';
 import 'package:mosahem/features/auth/logic/cubit/auth_cubit.dart';
 import 'package:mosahem/features/auth/presentation/views/login_view.dart';
 import 'package:mosahem/features/auth/presentation/views/upload_organization_document_view.dart';
-import 'package:mosahem/features/auth/presentation/widgets/custom_phone_number_field.dart';
+import 'package:mosahem/core/widgets/custom_phone_number_field.dart';
 
 class OrganizationSignupView extends StatefulWidget {
   const OrganizationSignupView({super.key});
