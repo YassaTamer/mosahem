@@ -42,13 +42,13 @@ class _CreateOppViewState extends State<CreateOppView> {
       ),
       body: ListView(
         children: [
-          //***Image Upload Section***
+          //*** Image Upload Section ***
           Padding(
             padding: const EdgeInsets.only(top: 15, bottom: 10),
             child: ImageUploadWidget(),
           ),
 
-          //***Line divider***
+          //*** Line divider ***
           Divider(
             thickness: 1,
             color: AppColors.primaryDark,
@@ -57,7 +57,7 @@ class _CreateOppViewState extends State<CreateOppView> {
           ),
           SizedBox(height: 10),
 
-          //***Title of opportunity section***
+          //*** Title of opportunity section ***
           CustomTitleOfFields("Title of opportunitiy", padding: 20),
           SizedBox(height: 5),
           Padding(
@@ -66,7 +66,7 @@ class _CreateOppViewState extends State<CreateOppView> {
           ),
           SizedBox(height: 10),
 
-          //***Description section
+          //*** Description section ***
           CustomTitleOfFields("Description", padding: 20),
           SizedBox(height: 5),
           Padding(
@@ -75,7 +75,7 @@ class _CreateOppViewState extends State<CreateOppView> {
           ),
           SizedBox(height: 10),
 
-          //***Place section***
+          //*** Place section ***
           Row(
             children: [
               Padding(
@@ -101,7 +101,7 @@ class _CreateOppViewState extends State<CreateOppView> {
           ),
           SizedBox(height: 10),
 
-          //***Start date & End date section***
+          //*** Start date & End date section ***
           Row(
             children: [
               Padding(
@@ -174,7 +174,9 @@ class _CreateOppViewState extends State<CreateOppView> {
           SizedBox(height: 5),
           Padding(
             padding: const EdgeInsets.only(left: 15, right: 15),
-            child: CustomTextField(),
+            child: CustomTextField(
+              keyboardType: TextInputType.numberWithOptions(),
+            ),
           ),
           SizedBox(height: 10),
 
@@ -300,10 +302,7 @@ class _CreateOppViewState extends State<CreateOppView> {
           //*** Create opportunity button ***
           Padding(
             padding: const EdgeInsets.only(left: 25, right: 25),
-            child: CustomButton(
-              text: "Create Opportunity",
-              fontColor: AppColors.white,
-            ),
+            child: CustomButton(text: "Create Opportunity"),
           ),
           SizedBox(height: 20),
         ],

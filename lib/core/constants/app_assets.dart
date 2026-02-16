@@ -10,4 +10,7 @@ class AppAssets {
   static const calendarIcon = 'assets/logos/calendar_date_icon.png';
   static const rightArrow = "assets/logos/right_arrow.png";
   static const removeTrashIcon = "assets/logos/remove_trash_icon.png";
+  static const paragraphIcon = "assets/logos/paragraph_icon.png";
+  static const multipleChoiceIcon = "assets/logos/multiple_choice_icon.png";
+  static const checkBoxesIcon = "assets/logos/check_boxes_icon.png";
 }

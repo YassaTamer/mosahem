@@ -129,21 +129,6 @@ class AddPlaceView extends StatelessWidget {
                 SizedBox(height: 20),
                 Row(
                   children: [
-                    CustomTitleOfFields("Branch Address:", padding: 0),
-                    SizedBox(width: 10),
-                    SizedBox(
-                      height: 50,
-                      width: 163,
-                      child: CustomTextField(
-                        hintText: "Enter full address",
-                        numberOfLines: 1,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Row(
-                  children: [
                     CustomText(
                       "Description",
                       color: AppColors.textDark,
