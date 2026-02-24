@@ -5,7 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
-import 'package:mosahem/features/auth/logic/cubit/auth_cubit.dart';
+import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
 import 'package:mosahem/features/auth/presentation/views/organization_signup_view.dart';
 import 'package:mosahem/features/auth/presentation/widgets/role_card.dart';
 

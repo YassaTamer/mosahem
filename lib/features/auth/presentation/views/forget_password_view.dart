@@ -7,7 +7,9 @@ import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/core/widgets/custom_text_field.dart';
-import 'package:mosahem/features/auth/logic/cubit/auth_cubit.dart';
+import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
+import 'package:mosahem/features/auth/logic/cubit/forget_password/forget_password_cubit.dart';
+import 'package:mosahem/features/auth/presentation/views/forgot_otp_verification_view.dart';
 import 'package:mosahem/features/auth/presentation/views/otp_verification_view.dart';
 
 class ForgetPasswordView extends StatelessWidget {
@@ -68,19 +70,21 @@ class ForgetPasswordView extends StatelessWidget {
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-        child: BlocConsumer<AuthCubit, AuthState>(
+        child: BlocConsumer<ForgetPasswordCubit, ForgetPasswordState>(
           listener: (context, state) {
-            if (state is AuthSuccessMessage) {
+            if (state is ForgetPasswordOtpSent) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) =>
-                      OtpVerificationView(email: emailController.text),
+                  builder: (_) => BlocProvider.value(
+                    value: context.read<ForgetPasswordCubit>(),
+                    child: const ForgotOtpVerificationView(),
+                  ),
                 ),
               );
             }
 
-            if (state is AuthError) {
+            if (state is ForgetPasswordError) {
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(SnackBar(content: Text(state.message)));
@@ -88,9 +92,9 @@ class ForgetPasswordView extends StatelessWidget {
           },
           builder: (context, state) {
             return CustomButton(
-              text: state is AuthLoading ? "Loading..." : "Continue",
+              text: state is ForgetPasswordLoading ? "Loading..." : "Continue",
               onTap: () {
-                context.read<AuthCubit>().forgotPassword(
+                context.read<ForgetPasswordCubit>().sendOtp(
                   email: emailController.text.trim(),
                 );
               },

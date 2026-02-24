@@ -11,9 +11,9 @@ class LoginResponseModel {
 
   factory LoginResponseModel.fromJson(Map<String, dynamic> json) {
     return LoginResponseModel(
-      succeeded: json['succeeded'],
-      message: json['message'],
-      data: LoginUserData.fromJson(json['data']),
+      succeeded: json['Succeeded'],
+      message: json['Message'],
+      data: LoginUserData.fromJson(json['Data']),
     );
   }
 }
@@ -38,16 +38,17 @@ class LoginUserData {
     required this.refreshToken,
     required this.accessTokenExpiration,
   });
+
   factory LoginUserData.fromJson(Map<String, dynamic> json) {
     return LoginUserData(
-      id: json['id'],
-      email: json['email'],
-      fullName: json['fullName'],
-      role: json['role'],
-      isVerified: json['isVerified'],
-      accessToken: json['accessToken'],
-      refreshToken: json['refreshToken'],
-      accessTokenExpiration: json['accessTokenExpiration'],
+      id: json['Id'],
+      email: json['Email'],
+      fullName: json['FullName'],
+      role: json['Role'],
+      isVerified: json['IsVerified'],
+      accessToken: json['AccessToken'],
+      refreshToken: json['RefreshToken'],
+      accessTokenExpiration: json['AccessTokenExpiration'],
     );
   }
 }

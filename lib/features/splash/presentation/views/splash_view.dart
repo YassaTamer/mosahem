@@ -10,7 +10,7 @@ import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/features/admin/presentation/views/admin_home_view.dart';
 import 'package:mosahem/features/auth/data/api/auth_api_service.dart';
 import 'package:mosahem/features/auth/data/repository/auth_repository.dart';
-import 'package:mosahem/features/auth/logic/cubit/auth_cubit.dart';
+import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
 import 'package:mosahem/features/auth/presentation/views/login_view.dart';
 
 class SplashView extends StatefulWidget {

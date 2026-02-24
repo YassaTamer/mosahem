@@ -1,16 +1,20 @@
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
+import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
 import 'package:mosahem/features/auth/presentation/views/add_branch_location_view.dart';
 
 class UploadOrganizationDocumentView extends StatefulWidget {
-  const UploadOrganizationDocumentView({super.key});
+  final String email;
+
+  const UploadOrganizationDocumentView({super.key, required this.email});
 
   @override
   State<UploadOrganizationDocumentView> createState() =>
@@ -73,6 +77,12 @@ class _UploadOrganizationDocumentViewState
           _uploadError = data["Message"] ?? "Upload failed";
         });
       } else {
+        final String licenseUrl = data["Data"];
+
+        // 🔥 خزّن في الكيوبت
+        context.read<AuthCubit>().licenseUrl = licenseUrl;
+
+        // نروح للصفحة اللي بعدها
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => AddBranchLocationView()),

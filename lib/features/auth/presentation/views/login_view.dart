@@ -8,9 +8,12 @@ import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/core/widgets/custom_text_field.dart';
 import 'package:mosahem/features/admin/presentation/views/admin_home_view.dart';
-import 'package:mosahem/features/auth/logic/cubit/auth_cubit.dart';
+import 'package:mosahem/features/auth/data/repository/auth_repository.dart';
+import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
+import 'package:mosahem/features/auth/logic/cubit/forget_password/forget_password_cubit.dart';
 import 'package:mosahem/features/auth/presentation/views/forget_password_view.dart';
 import 'package:mosahem/features/auth/presentation/views/select_role_view.dart';
+import 'package:mosahem/features/organization/presentation/views/organization_home_view.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -56,6 +59,13 @@ class _LoginViewState extends State<LoginView> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const AdminHomeView()),
+                );
+              case "Organization":
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const OrganizationHomeView(),
+                  ),
                 );
               default:
                 Navigator.push(
@@ -145,7 +155,12 @@ class _LoginViewState extends State<LoginView> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => ForgetPasswordView(),
+                              builder: (_) => BlocProvider(
+                                create: (context) => ForgetPasswordCubit(
+                                  context.read<AuthRepository>(),
+                                ),
+                                child: ForgetPasswordView(),
+                              ),
                             ),
                           );
                         },
