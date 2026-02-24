@@ -1,22 +1,28 @@
 class BranchLocationModel {
-  final String governorate;
-  final String city;
+  // 🔹 للباك
+  final String governorateId;
+  final String cityId;
+  final String details;
+
+  // 🔹 للعرض
+  final String governorateName;
+  final String cityName;
   final String address;
-  final String? description;
 
   BranchLocationModel({
-    required this.governorate,
-    required this.city,
+    required this.governorateId,
+    required this.cityId,
+    required this.details,
+    required this.governorateName,
+    required this.cityName,
     required this.address,
-     this.description,
   });
 
   Map<String, dynamic> toJson() {
     return {
-      "governorate": governorate,
-      "city": city,
-      "address": address,
-      "description": description,
+      "GovernorateId": governorateId,
+      "CityId": cityId,
+      "Details": details,
     };
   }
 }

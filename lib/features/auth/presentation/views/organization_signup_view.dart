@@ -7,8 +7,10 @@ import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/core/widgets/custom_text_field.dart';
-import 'package:mosahem/features/auth/logic/cubit/auth_cubit.dart';
+import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
+import 'package:mosahem/features/auth/presentation/views/add_branch_location_view.dart';
 import 'package:mosahem/features/auth/presentation/views/login_view.dart';
+import 'package:mosahem/features/auth/presentation/views/otp_verification_view.dart';
 import 'package:mosahem/features/auth/presentation/views/upload_organization_document_view.dart';
 import 'package:mosahem/core/widgets/custom_phone_number_field.dart';
 
@@ -42,40 +44,36 @@ class _OrganizationSignupViewState extends State<OrganizationSignupView> {
         if (state is AuthLoading) {
           showDialog(
             context: context,
-            builder: (_) => Center(child: CircularProgressIndicator()),
+            barrierDismissible: false,
+            builder: (_) => const Center(child: CircularProgressIndicator()),
           );
         }
 
-        if (state is AuthRegistered) {
-          Navigator.pop(context);
+        if (state is AuthOtpSent) {
+          Navigator.pop(context); // يقفل اللودينج
+
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => UploadOrganizationDocumentView()),
+            MaterialPageRoute(
+              builder: (_) =>
+                  OtpVerificationView(email: emailController.text.trim()),
+            ),
           );
         }
 
         if (state is AuthError) {
-          Navigator.pop(context);
+          Navigator.pop(context); // يقفل اللودينج
 
           setState(() {
-            organizationNameError =
-                state.fieldErrors?["OrganizationName"] ??
-                state.fieldErrors?["organizationName"];
+            organizationNameError = state.fieldErrors?["OrganizationName"];
 
-            emailError =
-                state.fieldErrors?["Email"] ?? state.fieldErrors?["email"];
+            emailError = state.fieldErrors?["Email"];
 
-            passwordError =
-                state.fieldErrors?["Password"] ??
-                state.fieldErrors?["password"];
+            passwordError = state.fieldErrors?["Password"];
 
-            confirmPasswordError =
-                state.fieldErrors?["ConfirmPassword"] ??
-                state.fieldErrors?["confirmPassword"];
+            confirmPasswordError = state.fieldErrors?["ConfirmPassword"];
 
-            phoneError =
-                state.fieldErrors?["PhoneNumber"] ??
-                state.fieldErrors?["phoneNumber"];
+            phoneError = state.fieldErrors?["PhoneNumber"];
           });
         }
       },
@@ -153,9 +151,9 @@ class _OrganizationSignupViewState extends State<OrganizationSignupView> {
                     Gap(4),
                     CustomTextField(
                       onChange: (_) {
-                        if (emailError != null) {
+                        if (passwordError != null) {
                           setState(() {
-                            emailError = null;
+                            passwordError = null;
                           });
                         }
                       },
@@ -282,12 +280,12 @@ class _OrganizationSignupViewState extends State<OrganizationSignupView> {
           child: CustomButton(
             text: 'Continue',
             onTap: () {
-              context.read<AuthCubit>().registerOrganization(
-                organizationName: nameController.text,
-                email: emailController.text,
-                phoneNumber: phoneController.text,
-                password: passwordController.text,
-                confirmPassword: confirmPasswordController.text,
+              context.read<AuthCubit>().validateBasicInfo(
+                organizationName: nameController.text.trim(),
+                email: emailController.text.trim(),
+                phoneNumber: phoneController.text.trim(),
+                password: passwordController.text.trim(),
+                confirmPassword: confirmPasswordController.text.trim(),
               );
             },
           ),

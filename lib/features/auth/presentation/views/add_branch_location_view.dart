@@ -1,14 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
+import 'package:mosahem/features/auth/data/models/branch_location_model.dart';
 import 'package:mosahem/features/auth/data/models/city_model.dart';
 import 'package:mosahem/features/auth/data/models/governorate_model.dart';
 import 'package:mosahem/features/auth/data/repository/location_repository.dart';
+import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
 import 'package:mosahem/features/auth/presentation/views/select_tracks_view.dart';
 import 'package:mosahem/features/auth/presentation/widgets/labeled_field_row.dart';
 import 'package:mosahem/features/auth/presentation/widgets/labled_text_field_row.dart';
@@ -74,7 +77,7 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
   String? cityError;
   bool isCitiesLoading = false;
 
-  Map<String, String>? branch;
+  BranchLocationModel? branch;
   final TextEditingController addressController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   @override
@@ -83,6 +86,9 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
     descriptionController.dispose();
     super.dispose();
   }
+
+  GovernorateModel? selectedGovernorateModel;
+  CityModel? selectedCityModel;
 
   @override
   Widget build(BuildContext context) {
@@ -167,10 +173,13 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
 
                               setState(() {
                                 selectedGovernorate = value;
+                                selectedGovernorateModel = gov; // ✅
                                 selectedCity = null;
+                                selectedCityModel = null;
                                 governorateError = null;
                                 cities = [];
                               });
+
                               fetchCities(gov.id);
                             },
                           ),
@@ -198,8 +207,13 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
                             items: cities.map((e) => e.name).toList(),
 
                             onSelect: (value) {
+                              final city = cities.firstWhere(
+                                (element) => element.name == value,
+                              );
+
                               setState(() {
                                 selectedCity = value;
+                                selectedCityModel = city; // ✅
                                 cityError = null;
                               });
                             },
@@ -287,31 +301,41 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
                               onTap: () {
                                 bool isValid = true;
 
-                                if (selectedGovernorate == null) {
+                                if (selectedGovernorateModel == null) {
                                   governorateError = "Governorate is required";
                                   isValid = false;
                                 }
 
-                                if (selectedCity == null) {
+                                if (selectedCityModel == null) {
                                   cityError = "City is required";
                                   isValid = false;
                                 }
 
                                 setState(() {});
-
                                 if (!isValid) return;
+                                final newBranch = BranchLocationModel(
+                                  governorateId: selectedGovernorateModel!.id,
+                                  cityId: selectedCityModel!.id,
+                                  details: descriptionController.text,
+                                  governorateName: selectedGovernorate!,
+                                  cityName: selectedCity!,
+                                  address: addressController.text,
+                                );
+
+                                // ✅ خزنه في الكيوبت
+                                context.read<AuthCubit>().locations.add(
+                                  newBranch,
+                                );
 
                                 setState(() {
-                                  branch = {
-                                    "governorate": selectedGovernorate!,
-                                    "city": selectedCity!,
-                                    "address": addressController.text,
-                                    "description": descriptionController.text,
-                                  };
+                                  branch = newBranch;
+
                                   addressController.clear();
                                   descriptionController.clear();
                                   selectedGovernorate = null;
                                   selectedCity = null;
+                                  selectedGovernorateModel = null;
+                                  selectedCityModel = null;
                                   cities = [];
                                 });
                               },
@@ -349,25 +373,25 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 CustomText(
-                                  branch!["governorate"]!,
+                                  branch!.governorateName,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w800,
                                   color: AppColors.primaryDark,
                                 ),
                                 CustomText(
-                                  branch!["city"]!,
+                                  branch!.cityName,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w800,
                                   color: AppColors.primaryDark,
                                 ),
                                 CustomText(
-                                  branch!["address"]!,
+                                  branch!.address,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w800,
                                   color: AppColors.primaryDark,
                                 ),
                                 CustomText(
-                                  branch!["description"]!,
+                                  branch!.details,
                                   fontSize: 15,
                                   fontWeight: FontWeight.w700,
                                   color: AppColors.primaryDark,
@@ -403,9 +427,10 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => SelectTracksView()),
+                  MaterialPageRoute(builder: (_) => const SelectTracksView()),
                 );
               },
+
               child: const CustomText(
                 'Skip',
                 color: Color(0xffD8B50C),
@@ -424,7 +449,9 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
                     : () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => SelectTracksView()),
+                          MaterialPageRoute(
+                            builder: (_) => const SelectTracksView(),
+                          ),
                         );
                       },
               ),

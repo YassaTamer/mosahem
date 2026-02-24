@@ -28,3 +28,9 @@ class AuthSuccessMessage extends AuthState {
 
   AuthSuccessMessage(this.message);
 }
+
+class AuthBasicInfoValidated extends AuthState {}
+
+class AuthOtpVerified extends AuthState {}
+
+class AuthOtpSent extends AuthState {}
