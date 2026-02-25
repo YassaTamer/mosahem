@@ -9,7 +9,7 @@ final class AuthLoading extends AuthState {}
 
 final class AuthSuccess extends AuthState {
   final bool isVerified;
-  final String role;
+  final UserRole role;
 
   AuthSuccess({required this.isVerified, required this.role});
 }
