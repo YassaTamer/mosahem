@@ -10,11 +10,13 @@ class DropDownList extends StatefulWidget {
     required this.icon,
     this.multiValues = false,
     required this.options,
+    this.onChanged,
   });
   final String labeltext;
   final Icon icon;
   final bool multiValues;
   final List<String> options;
+  final Function(String?)? onChanged;
   @override
   State<DropDownList> createState() => _DropDownListState();
 }
@@ -22,6 +24,14 @@ class DropDownList extends StatefulWidget {
 class _DropDownListState extends State<DropDownList> {
   String? selectedValue;
   List<String> selectedItems = [];
+  void reset() {
+    setState(() {
+      selectedValue = null;
+      selectedItems.clear();
+    });
+    widget.onChanged?.call(null);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -62,6 +72,9 @@ class _DropDownListState extends State<DropDownList> {
                 selectedValue = newValue;
               }
             });
+            if (!widget.multiValues) {
+              widget.onChanged?.call(newValue);
+            }
           },
         ),
 
