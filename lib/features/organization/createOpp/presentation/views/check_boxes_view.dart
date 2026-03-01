@@ -66,7 +66,7 @@ class _CheckBoxesViewState extends State<CheckBoxesView> {
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: CustomTextField(
-              controller: _controller,
+              textEditingController: _controller,
               numberOfLines: 3,
               hintText: "type your question here...",
             ),
@@ -75,7 +75,7 @@ class _CheckBoxesViewState extends State<CheckBoxesView> {
           Padding(
             padding: const EdgeInsets.only(left: 20),
             child: CustomDynamicOption(
-              isMultiSelection: false,
+              isMultiSelection: true,
               onOptionsChanged: (value) {
                 hasOptions = value;
                 checkIfCanSave();

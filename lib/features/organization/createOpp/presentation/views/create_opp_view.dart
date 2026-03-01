@@ -128,7 +128,7 @@ class _CreateOppViewState extends State<CreateOppView> {
                   child: CustomTextField(
                     readonly: true,
                     hintText: "DD / MM / YY",
-                    controller: startDateController,
+                    textEditingController: startDateController,
                     onTap: () async {
                       DateTime? date = await showDatePicker(
                         context: context,
@@ -150,7 +150,7 @@ class _CreateOppViewState extends State<CreateOppView> {
                 child: CustomTextField(
                   readonly: true,
                   hintText: "DD / MM / YY",
-                  controller: endDateController,
+                  textEditingController: endDateController,
                   onTap: () async {
                     DateTime? date = await showDatePicker(
                       context: context,

@@ -10,25 +10,33 @@ class CustomTextField extends StatelessWidget {
     this.suffixIcon,
     this.readonly = false,
     this.navigatTo,
-    this.numberOfLines,
+    this.numberOfLines = 1,
     this.onTap,
-    this.controller,
+    this.textEditingController,
+    this.validator,
+    this.errorText,
+    this.onChange,
   });
-
+  final TextEditingController? textEditingController;
   final String? hintText;
   final TextInputType? keyboardType;
   final bool obscureText;
   final Widget? suffixIcon;
+  final String? Function(String?)? validator;
+  final String? errorText;
+  final Function(String)? onChange;
   final bool readonly;
   final Widget? navigatTo;
   final int? numberOfLines;
   final VoidCallback? onTap;
-  final TextEditingController? controller;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: controller,
       maxLines: numberOfLines,
+      onChanged: onChange,
+      validator: validator,
+      controller: textEditingController,
+      readOnly: readonly,
       onTap: () {
         if (onTap != null) {
           onTap!(); // date picker / custom logic
@@ -39,13 +47,13 @@ class CustomTextField extends StatelessWidget {
           );
         }
       },
-      readOnly: readonly,
       obscureText: obscureText,
       keyboardType: keyboardType,
       cursorColor: AppColors.primary,
       cursorWidth: 1.5,
       cursorHeight: 20,
       decoration: InputDecoration(
+        errorText: errorText,
         contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         hintText: hintText,
         hintStyle: const TextStyle(color: Colors.grey),
@@ -58,6 +66,17 @@ class CustomTextField extends StatelessWidget {
           borderSide: const BorderSide(color: AppColors.primaryDark),
           borderRadius: BorderRadius.circular(16),
         ),
+        errorBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.red),
+          borderRadius: BorderRadius.circular(16),
+        ),
+
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.red),
+          borderRadius: BorderRadius.circular(16),
+        ),
+
+        errorStyle: const TextStyle(color: Colors.red, fontSize: 12),
       ),
     );
   }

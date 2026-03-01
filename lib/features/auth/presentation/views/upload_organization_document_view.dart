@@ -1,15 +1,20 @@
+import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
+import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
 import 'package:mosahem/features/auth/presentation/views/add_branch_location_view.dart';
 
 class UploadOrganizationDocumentView extends StatefulWidget {
-  const UploadOrganizationDocumentView({super.key});
+  final String email;
+
+  const UploadOrganizationDocumentView({super.key, required this.email});
 
   @override
   State<UploadOrganizationDocumentView> createState() =>
@@ -31,6 +36,91 @@ class _UploadOrganizationDocumentViewState
         _pickedFile = result.files.single;
       });
     }
+  }
+
+  bool _isLoading = false;
+  String? _uploadError;
+  Future<void> _uploadFile() async {
+    if (_pickedFile == null) {
+      setState(() {
+        _uploadError = "Please select a file first";
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _uploadError = null;
+    });
+
+    try {
+      final dio = Dio();
+
+      final formData = FormData.fromMap({
+        "file": MultipartFile.fromBytes(
+          _pickedFile!.bytes!,
+          filename: _pickedFile!.name,
+        ),
+        "folderName": "images",
+      });
+
+      final response = await dio.post(
+        "https://mosahemapi.runasp.net/api/v1/files/upload",
+        data: formData,
+      );
+      print("UPLOAD RESPONSE: ${response.data}");
+
+      final data = response.data;
+
+      if (data["Succeeded"] == false || data["succeeded"] == false) {
+        setState(() {
+          _uploadError = data["Message"] ?? "Upload failed";
+        });
+      } else {
+        final String licenseUrl = data["Data"];
+
+        // 🔥 خزّن في الكيوبت
+        context.read<AuthCubit>().licenseUrl = licenseUrl;
+
+        // نروح للصفحة اللي بعدها
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => AddBranchLocationView()),
+        );
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 422) {
+        final data = e.response?.data;
+
+        print("422 DATA: $data");
+
+        if (data != null && data["Errors"] != null) {
+          final errors = data["Errors"];
+
+          if (errors["File"] != null) {
+            setState(() {
+              _uploadError = errors["File"].first;
+            });
+          } else if (errors["FolderName"] != null) {
+            setState(() {
+              _uploadError = errors["FolderName"].first;
+            });
+          } else {
+            setState(() {
+              _uploadError = data["Message"] ?? "Validation error";
+            });
+          }
+        }
+      } else {
+        setState(() {
+          _uploadError = "Something went wrong";
+        });
+      }
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -171,21 +261,12 @@ class _UploadOrganizationDocumentViewState
             const Gap(12),
             Expanded(
               child: CustomButton(
-                text: 'Continue',
+                text: _isLoading ? 'Uploading...' : 'Continue',
                 color: _pickedFile == null
                     ? AppColors.disabledButton
                     : AppColors.primaryDark,
 
-                onTap: _pickedFile == null
-                    ? null
-                    : () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => AddBranchLocationView(),
-                          ),
-                        );
-                      },
+                onTap: _pickedFile == null || _isLoading ? null : _uploadFile,
               ),
             ),
           ],

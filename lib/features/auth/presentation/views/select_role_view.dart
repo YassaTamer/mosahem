@@ -44,7 +44,7 @@ class SelectRoleView extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => OrganizationSignupView(),
+                        builder: (_) => const OrganizationSignupView(),
                       ),
                     );
                   },

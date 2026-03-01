@@ -66,7 +66,7 @@ class _MultipleChoiceViewState extends State<MultipleChoiceView> {
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: CustomTextField(
-              controller: _controller,
+              textEditingController: _controller,
               numberOfLines: 3,
               hintText: "type your question here...",
             ),
@@ -75,7 +75,7 @@ class _MultipleChoiceViewState extends State<MultipleChoiceView> {
           Padding(
             padding: const EdgeInsets.only(left: 20),
             child: CustomDynamicOption(
-              isMultiSelection: true,
+              isMultiSelection: false,
               onOptionsChanged: (value) {
                 hasOptions = value;
                 checkIfCanSave();

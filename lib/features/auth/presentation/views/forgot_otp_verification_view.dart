@@ -7,20 +7,19 @@ import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
-import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
+import 'package:mosahem/features/auth/logic/cubit/forget_password/forget_password_cubit.dart';
 import 'package:mosahem/features/auth/presentation/views/login_view.dart';
-import 'package:mosahem/features/auth/presentation/views/upload_organization_document_view.dart';
+import 'package:mosahem/features/auth/presentation/views/new_password_view.dart';
 
-class OtpVerificationView extends StatefulWidget {
-  final String email;
-
-  const OtpVerificationView({super.key, required this.email});
+class ForgotOtpVerificationView extends StatefulWidget {
+  const ForgotOtpVerificationView({super.key});
 
   @override
-  State<OtpVerificationView> createState() => _OtpVerificationViewState();
+  State<ForgotOtpVerificationView> createState() =>
+      _ForgotOtpVerificationViewState();
 }
 
-class _OtpVerificationViewState extends State<OtpVerificationView> {
+class _ForgotOtpVerificationViewState extends State<ForgotOtpVerificationView> {
   String getOtpCode() {
     return _controllers.map((c) => c.text).join();
   }
@@ -80,34 +79,27 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthCubit, AuthState>(
+    return BlocListener<ForgetPasswordCubit, ForgetPasswordState>(
       listener: (context, state) {
-        if (state is AuthLoading) {
-          showDialog(
-            context: context,
-            builder: (_) => Center(child: CircularProgressIndicator()),
-          );
-        }
-        if (state is AuthOtpVerified) {
-          Navigator.pop(context); // close loading
+        if (state is ForgetPasswordOtpVerified) {
+          final cubit = context.read<ForgetPasswordCubit>();
 
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (_) =>
-                  UploadOrganizationDocumentView(email: widget.email),
+              builder: (_) => BlocProvider.value(
+                value: cubit,
+                child: const NewPasswordView(),
+              ),
             ),
           );
         }
-        if (state is AuthError) {
-          Navigator.pop(context);
-
+        if (state is ForgetPasswordError) {
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
-
       child: Scaffold(
         backgroundColor: AppColors.white,
         appBar: AppBar(
@@ -145,7 +137,7 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                   fontWeight: FontWeight.w500,
                 ),
                 CustomText(
-                  widget.email,
+                  context.read<ForgetPasswordCubit>().email ?? '',
                   color: AppColors.primaryDark,
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -238,16 +230,21 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
           child: CustomButton(
             text: 'Verify Now',
             onTap: () {
+              print("BUTTON PRESSED");
               final code = getOtpCode();
 
+              print("CODE = $code");
+
               if (code.length != 6) {
+                print("INVALID LENGTH");
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Please enter full OTP")),
+                  const SnackBar(content: Text("Please enter full OTP")),
                 );
                 return;
               }
 
-              context.read<AuthCubit>().verifyRegisterOtp(widget.email, code);
+              print("CALLING CUBIT");
+              context.read<ForgetPasswordCubit>().verifyOtp(code: code);
             },
           ),
         ),

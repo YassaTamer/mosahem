@@ -174,7 +174,7 @@ class _AddPlaceViewState extends State<AddPlaceView> {
                 ),
                 SizedBox(height: 5),
                 CustomTextField(
-                  controller: descriptionController,
+                  textEditingController: descriptionController,
                   hintText: "Enter addtional details about this branch...",
                   numberOfLines: 4,
                 ),

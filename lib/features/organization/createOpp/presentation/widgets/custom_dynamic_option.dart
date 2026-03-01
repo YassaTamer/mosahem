@@ -44,7 +44,7 @@ class _CustomDynamicQuestionState extends State<CustomDynamicOption> {
                     options.add(optionController.text);
                     optionController.clear();
                   });
-                  widget.onOptionsChanged(options.isNotEmpty);
+                  widget.onOptionsChanged(options.length >= 2);
                 }
               },
             ),
@@ -88,7 +88,7 @@ class _CustomDynamicQuestionState extends State<CustomDynamicOption> {
                         options.removeAt(index);
                         selectedValues.remove(option);
                       });
-                      widget.onOptionsChanged(options.isNotEmpty);
+                      widget.onOptionsChanged(options.length >= 2);
                     },
                   ),
                 ],
@@ -128,7 +128,7 @@ class _CustomDynamicQuestionState extends State<CustomDynamicOption> {
                             selectedValue = null;
                           }
                         });
-                        widget.onOptionsChanged(options.isNotEmpty);
+                        widget.onOptionsChanged(options.length >= 2);
                       },
                     ),
                   ],

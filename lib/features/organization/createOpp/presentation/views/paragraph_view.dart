@@ -56,7 +56,7 @@ class _ParagraphViewState extends State<ParagraphView> {
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: CustomTextField(
-              controller: _controller,
+              textEditingController: _controller,
               numberOfLines: 3,
               hintText: "type your question here...",
             ),

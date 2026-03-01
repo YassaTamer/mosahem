@@ -8,14 +8,14 @@ class LabeledTextFieldRow extends StatelessWidget {
     required this.label,
     required this.hint,
     required this.isRequired,
-    this.height = 40,
+    this.height = 40, this.controller,
   });
 
   final String label;
   final String hint;
   final bool isRequired;
   final double height;
-
+final TextEditingController? controller;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -33,6 +33,7 @@ class LabeledTextFieldRow extends StatelessWidget {
         Expanded(
           flex: 6,
           child: Container(
+            
             height: height,
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
@@ -41,6 +42,7 @@ class LabeledTextFieldRow extends StatelessWidget {
             ),
             alignment: Alignment.center,
             child: TextField(
+              controller:controller ,
               decoration: InputDecoration(
                 hintText: hint,
                 hintStyle: TextStyle(fontSize: 13, color: Colors.grey.shade600),
