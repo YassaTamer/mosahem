@@ -20,7 +20,6 @@ class AuthApiService {
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
-      print("📩 FULL LOGIN RESPONSE: ${response.data}");
 
       final data = response.data;
 
@@ -223,7 +222,7 @@ class AuthApiService {
 
       final data = response.data;
 
-      print("📩 OTP RESPONSE: $data");
+      // print("📩 OTP RESPONSE: $data");
 
       final succeeded = data["Succeeded"] ?? data["succeeded"];
 
@@ -237,7 +236,7 @@ class AuthApiService {
     } on DioException catch (e) {
       final data = e.response?.data;
 
-      print("❌ OTP ERROR RESPONSE: $data");
+     // print("❌ OTP ERROR RESPONSE: $data");
 
       if (data?["Errors"] != null && data["Errors"]["Email"] != null) {
         throw Exception(data["Errors"]["Email"][0]);

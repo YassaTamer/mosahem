@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:mosahem/features/auth/data/repository/auth_repository.dart';
 
 part 'forget_password_state.dart';

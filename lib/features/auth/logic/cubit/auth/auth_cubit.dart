@@ -1,5 +1,6 @@
-import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mosahem/core/constants/user_role.dart';
 import 'package:mosahem/core/helpers/cache_helper.dart';
 import 'package:mosahem/features/auth/data/models/branch_location_model.dart';
 import 'package:mosahem/features/auth/data/models/validation_exception.dart';
@@ -38,15 +39,12 @@ class AuthCubit extends Cubit<AuthState> {
 
       await CacheHelper.saveToken(response.data.accessToken);
       final savedToken = await CacheHelper.getToken();
-      emit(
-        AuthSuccess(
-          isVerified: response.data.isVerified,
-          role: response.data.role,
-        ),
-      );
-      print("📩 LOGIN RESPONSE: ${response.data}");
+      final userRole = parseUserRole(response.data.role);
+
+      emit(AuthSuccess(isVerified: response.data.isVerified, role: userRole));
+      // print("📩 LOGIN RESPONSE: ${response.data}");
     } catch (e) {
-      print("❌ LOGIN ERROR: $e");
+      // print("❌ LOGIN ERROR: $e");
 
       final message = e.toString().replaceAll('Exception: ', '');
       emit(AuthError(message));
@@ -73,7 +71,7 @@ class AuthCubit extends Cubit<AuthState> {
         confirmPassword: confirmPassword,
         locations: locations,
         fieldIds: fieldIds,
-        licenseUrl: this.licenseUrl, // 👈 هنا
+        licenseUrl: licenseUrl, // 👈 هنا
       );
 
       emit(AuthRegistered());

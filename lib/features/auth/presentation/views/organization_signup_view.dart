@@ -8,10 +8,8 @@ import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/core/widgets/custom_text_field.dart';
 import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
-import 'package:mosahem/features/auth/presentation/views/add_branch_location_view.dart';
 import 'package:mosahem/features/auth/presentation/views/login_view.dart';
 import 'package:mosahem/features/auth/presentation/views/otp_verification_view.dart';
-import 'package:mosahem/features/auth/presentation/views/upload_organization_document_view.dart';
 import 'package:mosahem/core/widgets/custom_phone_number_field.dart';
 
 class OrganizationSignupView extends StatefulWidget {

@@ -7,7 +7,6 @@ import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
-import 'package:mosahem/features/auth/data/models/branch_location_model.dart';
 import 'package:mosahem/features/auth/data/models/track_model.dart';
 import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
 import 'package:mosahem/features/organization/presentation/views/organization_home_view.dart';
@@ -36,7 +35,7 @@ class _SelectTracksViewState extends State<SelectTracksView> {
         });
       }
     } catch (e) {
-      print(e);
+      //print(e);
     }
   }
 
@@ -193,29 +192,29 @@ class _SelectTracksViewState extends State<SelectTracksView> {
                       : () {
                           final cubit = context.read<AuthCubit>();
 
-                          print("===== DEBUG REGISTER DATA =====");
-                          print("OrganizationName: ${cubit.organizationName}");
-                          print("Email: ${cubit.email}");
-                          print("Phone: ${cubit.phoneNumber}");
-                          print("LicenseUrl: ${cubit.licenseUrl}");
-                          print("FieldIds: $selectedTrackIds");
+                          // print("===== DEBUG REGISTER DATA =====");
+                          // print("OrganizationName: ${cubit.organizationName}");
+                          // print("Email: ${cubit.email}");
+                          // print("Phone: ${cubit.phoneNumber}");
+                          // print("LicenseUrl: ${cubit.licenseUrl}");
+                          // print("FieldIds: $selectedTrackIds");
 
-                          if (cubit.locations.isNotEmpty) {
-                            print("Locations count: ${cubit.locations.length}");
-                            print(
-                              "First GovernorateId: ${cubit.locations.first.governorateId}",
-                            );
-                            print(
-                              "First CityId: ${cubit.locations.first.cityId}",
-                            );
-                            print(
-                              "First Details: ${cubit.locations.first.details}",
-                            );
-                          } else {
-                            print("Locations is EMPTY ❌");
-                          }
+                          // if (cubit.locations.isNotEmpty) {
+                          //   print("Locations count: ${cubit.locations.length}");
+                          //   print(
+                          //     "First GovernorateId: ${cubit.locations.first.governorateId}",
+                          //   );
+                          //   print(
+                          //     "First CityId: ${cubit.locations.first.cityId}",
+                          //   );
+                          //   print(
+                          //     "First Details: ${cubit.locations.first.details}",
+                          //   );
+                          // } else {
+                          // //  print("Locations is EMPTY ❌");
+                          // }
 
-                          print("================================");
+                          //   print("================================");
 
                           cubit.registerOrganization(
                             organizationName: cubit.organizationName!,
