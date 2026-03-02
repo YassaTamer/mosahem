@@ -71,7 +71,7 @@ class AuthCubit extends Cubit<AuthState> {
         confirmPassword: confirmPassword,
         locations: locations,
         fieldIds: fieldIds,
-        licenseUrl: this.licenseUrl, // 👈 هنا
+        licenseUrl: licenseUrl, // 👈 هنا
       );
 
       emit(AuthRegistered());
