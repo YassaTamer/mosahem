@@ -8,6 +8,10 @@ class CustomTextField extends StatelessWidget {
     this.keyboardType,
     this.obscureText = false,
     this.suffixIcon,
+    this.readonly = false,
+    this.navigatTo,
+    this.numberOfLines = 1,
+    this.onTap,
     this.textEditingController,
     this.validator,
     this.errorText,
@@ -21,17 +25,32 @@ class CustomTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final String? errorText;
   final Function(String)? onChange;
-
+  final bool readonly;
+  final Widget? navigatTo;
+  final int? numberOfLines;
+  final VoidCallback? onTap;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      maxLines: numberOfLines,
       onChanged: onChange,
       validator: validator,
       controller: textEditingController,
+      readOnly: readonly,
+      onTap: () {
+        if (onTap != null) {
+          onTap!(); // date picker / custom logic
+        } else if (navigatTo != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => navigatTo!),
+          );
+        }
+      },
       obscureText: obscureText,
       keyboardType: keyboardType,
       cursorColor: AppColors.primary,
-      cursorWidth: 1.3,
+      cursorWidth: 1.5,
       cursorHeight: 20,
       decoration: InputDecoration(
         errorText: errorText,

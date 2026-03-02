@@ -8,7 +8,8 @@ class CustomText extends StatelessWidget {
     this.fontSize,
     this.color,
     this.fontWeight,
-    this.maxLines, this.overflow,
+    this.maxLines,
+    this.overflow,
   });
   final String text;
   final String? fontFamily;
@@ -23,7 +24,6 @@ class CustomText extends StatelessWidget {
     return Text(
       text,
       overflow: overflow,
-
       maxLines: maxLines,
       style: TextStyle(
         fontFamily: fontFamily,
