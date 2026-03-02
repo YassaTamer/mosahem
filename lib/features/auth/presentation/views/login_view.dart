@@ -33,7 +33,6 @@ class _LoginViewState extends State<LoginView> {
     super.dispose();
   }
 
-  @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
