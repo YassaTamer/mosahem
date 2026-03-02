@@ -7,10 +7,8 @@ import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/core/widgets/custom_text_field.dart';
-import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
 import 'package:mosahem/features/auth/logic/cubit/forget_password/forget_password_cubit.dart';
 import 'package:mosahem/features/auth/presentation/views/forgot_otp_verification_view.dart';
-import 'package:mosahem/features/auth/presentation/views/otp_verification_view.dart';
 
 class ForgetPasswordView extends StatelessWidget {
   ForgetPasswordView({super.key});

@@ -1,5 +1,5 @@
-import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/user_role.dart';
 import 'package:mosahem/core/helpers/cache_helper.dart';
 import 'package:mosahem/features/auth/data/models/branch_location_model.dart';
@@ -71,7 +71,7 @@ class AuthCubit extends Cubit<AuthState> {
         confirmPassword: confirmPassword,
         locations: locations,
         fieldIds: fieldIds,
-        licenseUrl: this.licenseUrl, // 👈 هنا
+        licenseUrl: licenseUrl, // 👈 هنا
       );
 
       emit(AuthRegistered());
