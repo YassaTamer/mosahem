@@ -39,7 +39,7 @@ class _SelectTracksViewState extends State<SelectTracksView> {
         });
       }
     } catch (e) {
-      print(e);
+      //print(e);
     }
   }
 
@@ -205,17 +205,13 @@ class _SelectTracksViewState extends State<SelectTracksView> {
                       ? null
                       : () {
                           final cubit = context.read<AuthCubit>();
-                          // print(
-                          //   "Locations: ${cubit.locations.map((e) => e.toJson()).toList()}",
-                          // );
-                          // print("FieldIds: $selectedTrackIds");
+
                           // print("===== DEBUG REGISTER DATA =====");
                           // print("OrganizationName: ${cubit.organizationName}");
                           // print("Email: ${cubit.email}");
                           // print("Phone: ${cubit.phoneNumber}");
                           // print("LicenseUrl: ${cubit.licenseUrl}");
                           // print("FieldIds: $selectedTrackIds");
-                          // print("pass: ${cubit.password}");
 
                           // if (cubit.locations.isNotEmpty) {
                           //   print("Locations count: ${cubit.locations.length}");
@@ -229,8 +225,10 @@ class _SelectTracksViewState extends State<SelectTracksView> {
                           //     "First Details: ${cubit.locations.first.details}",
                           //   );
                           // } else {
-                          //   print("Locations is EMPTY ❌");
+                          // //  print("Locations is EMPTY ❌");
                           // }
+
+                          //   print("================================");
 
                           cubit.registerOrganization(
                             organizationName: cubit.organizationName!,

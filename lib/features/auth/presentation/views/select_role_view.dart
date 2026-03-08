@@ -14,53 +14,80 @@ class SelectRoleView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-
       appBar: AppBar(
         backgroundColor: AppColors.white,
-
         leading: IconButton(
-          icon: const Icon(Icons.chevron_left, size: 32),
+          icon: const Icon(Icons.chevron_left, size: 28),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Center(
-            child: Column(
-              children: [
-                SvgPicture.asset(AppAssets.splashLogo),
-                CustomText(
-                  'مُساهم',
-                  fontSize: 32,
-                  fontFamily: 'Tajawal',
-                  fontWeight: FontWeight.bold,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final screenHeight = constraints.maxHeight;
+          final screenWidth = constraints.maxWidth;
+
+          return SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth * 0.07, // 6% من العرض
                 ),
-                Gap(32),
-                RoleCard(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const OrganizationSignupView(),
-                      ),
-                    );
-                  },
-                  text: 'Organization',
-                  iconPath: AppAssets.organizationIcon,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: screenHeight),
+                  child: IntrinsicHeight(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(height: screenHeight * 0.05),
+
+                        SvgPicture.asset(
+                          AppAssets.splashLogo,
+                          height: screenHeight * 0.12,
+                        ),
+
+                        SizedBox(height: screenHeight * 0.02),
+
+                        CustomText(
+                          'مُساهم',
+                          fontSize: screenWidth * 0.08, // responsive font
+                          fontFamily: 'Tajawal',
+                          fontWeight: FontWeight.bold,
+                        ),
+
+                        SizedBox(height: screenHeight * 0.08),
+
+                        RoleCard(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const OrganizationSignupView(),
+                              ),
+                            );
+                          },
+                          text: 'Organization',
+                          iconPath: AppAssets.organizationIcon,
+                        ),
+
+                        SizedBox(height: screenHeight * 0.03),
+
+                        RoleCard(
+                          onTap: () {},
+                          text: 'Volunteer',
+                          iconPath: AppAssets.volunteerIcon,
+                        ),
+
+                        const Spacer(),
+                      ],
+                    ),
+                  ),
                 ),
-                Gap(32),
-                RoleCard(
-                  onTap: () {},
-                  text: 'Volunteer',
-                  iconPath: AppAssets.volunteerIcon,
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
