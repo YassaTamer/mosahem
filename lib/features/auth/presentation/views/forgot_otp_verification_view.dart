@@ -230,20 +230,20 @@ class _ForgotOtpVerificationViewState extends State<ForgotOtpVerificationView> {
           child: CustomButton(
             text: 'Verify Now',
             onTap: () {
-              print("BUTTON PRESSED");
+           //   print("BUTTON PRESSED");
               final code = getOtpCode();
 
-              print("CODE = $code");
+            //  print("CODE = $code");
 
               if (code.length != 6) {
-                print("INVALID LENGTH");
+               // print("INVALID LENGTH");
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Please enter full OTP")),
                 );
                 return;
               }
 
-              print("CALLING CUBIT");
+          //    print("CALLING CUBIT");
               context.read<ForgetPasswordCubit>().verifyOtp(code: code);
             },
           ),
