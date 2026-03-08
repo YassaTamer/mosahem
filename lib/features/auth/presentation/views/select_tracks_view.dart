@@ -9,6 +9,7 @@ import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/features/auth/data/models/track_model.dart';
 import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
+import 'package:mosahem/features/auth/presentation/views/new_password_view.dart';
 import 'package:mosahem/features/organization/presentation/views/organization_home_view.dart';
 
 class SelectTracksView extends StatefulWidget {
@@ -28,6 +29,9 @@ class _SelectTracksViewState extends State<SelectTracksView> {
       final response = await Dio().get(
         'https://mosahemapi.runasp.net/api/v1/fields/get-all-fields',
       );
+
+      print("TRACK RESPONSE: ${response.data}");
+
       if (response.statusCode == 200 && response.data['Succeeded'] == true) {
         final List data = response.data['Data'];
         setState(() {
@@ -67,11 +71,21 @@ class _SelectTracksViewState extends State<SelectTracksView> {
           );
         }
         if (state is AuthError) {
-          Navigator.pop(context); // يقفل اللودينج
+          Navigator.pop(context);
+
+          String errorMessage = state.message;
+
+          if (state.fieldErrors != null && state.fieldErrors!.isNotEmpty) {
+            errorMessage += "\n\n";
+
+            state.fieldErrors!.forEach((key, value) {
+              errorMessage += "$key: $value\n";
+            });
+          }
 
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text(state.message)));
+          ).showSnackBar(SnackBar(content: Text(errorMessage)));
         }
       },
       child: Scaffold(
@@ -221,9 +235,11 @@ class _SelectTracksViewState extends State<SelectTracksView> {
                             email: cubit.email!,
                             phoneNumber: cubit.phoneNumber!,
                             password: cubit.password!,
-                            confirmPassword: cubit.confirmPassword!,
+                            //confirmPassword: cubit.confirmPassword!,
                             locations: cubit.locations,
                             fieldIds: selectedTrackIds,
+                            licenseUrl: cubit.licenseUrl,
+                            description: "",
                           );
                         },
                 ),

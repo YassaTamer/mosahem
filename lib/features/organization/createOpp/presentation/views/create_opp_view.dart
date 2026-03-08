@@ -44,7 +44,11 @@ class _CreateOppViewState extends State<CreateOppView> {
         children: [
           //*** Image Upload Section ***
           Padding(
-            padding: const EdgeInsets.only(top: 15, bottom: 10),
+            padding: const EdgeInsets.only(
+              top: 15,
+              bottom: 10,
+            
+            ),
             child: ImageUploadWidget(),
           ),
 

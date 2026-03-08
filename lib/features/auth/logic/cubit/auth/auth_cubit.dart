@@ -56,10 +56,15 @@ class AuthCubit extends Cubit<AuthState> {
     required String email,
     required String phoneNumber,
     required String password,
-    required String confirmPassword,
+    //required String confirmPassword,
     required List<BranchLocationModel> locations,
     required List<String> fieldIds,
+    String? description,
+    String? licenseUrl,
   }) async {
+    print("REGISTER FUNCTION STARTED");
+    print("Locations: ${locations.map((e) => e.toJson()).toList()}");
+    print("FieldIds: $fieldIds");
     emit(AuthLoading());
 
     try {
@@ -68,10 +73,11 @@ class AuthCubit extends Cubit<AuthState> {
         email: email,
         phoneNumber: phoneNumber,
         password: password,
-        confirmPassword: confirmPassword,
+        //confirmPassword: confirmPassword,
         locations: locations,
         fieldIds: fieldIds,
-        licenseUrl: licenseUrl, // 👈 هنا
+        licenseUrl: licenseUrl,
+        description: description ?? "",
       );
 
       emit(AuthRegistered());

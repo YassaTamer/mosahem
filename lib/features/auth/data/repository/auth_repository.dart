@@ -25,10 +25,11 @@ class AuthRepository {
     required String email,
     required String phoneNumber,
     required String password,
-    required String confirmPassword,
+    // required String confirmPassword,
     required List<BranchLocationModel> locations,
     required List<String> fieldIds,
     String? licenseUrl,
+    String? description,
   }) async {
     try {
       await _authApiService.registerOrganization(
@@ -36,9 +37,11 @@ class AuthRepository {
         email: email,
         phoneNumber: phoneNumber,
         password: password,
-        confirmPassword: confirmPassword,
+        // confirmPassword: confirmPassword,
         locations: locations,
         fieldIds: fieldIds,
+        licenseUrl: licenseUrl,
+        description: description,
       );
     } catch (e) {
       throw Exception(e.toString().replaceAll('Exception: ', ''));

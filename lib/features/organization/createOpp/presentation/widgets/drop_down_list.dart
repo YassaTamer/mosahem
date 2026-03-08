@@ -38,17 +38,55 @@ class _DropDownListState extends State<DropDownList> {
       children: [
         DropdownButtonFormField<String>(
           initialValue: selectedValue,
+          borderRadius: BorderRadius.circular(10),
+          dropdownColor: AppColors.greyLight,
+          //menuMaxHeight: 250,
           decoration: InputDecoration(
+            enabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: AppColors.primary),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: const BorderSide(
+                color: AppColors.primaryDark,
+                width: 1.6,
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
             labelText: widget.labeltext,
             suffixIcon: widget.icon,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6), // نفس LabeledFieldRow
+            ),
           ),
-          items: widget.options.map((option) {
+          items: widget.options.asMap().entries.map((entry) {
+            int index = entry.key;
+            String option = entry.value;
+
             return DropdownMenuItem<String>(
               value: option,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [CustomText(option), const Divider()],
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: index == widget.options.length - 1
+                          ? Colors.transparent
+                          : Colors.white,
+                      width: 1,
+                    ),
+                  ),
+                ),
+                child: CustomText(
+                  option,
+                  color: AppColors.primaryDark,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             );
           }).toList(),
