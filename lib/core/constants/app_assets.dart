@@ -2,7 +2,10 @@ class AppAssets {
   static const splashLogo = 'assets/logos/splash_logo.svg';
 
   static const volunteerIcon = 'assets/logos/volunteer_icon.svg';
+  static const volunteerIcon2 = 'assets/logos/volunteer_icon.png';
   static const organizationIcon = 'assets/logos/organization_icon.svg';
+  static const organizationIcon2 = 'assets/logos/organization_icon.png';
+  static const opportunityIcon = "assets/logos/opportunity_icon.png";
 
   static const locationIcon = 'assets/logos/location.svg';
   static const locationIcon2 = 'assets/logos/location.png';
@@ -13,4 +16,8 @@ class AppAssets {
   static const paragraphIcon = "assets/logos/paragraph_icon.png";
   static const multipleChoiceIcon = "assets/logos/multiple_choice_icon.png";
   static const checkBoxesIcon = "assets/logos/check_boxes_icon.png";
+  static const editProfileIcon = "assets/logos/edit_profile_icon.png";
+  static const settingsIcon = "assets/logos/settings_icon.png";
+  static const phoneIcon = "assets/logos/phone_icon.png";
+  static const editRightArrow = "assets/logos/edit_right_arrow.png";
 }
