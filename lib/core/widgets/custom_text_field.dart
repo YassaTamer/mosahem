@@ -16,6 +16,8 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     this.errorText,
     this.onChange,
+    this.focusNode,
+    this.onSubmitted,
   });
   final TextEditingController? textEditingController;
   final String? hintText;
@@ -29,9 +31,13 @@ class CustomTextField extends StatelessWidget {
   final Widget? navigatTo;
   final int? numberOfLines;
   final VoidCallback? onTap;
+  final FocusNode? focusNode;
+  final Function(String)? onSubmitted;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      onFieldSubmitted: onSubmitted,
+      focusNode: focusNode,
       maxLines: numberOfLines,
       onChanged: onChange,
       validator: validator,

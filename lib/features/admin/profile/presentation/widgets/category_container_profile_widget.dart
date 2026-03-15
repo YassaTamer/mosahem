@@ -3,8 +3,8 @@ import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 
-class CategoryContainer extends StatelessWidget {
-  const CategoryContainer({
+class CategoryContainerProfile extends StatelessWidget {
+  const CategoryContainerProfile({
     super.key,
     this.recentButtonName,
     this.navigationRecentPage,

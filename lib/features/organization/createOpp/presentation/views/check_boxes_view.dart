@@ -3,7 +3,7 @@ import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/core/widgets/custom_text_field.dart';
 import 'package:mosahem/features/organization/createOpp/presentation/widgets/custom_dynamic_option.dart';
-import 'package:mosahem/features/organization/createOpp/presentation/widgets/custom_enabled_disabled_button.dart';
+import 'package:mosahem/core/widgets/custom_enabled_disabled_button.dart';
 import 'package:mosahem/features/organization/createOpp/presentation/widgets/custom_required_slide_button.dart';
 
 class CheckBoxesView extends StatefulWidget {

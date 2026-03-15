@@ -5,11 +5,11 @@ import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/features/admin/profile/presentation/views/edit_profile_view.dart';
 import 'package:mosahem/features/admin/profile/presentation/views/recent_opportunities_view.dart';
 import 'package:mosahem/features/admin/profile/presentation/views/recent_organizations_view.dart';
-import 'package:mosahem/features/admin/profile/presentation/views/settings_view.dart';
+import 'package:mosahem/features/admin/profile/presentation/views/settings_and_activity_view.dart';
 import 'package:mosahem/features/admin/profile/presentation/views/total_opportunities_view.dart';
 import 'package:mosahem/features/admin/profile/presentation/views/total_organizations_view.dart';
 import 'package:mosahem/features/admin/profile/presentation/views/total_volunteers_view.dart';
-import 'package:mosahem/features/admin/profile/presentation/widgets/category_container_widget.dart';
+import 'package:mosahem/features/admin/profile/presentation/widgets/category_container_profile_widget.dart';
 import 'package:mosahem/features/admin/profile/presentation/widgets/profile_clipper_widget.dart';
 
 class AdminProfileView extends StatelessWidget {
@@ -41,7 +41,9 @@ class AdminProfileView extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SettingsView()),
+                MaterialPageRoute(
+                  builder: (context) => SettingsAndActivityView(),
+                ),
               );
             },
             icon: Image.asset(AppAssets.settingsIcon, width: 24, height: 24),
@@ -128,7 +130,7 @@ class AdminProfileView extends StatelessWidget {
           ),
 
           //*** Organizations container ***
-          CategoryContainer(
+          CategoryContainerProfile(
             containerName: "Organizations",
             containerNumber: 800,
             totalButtonName: "total organizations",
@@ -142,7 +144,7 @@ class AdminProfileView extends StatelessWidget {
           SizedBox(height: 10),
 
           //*** Opportunity container ***
-          CategoryContainer(
+          CategoryContainerProfile(
             containerName: "Opportunities",
             containerNumber: 105,
             totalButtonName: "total opportunities",
@@ -155,7 +157,7 @@ class AdminProfileView extends StatelessWidget {
           SizedBox(height: 10),
 
           //*** Volunteer container ***
-          CategoryContainer(
+          CategoryContainerProfile(
             containerName: "Volunteers",
             containerNumber: 1000,
             totalButtonName: "total volunteers",

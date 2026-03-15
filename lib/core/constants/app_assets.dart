@@ -20,4 +20,9 @@ class AppAssets {
   static const settingsIcon = "assets/logos/settings_icon.png";
   static const phoneIcon = "assets/logos/phone_icon.png";
   static const editRightArrow = "assets/logos/edit_right_arrow.png";
+  static const settingIcon = "assets/logos/setting_icon.png";
+  static const privacyIcon = "assets/logos/privacy_icon.png";
+  static const adminIcon = "assets/logos/admin_icon.png";
+  static const logoutIcon = "assets/logos/logout_icon.png";
+  static const changePasswordIcon = "assets/logos/change_password_icon.png";
 }
