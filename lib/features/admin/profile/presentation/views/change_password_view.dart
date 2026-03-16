@@ -17,47 +17,37 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
   bool _isConfirmPasswordHidden = true;
   bool isButtonEnabled = false;
   String? newPasswordError;
-  bool newPasswordErrorBool = false;
   String? confirmPasswordError;
-  bool confirmPasswordErrorBool = false;
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
   final TextEditingController oldPasswordController = TextEditingController();
   void validatePasswords() {
     setState(() {
-      if (oldPasswordController.text == newPasswordController.text &&
-          newPasswordController.text.isNotEmpty) {
-        newPasswordError = "New password must be different from old password";
-        newPasswordErrorBool = true;
-      } else {
+      // *** Validation of New Password ***
+      if (newPasswordController.text.isEmpty) {
         newPasswordError = null;
-        newPasswordErrorBool = false;
-      }
-
-      if (confirmPasswordController.text != newPasswordController.text &&
-          confirmPasswordController.text.isNotEmpty) {
-        confirmPasswordError = "Passwords do not match";
-        confirmPasswordErrorBool = true;
-      } else {
-        confirmPasswordError = null;
-        confirmPasswordErrorBool = false;
-      }
-      if (newPasswordController.text.length < 6) {
+      } else if (oldPasswordController.text == newPasswordController.text) {
+        newPasswordError = "New password must be different from old password";
+      } else if (newPasswordController.text.length < 6) {
         newPasswordError = "Password must be more than 6 characters";
-        newPasswordErrorBool = true;
       } else if (!RegExp(r'[0-9]').hasMatch(newPasswordController.text)) {
         newPasswordError = "Password must contain at least one number";
-        newPasswordErrorBool = true;
       } else if (!RegExp(r'[A-Z]').hasMatch(newPasswordController.text)) {
         newPasswordError = "Password must contain a capital letter";
-        newPasswordErrorBool = true;
       } else if (!RegExp(r'[!@#\$&*~]').hasMatch(newPasswordController.text)) {
         newPasswordError = "Password must contain a special character";
-        newPasswordErrorBool = true;
       } else {
         newPasswordError = null;
-        newPasswordErrorBool = false;
+      }
+
+      // *** Validation of Confirm Password ***
+      if (confirmPasswordController.text.isEmpty) {
+        confirmPasswordError = null;
+      } else if (confirmPasswordController.text != newPasswordController.text) {
+        confirmPasswordError = "Passwords do not match";
+      } else {
+        confirmPasswordError = null;
       }
     });
   }
@@ -70,8 +60,8 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
     setState(() {
       isButtonEnabled =
           fieldNotEmpty &&
-          newPasswordErrorBool == false &&
-          confirmPasswordErrorBool == false;
+          newPasswordError == null &&
+          confirmPasswordError == null;
     });
   }
 
