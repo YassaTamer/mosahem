@@ -9,7 +9,7 @@ import 'package:mosahem/features/admin/profile/presentation/views/settings_and_a
 import 'package:mosahem/features/admin/profile/presentation/views/total_opportunities_view.dart';
 import 'package:mosahem/features/admin/profile/presentation/views/total_organizations_view.dart';
 import 'package:mosahem/features/admin/profile/presentation/views/total_volunteers_view.dart';
-import 'package:mosahem/features/admin/profile/presentation/widgets/category_container_profile_widget.dart';
+import 'package:mosahem/features/admin/profile/presentation/widgets/category_container_profile.dart';
 import 'package:mosahem/features/admin/profile/presentation/widgets/profile_clipper_widget.dart';
 
 class AdminProfileView extends StatelessWidget {

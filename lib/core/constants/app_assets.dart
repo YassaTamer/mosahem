@@ -1,6 +1,7 @@
 class AppAssets {
   static const splashLogo = 'assets/logos/splash_logo.svg';
   static const splashLogo2 = "assets/logos/splash_logo.png";
+  static const orgLogo = "assets/logos/org_logo.png";
 
   static const volunteerIcon = 'assets/logos/volunteer_icon.svg';
   static const volunteerIcon2 = 'assets/logos/volunteer_icon.png';
@@ -29,4 +30,6 @@ class AppAssets {
   static const changePasswordIcon = "assets/logos/change_password_icon.png";
   static const addNewAdminIcon = "assets/logos/add_new_admin_icon.png";
   static const searchIcon = "assets/logos/search_icon.png";
+  static const startDateIcon = "assets/logos/start_date_icon.png";
+  static const endDateIcon = "assets/logos/end_date_icon.png";
 }

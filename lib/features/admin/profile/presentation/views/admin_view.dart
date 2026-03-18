@@ -3,7 +3,7 @@ import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/features/admin/profile/presentation/views/add_new_admin_view.dart';
-import 'package:mosahem/features/admin/profile/presentation/widgets/custom_container_admin_widget.dart';
+import 'package:mosahem/features/admin/profile/presentation/widgets/custom_container_admin.dart';
 
 class AdminView extends StatefulWidget {
   const AdminView({super.key});

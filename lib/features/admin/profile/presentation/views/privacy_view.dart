@@ -3,7 +3,7 @@ import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/features/admin/profile/presentation/views/change_password_view.dart';
-import 'package:mosahem/features/admin/profile/presentation/widgets/category_container_settings_widget.dart';
+import 'package:mosahem/features/admin/profile/presentation/widgets/category_container_settings.dart';
 
 class PrivacyView extends StatelessWidget {
   const PrivacyView({super.key});
