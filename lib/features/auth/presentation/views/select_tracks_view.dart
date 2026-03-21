@@ -28,6 +28,9 @@ class _SelectTracksViewState extends State<SelectTracksView> {
       final response = await Dio().get(
         'https://mosahemapi.runasp.net/api/v1/fields/get-all-fields',
       );
+
+      print("TRACK RESPONSE: ${response.data}");
+
       if (response.statusCode == 200 && response.data['Succeeded'] == true) {
         final List data = response.data['Data'];
         setState(() {
@@ -35,7 +38,7 @@ class _SelectTracksViewState extends State<SelectTracksView> {
         });
       }
     } catch (e) {
-      print(e);
+      //print(e);
     }
   }
 
@@ -67,11 +70,21 @@ class _SelectTracksViewState extends State<SelectTracksView> {
           );
         }
         if (state is AuthError) {
-          Navigator.pop(context); // يقفل اللودينج
+          Navigator.pop(context);
+
+          String errorMessage = state.message;
+
+          if (state.fieldErrors != null && state.fieldErrors!.isNotEmpty) {
+            errorMessage += "\n\n";
+
+            state.fieldErrors!.forEach((key, value) {
+              errorMessage += "$key: $value\n";
+            });
+          }
 
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text(state.message)));
+          ).showSnackBar(SnackBar(content: Text(errorMessage)));
         }
       },
       child: Scaffold(
@@ -192,38 +205,40 @@ class _SelectTracksViewState extends State<SelectTracksView> {
                       : () {
                           final cubit = context.read<AuthCubit>();
 
-                          print("===== DEBUG REGISTER DATA =====");
-                          print("OrganizationName: ${cubit.organizationName}");
-                          print("Email: ${cubit.email}");
-                          print("Phone: ${cubit.phoneNumber}");
-                          print("LicenseUrl: ${cubit.licenseUrl}");
-                          print("FieldIds: $selectedTrackIds");
+                          // print("===== DEBUG REGISTER DATA =====");
+                          // print("OrganizationName: ${cubit.organizationName}");
+                          // print("Email: ${cubit.email}");
+                          // print("Phone: ${cubit.phoneNumber}");
+                          // print("LicenseUrl: ${cubit.licenseUrl}");
+                          // print("FieldIds: $selectedTrackIds");
 
-                          if (cubit.locations.isNotEmpty) {
-                            print("Locations count: ${cubit.locations.length}");
-                            print(
-                              "First GovernorateId: ${cubit.locations.first.governorateId}",
-                            );
-                            print(
-                              "First CityId: ${cubit.locations.first.cityId}",
-                            );
-                            print(
-                              "First Details: ${cubit.locations.first.details}",
-                            );
-                          } else {
-                            print("Locations is EMPTY ❌");
-                          }
+                          // if (cubit.locations.isNotEmpty) {
+                          //   print("Locations count: ${cubit.locations.length}");
+                          //   print(
+                          //     "First GovernorateId: ${cubit.locations.first.governorateId}",
+                          //   );
+                          //   print(
+                          //     "First CityId: ${cubit.locations.first.cityId}",
+                          //   );
+                          //   print(
+                          //     "First Details: ${cubit.locations.first.details}",
+                          //   );
+                          // } else {
+                          // //  print("Locations is EMPTY ❌");
+                          // }
 
-                          print("================================");
+                          //   print("================================");
 
                           cubit.registerOrganization(
                             organizationName: cubit.organizationName!,
                             email: cubit.email!,
                             phoneNumber: cubit.phoneNumber!,
                             password: cubit.password!,
-                            confirmPassword: cubit.confirmPassword!,
+                            //confirmPassword: cubit.confirmPassword!,
                             locations: cubit.locations,
                             fieldIds: selectedTrackIds,
+                            licenseUrl: cubit.licenseUrl,
+                            description: "",
                           );
                         },
                 ),

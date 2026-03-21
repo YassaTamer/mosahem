@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/user_role.dart';
 import 'package:mosahem/features/layout/logic/cubit/layout_cubit.dart';
+import 'package:mosahem/features/organization/createOpp/presentation/views/create_opp_view.dart';
 
 class MainLayoutView extends StatelessWidget {
   final UserRole role;
@@ -39,7 +40,8 @@ class MainLayoutView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           for (int i = 0; i < items.length; i++) ...[
-            if (role == UserRole.organization && i == 2) _buildAddButton(),
+            if (role == UserRole.organization && i == 2)
+              _buildAddButton(context),
 
             _buildNavItem(context, i, currentIndex),
           ],
@@ -74,17 +76,25 @@ class MainLayoutView extends StatelessWidget {
     );
   }
 
-  Widget _buildAddButton() {
-    return Container(
-      margin: EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.white,
-        shape: BoxShape.rectangle,
-        //border: Border.all(color: const Color(0xFFFFC107), width: 2),
+  Widget _buildAddButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => CreateOppView()),
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.white,
+          shape: BoxShape.rectangle,
+          //border: Border.all(color: const Color(0xFFFFC107), width: 2),
+        ),
+        child: const Icon(Icons.add, size: 32, color: Color(0xFF072132)),
       ),
-      child: const Icon(Icons.add, size: 32, color: Color(0xFF072132)),
     );
   }
 
@@ -98,6 +108,7 @@ class MainLayoutView extends StatelessWidget {
       return const [
         Center(child: Text("Organization Home")),
         Center(child: Text("Organization Chat")),
+
         Center(child: Text("Organization Notifications")),
         Center(child: Text("Organization Profile")),
       ];

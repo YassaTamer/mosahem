@@ -20,7 +20,6 @@ class AuthApiService {
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
-      print("📩 FULL LOGIN RESPONSE: ${response.data}");
 
       final data = response.data;
 
@@ -60,26 +59,28 @@ class AuthApiService {
     required String email,
     required String phoneNumber,
     required String password,
-    required String confirmPassword,
     required List<String> fieldIds,
     required List<BranchLocationModel> locations,
-    String? licenseUrl, // 👈 أضف دي
+    String? licenseUrl,
+    String? description,
   }) async {
     try {
+      final body = {
+        "OrganizationName": organizationName,
+        "Email": email,
+        "PhoneNumber": phoneNumber,
+        "Password": password,
+        "LicenseUrl": licenseUrl ?? "",
+        "Locations": locations.map((e) => e.toJson()).toList(),
+        "FieldIds": fieldIds,
+        "Description": description ?? "",
+      };
+
+   //   print("REGISTER BODY: $body");
+
       final response = await _dio.post(
         "$_baseUrl/organization/register-organization",
-        data: {
-          "OrganizationName": organizationName,
-          "Email": email,
-          "PhoneNumber": phoneNumber,
-          "Password": password,
-          "ConfirmPassword": confirmPassword,
-          "LicenseUrl": "",
-          "Locations": locations.map((e) => e.toJson()).toList(),
-          "FieldIds": fieldIds,
-          "Description": "",
-          "LicenseUrl": licenseUrl,
-        },
+        data: body,
       );
 
       final data = response.data;
@@ -119,6 +120,69 @@ class AuthApiService {
       throw Exception(responseData?["Message"] ?? "Network error");
     }
   }
+  // Future<void> registerOrganization({
+  //   required String organizationName,
+  //   required String email,
+  //   required String phoneNumber,
+  //   required String password,
+  //   // required String confirmPassword,
+  //   required List<String> fieldIds,
+  //   required List<BranchLocationModel> locations,
+  //   String? licenseUrl,
+  //   String? description,
+  // }) async {
+  //   try {
+  //     final response = await _dio.post(
+  //       "$_baseUrl/organization/register-organization",
+  //       data: {
+  //         "OrganizationName": organizationName,
+  //         "Email": email,
+  //         "PhoneNumber": phoneNumber,
+  //         "Password": password,
+  //         //   "ConfirmPassword": confirmPassword,
+  //         "Locations": locations.map((e) => e.toJson()).toList(),
+  //         "FieldIds": fieldIds,
+  //         "Description": description ?? "",
+  //         "LicenseUrl": licenseUrl ?? "",
+  //       },
+  //     );
+
+  //     final data = response.data;
+
+  //     if (data["Succeeded"] != true) {
+  //       final errors = data["Errors"];
+
+  //       if (errors != null && errors is Map) {
+  //         Map<String, String> fieldErrors = {};
+  //         errors.forEach((key, value) {
+  //           fieldErrors[key] = (value as List).join("\n");
+  //         });
+
+  //         throw ExceptionWithFields(
+  //           message: data["Message"] ?? "Registration failed",
+  //           fieldErrors: fieldErrors,
+  //         );
+  //       }
+
+  //       throw Exception(data["Message"] ?? "Registration failed");
+  //     }
+  //   } on DioException catch (e) {
+  //     final responseData = e.response?.data;
+  //     if (responseData is Map && responseData["Errors"] != null) {
+  //       Map<String, String> fieldErrors = {};
+  //       responseData["Errors"].forEach((key, value) {
+  //         fieldErrors[key] = (value as List).join("\n");
+  //       });
+
+  //       throw ExceptionWithFields(
+  //         message: responseData["Message"] ?? "Validation error",
+  //         fieldErrors: fieldErrors,
+  //       );
+  //     }
+
+  //     throw Exception(responseData?["Message"] ?? "Network error");
+  //   }
+  // }
 
   Future<void> forgotPassword({required String email}) async {
     try {
@@ -223,7 +287,7 @@ class AuthApiService {
 
       final data = response.data;
 
-      print("📩 OTP RESPONSE: $data");
+      // print("📩 OTP RESPONSE: $data");
 
       final succeeded = data["Succeeded"] ?? data["succeeded"];
 
@@ -237,7 +301,7 @@ class AuthApiService {
     } on DioException catch (e) {
       final data = e.response?.data;
 
-      print("❌ OTP ERROR RESPONSE: $data");
+     // print("❌ OTP ERROR RESPONSE: $data");
 
       if (data?["Errors"] != null && data["Errors"]["Email"] != null) {
         throw Exception(data["Errors"]["Email"][0]);
