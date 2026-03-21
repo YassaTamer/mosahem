@@ -75,6 +75,9 @@ class _TotalOpportunitiesViewState extends State<TotalOpportunitiesView>
     "12/4/2026",
     "15/4/2026",
   ];
+
+  bool isSearching = false;
+  TextEditingController searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,18 +85,47 @@ class _TotalOpportunitiesViewState extends State<TotalOpportunitiesView>
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: AppColors.primaryLightBlue,
-        title: CustomText(
-          'Total Opportunities',
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: AppColors.primary,
-        ),
+        leading: const BackButton(),
+
+        title: isSearching
+            ? Container(
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: TextField(
+                  controller: searchController,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    hintText: "Search",
+                    border: InputBorder.none,
+                    prefixIcon: Icon(Icons.search),
+                  ),
+                ),
+              )
+            : CustomText(
+                'Total Opportunities',
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppColors.primary,
+              ),
+
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10),
             child: IconButton(
-              onPressed: () {},
-              icon: Image.asset(AppAssets.searchIcon, width: 40, height: 40),
+              onPressed: () {
+                setState(() {
+                  if (isSearching) {
+                    searchController.clear();
+                  }
+                  isSearching = !isSearching;
+                });
+              },
+              icon: isSearching
+                  ? const Icon(Icons.close)
+                  : Image.asset(AppAssets.searchIcon, width: 40, height: 40),
             ),
           ),
         ],

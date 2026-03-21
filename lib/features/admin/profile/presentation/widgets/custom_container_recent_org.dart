@@ -3,29 +3,18 @@ import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
+import 'package:mosahem/features/admin/profile/presentation/views/reason_of_rejection_view.dart';
 
-class AcceptedOppView extends StatefulWidget {
-  const AcceptedOppView({
+class CustomContainerRecentOrg extends StatelessWidget {
+  const CustomContainerRecentOrg({
     super.key,
     required this.orgLogo,
     required this.orgName,
-    required this.oppName,
-    required this.startDate,
-    required this.endDate,
+    required this.date,
   });
   final String orgLogo;
   final String orgName;
-  final String oppName;
-  final String startDate;
-  final String endDate;
-
-  @override
-  State<AcceptedOppView> createState() => _AcceptedOppViewState();
-}
-
-class _AcceptedOppViewState extends State<AcceptedOppView> {
-  bool resume = false;
-
+  final String date;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -44,7 +33,7 @@ class _AcceptedOppViewState extends State<AcceptedOppView> {
                   backgroundColor: AppColors.white,
                   radius: 34,
                   child: ClipOval(
-                    child: Image.asset(widget.orgLogo, width: 100, height: 100),
+                    child: Image.asset(orgLogo, width: 100, height: 100),
                   ),
                 ),
                 SizedBox(width: 10),
@@ -52,44 +41,46 @@ class _AcceptedOppViewState extends State<AcceptedOppView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomText(
-                      widget.orgName,
+                      orgName,
                       fontSize: 20,
                       color: AppColors.primary,
                       fontWeight: FontWeight.bold,
                     ),
-                    CustomText(widget.oppName, fontWeight: FontWeight.bold),
-                    SizedBox(height: 5),
-                    Row(
-                      children: [
-                        Image.asset(AppAssets.startDateIcon),
-                        SizedBox(width: 5),
-                        CustomText(widget.startDate, fontSize: 10),
-
-                        SizedBox(width: 10),
-
-                        Image.asset(AppAssets.endDateIcon),
-                        SizedBox(width: 5),
-                        CustomText(widget.endDate, fontSize: 10),
-                      ],
-                    ),
+                    CustomText(date, fontSize: 12),
                   ],
+                ),
+                Spacer(),
+                IconButton(
+                  onPressed: () {},
+                  icon: Image.asset(AppAssets.documentationIcon),
                 ),
               ],
             ),
 
-            SizedBox(height: 10),
+            SizedBox(height: 12),
             Row(
               children: [
                 CustomButton(
-                  text: resume == false ? "Stop" : "Resume",
-                  color: resume == false ? AppColors.red : AppColors.lightGreen,
-                  width: 317,
+                  text: "Rejected",
+                  color: AppColors.red,
+                  width: 150,
                   height: 40,
                   onTap: () {
-                    setState(() {
-                      resume = !resume;
-                    });
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ReasonOfRejectionView(),
+                      ),
+                    );
                   },
+                ),
+                SizedBox(width: 10),
+                CustomButton(
+                  text: "Accepted",
+                  color: AppColors.lightGreen,
+                  width: 150,
+                  height: 40,
+                  onTap: () {},
                 ),
               ],
             ),

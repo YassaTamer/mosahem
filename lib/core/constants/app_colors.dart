@@ -15,6 +15,7 @@ class AppColors {
 
   // Backgrounds
   static const Color white = Colors.white;
+  static const Color grey = Color(0xffE9E9E9);
 
   // Google button
   static const Color googleButton = Color(0xffB6CDDD);
