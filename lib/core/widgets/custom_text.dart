@@ -10,6 +10,9 @@ class CustomText extends StatelessWidget {
     this.fontWeight,
     this.maxLines,
     this.overflow,
+    this.underline = false,
+    this.decorationColor,
+    this.decorationThickness,
   });
   final String text;
   final String? fontFamily;
@@ -18,7 +21,9 @@ class CustomText extends StatelessWidget {
   final FontWeight? fontWeight;
   final int? maxLines;
   final TextOverflow? overflow;
-
+  final bool? underline;
+  final Color? decorationColor;
+  final double? decorationThickness;
   @override
   Widget build(BuildContext context) {
     return Text(
@@ -30,6 +35,9 @@ class CustomText extends StatelessWidget {
         fontSize: fontSize,
         color: color,
         fontWeight: fontWeight,
+        decoration: underline == true ? TextDecoration.underline : null,
+        decorationColor: decorationColor,
+        decorationThickness: decorationThickness,
       ),
     );
   }

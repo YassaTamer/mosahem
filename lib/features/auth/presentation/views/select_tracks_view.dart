@@ -9,7 +9,6 @@ import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/features/auth/data/models/track_model.dart';
 import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
-import 'package:mosahem/features/auth/presentation/views/new_password_view.dart';
 import 'package:mosahem/features/organization/presentation/views/organization_home_view.dart';
 
 class SelectTracksView extends StatefulWidget {

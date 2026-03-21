@@ -6,16 +6,11 @@ import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
-import 'package:mosahem/core/widgets/custom_text_field.dart';
 import 'package:mosahem/features/auth/data/models/branch_location_model.dart';
 import 'package:mosahem/features/auth/data/models/city_model.dart';
 import 'package:mosahem/features/auth/data/models/governorate_model.dart';
 import 'package:mosahem/features/auth/data/repository/location_repository.dart';
 import 'package:mosahem/features/auth/presentation/widgets/labeled_field_row.dart';
-import 'package:mosahem/features/auth/presentation/widgets/labled_text_field_row.dart';
-import 'package:mosahem/features/organization/createOpp/presentation/widgets/custom_enabled_disabled_button.dart';
-import 'package:mosahem/features/organization/createOpp/presentation/widgets/custom_title_of_fields.dart';
-import 'package:mosahem/features/organization/createOpp/presentation/widgets/drop_down_list.dart';
 
 class AddPlaceView extends StatefulWidget {
   const AddPlaceView({super.key});

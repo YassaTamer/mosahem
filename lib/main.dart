@@ -8,7 +8,6 @@ import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
 
 void main() {
   runApp(const MyApp());
-  
 }
 
 class MyApp extends StatelessWidget {
@@ -34,7 +33,6 @@ class MyApp extends StatelessWidget {
             FocusManager.instance.primaryFocus?.unfocus();
           },
           child: const MaterialApp(
-            title: "Mosahem",
             debugShowCheckedModeBanner: false,
             home: SplashView(),
           ),
