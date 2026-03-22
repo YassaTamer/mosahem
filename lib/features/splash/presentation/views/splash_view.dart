@@ -1,18 +1,13 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_constant.dart';
+import 'package:mosahem/core/constants/user_role.dart';
 import 'package:mosahem/core/helpers/cache_helper.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
-import 'package:mosahem/features/admin/presentation/views/admin_home_view.dart';
-import 'package:mosahem/features/auth/data/api/auth_api_service.dart';
-import 'package:mosahem/features/auth/data/repository/auth_repository.dart';
-import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
 import 'package:mosahem/features/auth/presentation/views/login_view.dart';
-import 'package:mosahem/features/organization/presentation/views/organization_home_view.dart';
+import 'package:mosahem/features/layout/presentation/views/main_layout_view.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -32,54 +27,53 @@ class _SplashViewState extends State<SplashView> {
     await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
 
-    final token = await CacheHelper.getToken();
-    final role = await CacheHelper.getRole();
-
     if (isDevMode) {
+      debugPrint('DEV_MODE is enabled. Session persistence is still active.');
+    }
+
+    final hasValidSession = await CacheHelper.hasValidSession();
+    if (!mounted) return;
+
+    if (!hasValidSession) {
+      await CacheHelper.clearSession();
+      if (!mounted) return;
       _goToLogin();
       return;
     }
 
-    if (token != null && token.isNotEmpty && role != null) {
-      _goToHome(role);
-    } else {
+    final role = await CacheHelper.getRole();
+    if (!mounted) return;
+
+    if (role == null || role.isEmpty) {
+      await CacheHelper.clearSession();
+      if (!mounted) return;
+      _goToLogin();
+      return;
+    }
+
+    try {
+      _goToHome(parseUserRole(role));
+    } catch (_) {
+      await CacheHelper.clearSession();
+      if (!mounted) return;
       _goToLogin();
     }
   }
 
   void _goToLogin() {
-    Navigator.pushReplacement(
+    Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(
-        builder: (_) => BlocProvider(
-          create: (context) => AuthCubit(AuthRepository(AuthApiService(Dio()))),
-          child: const LoginView(),
-        ),
-      ),
+      MaterialPageRoute(builder: (_) => const LoginView()),
+      (route) => false,
     );
   }
 
-  void _goToHome(String role) {
-    Widget page;
-
-    switch (role.toLowerCase()) {
-      case 'admin':
-        page = const AdminHomeView();
-        break;
-
-      case 'organization':
-        page = const OrganizationHomeView();
-        break;
-
-      case 'volunteer':
-        page = const OrganizationHomeView();
-        break;
-
-      default:
-        page = const LoginView();
-    }
-
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => page));
+  void _goToHome(UserRole role) {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => MainLayoutView(role: role)),
+      (route) => false,
+    );
   }
 
   @override

@@ -37,15 +37,12 @@ class AuthCubit extends Cubit<AuthState> {
         password: password,
       );
 
-      await CacheHelper.saveToken(response.data.accessToken);
-      await CacheHelper.saveRole(response.data.role);
-
-      final organizationId = response.data.id;
-      if (organizationId.isNotEmpty) {
-        await CacheHelper.saveOrganizationId(organizationId);
-      } else {
-        await CacheHelper.clearOrganizationId();
-      }
+      await CacheHelper.saveLoginSession(
+        token: response.data.accessToken,
+        role: response.data.role,
+        accessTokenExpiration: response.data.accessTokenExpiration,
+        organizationId: response.data.id,
+      );
 
       final userRole = parseUserRole(response.data.role);
 
@@ -177,5 +174,10 @@ class AuthCubit extends Cubit<AuthState> {
 
   void setLicenseUrl(String url) {
     licenseUrl = url;
+  }
+
+  Future<void> logout() async {
+    await CacheHelper.clearSession();
+    emit(AuthLoggedOut());
   }
 }
