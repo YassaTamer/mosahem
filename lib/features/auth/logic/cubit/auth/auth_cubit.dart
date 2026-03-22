@@ -38,7 +38,15 @@ class AuthCubit extends Cubit<AuthState> {
       );
 
       await CacheHelper.saveToken(response.data.accessToken);
-      final savedToken = await CacheHelper.getToken();
+      await CacheHelper.saveRole(response.data.role);
+
+      final organizationId = response.data.id;
+      if (organizationId.isNotEmpty) {
+        await CacheHelper.saveOrganizationId(organizationId);
+      } else {
+        await CacheHelper.clearOrganizationId();
+      }
+
       final userRole = parseUserRole(response.data.role);
 
       emit(AuthSuccess(isVerified: response.data.isVerified, role: userRole));

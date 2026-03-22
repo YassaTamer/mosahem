@@ -11,12 +11,14 @@ class DropDownList extends StatefulWidget {
     this.multiValues = false,
     required this.options,
     this.onChanged,
+    this.onMultiChanged,
   });
   final String labeltext;
   final Icon icon;
   final bool multiValues;
   final List<String> options;
-  final Function(String?)? onChanged;
+  final ValueChanged<String?>? onChanged;
+  final ValueChanged<List<String>>? onMultiChanged;
   @override
   State<DropDownList> createState() => _DropDownListState();
 }
@@ -29,7 +31,11 @@ class _DropDownListState extends State<DropDownList> {
       selectedValue = null;
       selectedItems.clear();
     });
-    widget.onChanged?.call(null);
+    if (widget.multiValues) {
+      widget.onMultiChanged?.call(const []);
+    } else {
+      widget.onChanged?.call(null);
+    }
   }
 
   @override
@@ -110,7 +116,9 @@ class _DropDownListState extends State<DropDownList> {
                 selectedValue = newValue;
               }
             });
-            if (!widget.multiValues) {
+            if (widget.multiValues) {
+              widget.onMultiChanged?.call(List.unmodifiable(selectedItems));
+            } else {
               widget.onChanged?.call(newValue);
             }
           },
@@ -134,6 +142,9 @@ class _DropDownListState extends State<DropDownList> {
                     setState(() {
                       selectedItems.remove(item);
                     });
+                    widget.onMultiChanged?.call(
+                      List.unmodifiable(selectedItems),
+                    );
                   },
                   child: Image.asset(AppAssets.removeTrashIcon),
                 ),

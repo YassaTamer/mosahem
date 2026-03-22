@@ -1,1 +1,1 @@
-const bool isDevMode = false;
+const bool isDevMode = true;

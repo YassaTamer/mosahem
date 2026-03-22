@@ -12,6 +12,7 @@ import 'package:mosahem/features/auth/data/api/auth_api_service.dart';
 import 'package:mosahem/features/auth/data/repository/auth_repository.dart';
 import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
 import 'package:mosahem/features/auth/presentation/views/login_view.dart';
+import 'package:mosahem/features/organization/presentation/views/organization_home_view.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -28,15 +29,19 @@ class _SplashViewState extends State<SplashView> {
   }
 
   Future<void> _handleNavigation() async {
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
+
     final token = await CacheHelper.getToken();
+    final role = await CacheHelper.getRole();
+
     if (isDevMode) {
       _goToLogin();
       return;
     }
-    if (token != null && token.isNotEmpty) {
-      _goToHome();
+
+    if (token != null && token.isNotEmpty && role != null) {
+      _goToHome(role);
     } else {
       _goToLogin();
     }
@@ -54,11 +59,27 @@ class _SplashViewState extends State<SplashView> {
     );
   }
 
-  void _goToHome() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const AdminHomeView()),
-    );
+  void _goToHome(String role) {
+    Widget page;
+
+    switch (role.toLowerCase()) {
+      case 'admin':
+        page = const AdminHomeView();
+        break;
+
+      case 'organization':
+        page = const OrganizationHomeView();
+        break;
+
+      case 'volunteer':
+        page = const OrganizationHomeView();
+        break;
+
+      default:
+        page = const LoginView();
+    }
+
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => page));
   }
 
   @override

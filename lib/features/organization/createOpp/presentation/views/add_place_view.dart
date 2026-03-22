@@ -1,21 +1,18 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
-import 'package:mosahem/core/widgets/custom_text_field.dart';
 import 'package:mosahem/features/auth/data/models/branch_location_model.dart';
 import 'package:mosahem/features/auth/data/models/city_model.dart';
 import 'package:mosahem/features/auth/data/models/governorate_model.dart';
 import 'package:mosahem/features/auth/data/repository/location_repository.dart';
 import 'package:mosahem/features/auth/presentation/widgets/labeled_field_row.dart';
-import 'package:mosahem/features/auth/presentation/widgets/labled_text_field_row.dart';
-import 'package:mosahem/features/organization/createOpp/presentation/widgets/custom_enabled_disabled_button.dart';
-import 'package:mosahem/features/organization/createOpp/presentation/widgets/custom_title_of_fields.dart';
-import 'package:mosahem/features/organization/createOpp/presentation/widgets/drop_down_list.dart';
+import 'package:mosahem/features/organization/createOpp/logic/cubit/create_opportunity_cubit.dart';
 
 class AddPlaceView extends StatefulWidget {
   const AddPlaceView({super.key});
@@ -363,10 +360,10 @@ class _AddPlaceViewState extends State<AddPlaceView> {
                                   address: addressController.text,
                                 );
 
-                                // // ✅ خزنه في الكيوبت
-                                // context.read<AuthCubit>().locations.add(
-                                //   newBranch,
-                                // );
+                                // ✅ خزنه في الكيوبت
+                                context
+                                    .read<CreateOpportunityCubit>()
+                                    .addAddress(newBranch);
 
                                 setState(() {
                                   branch = newBranch;
@@ -425,12 +422,6 @@ class _AddPlaceViewState extends State<AddPlaceView> {
                                   fontWeight: FontWeight.w800,
                                   color: AppColors.primaryDark,
                                 ),
-                                // CustomText(
-                                //   branch!.address,
-                                //   fontSize: 16,
-                                //   fontWeight: FontWeight.w800,
-                                //   color: AppColors.primaryDark,
-                                // ),
                                 CustomText(
                                   branch!.details,
                                   fontSize: 15,
