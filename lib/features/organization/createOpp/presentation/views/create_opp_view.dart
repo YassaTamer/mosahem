@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
@@ -5,6 +6,7 @@ import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/core/widgets/custom_text_field.dart';
+import 'package:mosahem/features/auth/data/models/track_model.dart';
 import 'package:mosahem/features/auth/presentation/views/add_branch_location_view.dart';
 import 'package:mosahem/features/organization/createOpp/data/repository/create_opportunity_repository.dart';
 import 'package:mosahem/features/organization/createOpp/logic/cubit/create_opportunity_cubit.dart';
@@ -24,6 +26,34 @@ class CreateOppView extends StatefulWidget {
 class _CreateOppViewState extends State<CreateOppView> {
   final TextEditingController startDateController = TextEditingController();
   final TextEditingController endDateController = TextEditingController();
+  List<TrackModel> tracks = [];
+
+  List<String> selectedTrackIds = [];
+
+  Future<void> getTracks() async {
+    try {
+      final response = await Dio().get(
+        'https://mosahemapi.runasp.net/api/v1/fields/get-all-fields',
+      );
+
+      print("TRACK RESPONSE: ${response.data}");
+
+      if (response.statusCode == 200 && response.data['Succeeded'] == true) {
+        final List data = response.data['Data'];
+        setState(() {
+          tracks = data.map((e) => TrackModel.fromJson(e)).toList();
+        });
+      }
+    } catch (e) {
+      //print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getTracks();
+  }
 
   @override
   void dispose() {
@@ -228,28 +258,33 @@ class _CreateOppViewState extends State<CreateOppView> {
                 Padding(
                   padding: const EdgeInsets.only(left: 15, right: 15),
                   child: DropDownList(
-                    options: [
-                      'community service',
-                      'Education & Teaching',
-                      'Healthcare support',
-                      'Environmental Protection',
-                      'Charity & Non-profit work',
-                      'Event organization',
-                      'Adminstravtive Support',
-                      'Media & Content creation',
-                      'IT & Technical Support',
-                      'Human Resources Support',
-                      'Fundraising',
-                    ],
+                    // options: [
+                    //   'community service',
+                    //   'Education & Teaching',
+                    //   'Healthcare support',
+                    //   'Environmental Protection',
+                    //   'Charity & Non-profit work',
+                    //   'Event organization',
+                    //   'Adminstravtive Support',
+                    //   'Media & Content creation',
+                    //   'IT & Technical Support',
+                    //   'Human Resources Support',
+                    //   'Fundraising',
+                    // ],
+                    options: tracks.map((e) => e.name).toList(),
                     multiValues: true,
                     labeltext: '',
                     icon: Icon(Icons.search),
                     onMultiChanged: (values) {
+                      final selectedTracksId = tracks
+                          .where((tracks) => values.contains(tracks.name))
+                          .map((e) => e.id)
+                          .toList();
                       context
                               .read<CreateOpportunityCubit>()
                               .opportunity
                               .fieldIds =
-                          values;
+                          selectedTracksId;
                     },
                   ),
                 ),
