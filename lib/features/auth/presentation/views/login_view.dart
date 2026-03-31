@@ -54,11 +54,14 @@ class _LoginViewState extends State<LoginView> {
           );
 
           Future.delayed(const Duration(milliseconds: 800), () {
-            Navigator.pushReplacement(
+            if (!context.mounted) return;
+
+            Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
                 builder: (_) => MainLayoutView(role: state.role),
               ),
+              (route) => false,
             );
           });
         }

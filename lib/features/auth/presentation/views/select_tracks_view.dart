@@ -5,6 +5,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/core/network/dio_helper.dart';
+import 'package:mosahem/core/network/network_request_flags.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/features/auth/data/models/track_model.dart';
@@ -25,11 +27,12 @@ class _SelectTracksViewState extends State<SelectTracksView> {
 
   Future<void> getTracks() async {
     try {
-      final response = await Dio().get(
+      final response = await DioHelper.instance.client.get(
         'https://mosahemapi.runasp.net/api/v1/fields/get-all-fields',
+        options: Options(extra: {kSkipAuth: true, kSkipRefresh: true}),
       );
 
-      print("TRACK RESPONSE: ${response.data}");
+      // print("TRACK RESPONSE: ${response.data}");
 
       if (response.statusCode == 200 && response.data['Succeeded'] == true) {
         final List data = response.data['Data'];
