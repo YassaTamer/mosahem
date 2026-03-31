@@ -39,6 +39,7 @@ class AuthCubit extends Cubit<AuthState> {
 
       await CacheHelper.saveLoginSession(
         token: response.data.accessToken,
+        refreshToken: response.data.refreshToken,
         role: response.data.role,
         accessTokenExpiration: response.data.accessTokenExpiration,
         organizationId: response.data.id,
@@ -67,9 +68,9 @@ class AuthCubit extends Cubit<AuthState> {
     String? description,
     String? licenseUrl,
   }) async {
-    print("REGISTER FUNCTION STARTED");
-    print("Locations: ${locations.map((e) => e.toJson()).toList()}");
-    print("FieldIds: $fieldIds");
+  //  print("REGISTER FUNCTION STARTED");
+   // print("Locations: ${locations.map((e) => e.toJson()).toList()}");
+   // print("FieldIds: $fieldIds");
     emit(AuthLoading());
 
     try {

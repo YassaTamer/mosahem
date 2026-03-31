@@ -5,6 +5,22 @@ class CacheHelper {
   static const String _roleKey = 'role';
   static const String _organizationIdKey = 'organization_id';
   static const String _accessTokenExpirationKey = 'access_token_expiration';
+  static const String _refreshTokenKey = 'refresh_token';
+
+  static Future<void> saveRefreshToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_refreshTokenKey, token);
+  }
+
+  static Future<String?> getRefreshToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_refreshTokenKey);
+  }
+
+  static Future<void> clearRefreshToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_refreshTokenKey);
+  }
 
   static Future<void> saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
@@ -68,18 +84,17 @@ class CacheHelper {
 
   static Future<void> saveLoginSession({
     required String token,
+    required String refreshToken,
     required String role,
     required String accessTokenExpiration,
     String? organizationId,
   }) async {
     await saveToken(token);
+    await saveRefreshToken(refreshToken);
     await saveRole(role);
     await saveAccessTokenExpiration(accessTokenExpiration);
-
     if (organizationId != null && organizationId.isNotEmpty) {
       await saveOrganizationId(organizationId);
-    } else {
-      await clearOrganizationId();
     }
   }
 
@@ -110,6 +125,7 @@ class CacheHelper {
 
   static Future<void> clearSession() async {
     await clearToken();
+    await clearRefreshToken();
     await clearRole();
     await clearOrganizationId();
     await clearAccessTokenExpiration();

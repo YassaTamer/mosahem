@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:gap/gap.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';

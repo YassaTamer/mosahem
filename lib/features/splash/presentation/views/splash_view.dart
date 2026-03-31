@@ -5,6 +5,7 @@ import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_constant.dart';
 import 'package:mosahem/core/constants/user_role.dart';
 import 'package:mosahem/core/helpers/cache_helper.dart';
+import 'package:mosahem/core/network/dio_helper.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/features/auth/presentation/views/login_view.dart';
 import 'package:mosahem/features/layout/presentation/views/main_layout_view.dart';
@@ -31,7 +32,17 @@ class _SplashViewState extends State<SplashView> {
       debugPrint('DEV_MODE is enabled. Session persistence is still active.');
     }
 
-    final hasValidSession = await CacheHelper.hasValidSession();
+    final token = await CacheHelper.getToken();
+    final role = await CacheHelper.getRole();
+
+    if (token == null || token.isEmpty || role == null || role.isEmpty) {
+      await CacheHelper.clearSession();
+      if (!mounted) return;
+      _goToLogin();
+      return;
+    }
+
+    final hasValidSession = await DioHelper.instance.ensureValidSession();
     if (!mounted) return;
 
     if (!hasValidSession) {
@@ -41,10 +52,10 @@ class _SplashViewState extends State<SplashView> {
       return;
     }
 
-    final role = await CacheHelper.getRole();
+    final refreshedRole = await CacheHelper.getRole();
     if (!mounted) return;
 
-    if (role == null || role.isEmpty) {
+    if (refreshedRole == null || refreshedRole.isEmpty) {
       await CacheHelper.clearSession();
       if (!mounted) return;
       _goToLogin();
@@ -52,7 +63,7 @@ class _SplashViewState extends State<SplashView> {
     }
 
     try {
-      _goToHome(parseUserRole(role));
+      _goToHome(parseUserRole(refreshedRole));
     } catch (_) {
       await CacheHelper.clearSession();
       if (!mounted) return;

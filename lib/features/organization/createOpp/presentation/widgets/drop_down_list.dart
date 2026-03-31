@@ -3,6 +3,16 @@ import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 
+class DropDownOption {
+  final String value;
+  final String label;
+
+  const DropDownOption({
+    required this.value,
+    required this.label,
+  });
+}
+
 class DropDownList extends StatefulWidget {
   const DropDownList({
     super.key,
@@ -12,13 +22,19 @@ class DropDownList extends StatefulWidget {
     required this.options,
     this.onChanged,
     this.onMultiChanged,
+    this.enabled = true,
+    this.hintText,
   });
+
   final String labeltext;
   final Icon icon;
   final bool multiValues;
-  final List<String> options;
+  final List<DropDownOption> options;
   final ValueChanged<String?>? onChanged;
   final ValueChanged<List<String>>? onMultiChanged;
+  final bool enabled;
+  final String? hintText;
+
   @override
   State<DropDownList> createState() => _DropDownListState();
 }
@@ -27,11 +43,27 @@ class _DropDownListState extends State<DropDownList> {
   String? selectedValue;
   List<String> selectedItems = [];
 
+  @override
+  void didUpdateWidget(covariant DropDownList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final validValues = widget.options.map((option) => option.value).toSet();
+
+    if (selectedValue != null && !validValues.contains(selectedValue)) {
+      selectedValue = null;
+    }
+
+    selectedItems = selectedItems
+        .where((item) => validValues.contains(item))
+        .toList(growable: true);
+  }
+
   void reset() {
     setState(() {
       selectedValue = null;
       selectedItems.clear();
     });
+
     if (widget.multiValues) {
       widget.onMultiChanged?.call(const []);
     } else {
@@ -39,8 +71,20 @@ class _DropDownListState extends State<DropDownList> {
     }
   }
 
+  String _labelFor(String value) {
+    for (final option in widget.options) {
+      if (option.value == value) {
+        return option.label;
+      }
+    }
+
+    return value;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isEnabled = widget.enabled && widget.options.isNotEmpty;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return Column(
@@ -48,13 +92,21 @@ class _DropDownListState extends State<DropDownList> {
           children: [
             DropdownButtonFormField<String>(
               key: ValueKey(
-                '${widget.multiValues}-${selectedValue ?? ''}-${selectedItems.length}',
+                '${widget.multiValues}-${selectedValue ?? ''}-${selectedItems.join(',')}-${widget.options.length}',
               ),
               initialValue: selectedValue,
               isExpanded: true,
               icon: const SizedBox.shrink(),
               borderRadius: BorderRadius.circular(10),
               dropdownColor: AppColors.greyLight,
+              hint: widget.hintText == null
+                  ? null
+                  : CustomText(
+                      widget.hintText!,
+                      color: AppColors.primaryDark,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -86,7 +138,7 @@ class _DropDownListState extends State<DropDownList> {
                 final option = entry.value;
 
                 return DropdownMenuItem<String>(
-                  value: option,
+                  value: option.value,
                   child: SizedBox(
                     width: double.infinity,
                     child: Container(
@@ -105,7 +157,7 @@ class _DropDownListState extends State<DropDownList> {
                         ),
                       ),
                       child: CustomText(
-                        option,
+                        option.label,
                         color: AppColors.primaryDark,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -121,33 +173,37 @@ class _DropDownListState extends State<DropDownList> {
                   return Align(
                     alignment: Alignment.centerLeft,
                     child: CustomText(
-                      option,
+                      option.label,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   );
                 }).toList();
               },
-              onChanged: (newValue) {
-                if (newValue == null) return;
+              onChanged: !isEnabled
+                  ? null
+                  : (newValue) {
+                      if (newValue == null) return;
 
-                setState(() {
-                  if (widget.multiValues) {
-                    if (!selectedItems.contains(newValue)) {
-                      selectedItems.add(newValue);
-                    }
-                    selectedValue = null;
-                  } else {
-                    selectedValue = newValue;
-                  }
-                });
+                      setState(() {
+                        if (widget.multiValues) {
+                          if (!selectedItems.contains(newValue)) {
+                            selectedItems.add(newValue);
+                          }
+                          selectedValue = null;
+                        } else {
+                          selectedValue = newValue;
+                        }
+                      });
 
-                if (widget.multiValues) {
-                  widget.onMultiChanged?.call(List.unmodifiable(selectedItems));
-                } else {
-                  widget.onChanged?.call(newValue);
-                }
-              },
+                      if (widget.multiValues) {
+                        widget.onMultiChanged?.call(
+                          List.unmodifiable(selectedItems),
+                        );
+                      } else {
+                        widget.onChanged?.call(newValue);
+                      }
+                    },
             ),
             const SizedBox(height: 8),
             if (selectedItems.isNotEmpty)
@@ -164,7 +220,7 @@ class _DropDownListState extends State<DropDownList> {
                           child: Chip(
                             backgroundColor: AppColors.primary,
                             label: CustomText(
-                              item,
+                              _labelFor(item),
                               color: AppColors.white,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,

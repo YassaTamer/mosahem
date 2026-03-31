@@ -6,6 +6,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/core/helpers/app_snackbar_helper.dart';
+import 'package:mosahem/core/network/dio_helper.dart';
+import 'package:mosahem/core/network/network_request_flags.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
@@ -42,20 +45,15 @@ class _UploadOrganizationDocumentViewState
   String? _uploadError;
   Future<void> _uploadFile() async {
     if (_pickedFile == null) {
-      setState(() {
-        _uploadError = "Please select a file first";
-      });
+      AppSnackBarHelper.error(context, "Please select a file first");
       return;
     }
-
     setState(() {
       _isLoading = true;
       _uploadError = null;
     });
 
     try {
-      final dio = Dio();
-
       final formData = FormData.fromMap({
         "file": MultipartFile.fromBytes(
           _pickedFile!.bytes!,
@@ -64,11 +62,12 @@ class _UploadOrganizationDocumentViewState
         "folderName": "images",
       });
 
-      final response = await dio.post(
+      final response = await DioHelper.instance.client.post(
         "https://mosahemapi.runasp.net/api/v1/files/upload",
         data: formData,
+        options: Options(extra: {kSkipAuth: true, kSkipRefresh: true}),
       );
-      print("UPLOAD RESPONSE: ${response.data}");
+      //   print("UPLOAD RESPONSE: ${response.data}");
 
       final data = response.data;
 
@@ -77,6 +76,8 @@ class _UploadOrganizationDocumentViewState
           _uploadError = data["Message"] ?? "Upload failed";
         });
       } else {
+        if (!mounted) return;
+
         final String licenseUrl = data["Data"];
 
         // 🔥 خزّن في الكيوبت
@@ -92,23 +93,26 @@ class _UploadOrganizationDocumentViewState
       if (e.response?.statusCode == 422) {
         final data = e.response?.data;
 
-        print("422 DATA: $data");
+        //print("422 DATA: $data");
 
         if (data != null && data["Errors"] != null) {
           final errors = data["Errors"];
 
           if (errors["File"] != null) {
-            setState(() {
-              _uploadError = errors["File"].first;
-            });
+            if (!mounted) return;
+
+            AppSnackBarHelper.error(context, errors["File"].first);
           } else if (errors["FolderName"] != null) {
             setState(() {
               _uploadError = errors["FolderName"].first;
             });
           } else {
-            setState(() {
-              _uploadError = data["Message"] ?? "Validation error";
-            });
+            if (!mounted) return;
+
+            AppSnackBarHelper.error(
+              context,
+              data["Message"] ?? "Upload failed",
+            );
           }
         }
       } else {
@@ -234,6 +238,15 @@ class _UploadOrganizationDocumentViewState
                   'Please upload any documentation proving that you are an organization.',
                   fontSize: 16,
                   color: Colors.red,
+                ),
+              if (_uploadError != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: CustomText(
+                    _uploadError!,
+                    fontSize: 14,
+                    color: Colors.red,
+                  ),
                 ),
               Spacer(),
               Gap(4),

@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/core/helpers/app_snackbar_helper.dart';
+import 'package:mosahem/core/network/dio_helper.dart';
+import 'package:mosahem/core/network/network_request_flags.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/core/widgets/custom_text_field.dart';
 import 'package:mosahem/features/auth/data/models/track_model.dart';
-import 'package:mosahem/features/auth/presentation/views/add_branch_location_view.dart';
 import 'package:mosahem/features/organization/createOpp/data/repository/create_opportunity_repository.dart';
 import 'package:mosahem/features/organization/createOpp/logic/cubit/create_opportunity_cubit.dart';
 import 'package:mosahem/features/organization/createOpp/presentation/views/add_place_view.dart';
@@ -26,17 +28,18 @@ class CreateOppView extends StatefulWidget {
 class _CreateOppViewState extends State<CreateOppView> {
   final TextEditingController startDateController = TextEditingController();
   final TextEditingController endDateController = TextEditingController();
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
   List<TrackModel> tracks = [];
-
-  List<String> selectedTrackIds = [];
 
   Future<void> getTracks() async {
     try {
-      final response = await Dio().get(
+      final response = await DioHelper.instance.client.get(
         'https://mosahemapi.runasp.net/api/v1/fields/get-all-fields',
+        options: Options(extra: {kSkipAuth: true, kSkipRefresh: true}),
       );
 
-      print("TRACK RESPONSE: ${response.data}");
+      if (!mounted) return;
 
       if (response.statusCode == 200 && response.data['Succeeded'] == true) {
         final List data = response.data['Data'];
@@ -44,9 +47,7 @@ class _CreateOppViewState extends State<CreateOppView> {
           tracks = data.map((e) => TrackModel.fromJson(e)).toList();
         });
       }
-    } catch (e) {
-      //print(e);
-    }
+    } catch (_) {}
   }
 
   @override
@@ -66,9 +67,49 @@ class _CreateOppViewState extends State<CreateOppView> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          CreateOpportunityCubit(context.read<CreateOpportunityRepository>()),
-      child: Builder(
-        builder: (context) {
+          CreateOpportunityCubit(context.read<CreateOpportunityRepository>())
+            ..getSkills(),
+      child: BlocConsumer<CreateOpportunityCubit, CreateOpportunityState>(
+        listenWhen: (previous, current) =>
+            previous.submissionStatus != current.submissionStatus,
+        listener: (context, state) {
+          if (state.submissionStatus ==
+              CreateOpportunitySubmissionStatus.success) {
+            AppSnackBarHelper.success(
+              context,
+              'Opportunity created successfully.',
+            );
+          }
+
+          if (state.submissionStatus ==
+              CreateOpportunitySubmissionStatus.error) {
+            AppSnackBarHelper.error(
+              context,
+              state.submissionErrorMessage ?? 'Failed to create opportunity.',
+            );
+          }
+        },
+        builder: (context, state) {
+          final cubit = context.read<CreateOpportunityCubit>();
+          final trackOptions = tracks
+              .map(
+                (track) => DropDownOption(value: track.id, label: track.name),
+              )
+              .toList(growable: false);
+          final skillOptions = cubit.skills
+              .map(
+                (skill) => DropDownOption(value: skill.id, label: skill.name),
+              )
+              .toList(growable: false);
+          final isSkillsLoading =
+              state.skillsStatus == SkillsRequestStatus.loading;
+          final areSkillsReady =
+              state.skillsStatus == SkillsRequestStatus.success &&
+              skillOptions.isNotEmpty;
+          final isSubmitting =
+              state.submissionStatus ==
+              CreateOpportunitySubmissionStatus.loading;
+
           return Scaffold(
             backgroundColor: AppColors.white,
             appBar: AppBar(
@@ -83,44 +124,41 @@ class _CreateOppViewState extends State<CreateOppView> {
             ),
             body: ListView(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 15, bottom: 10),
+                const Padding(
+                  padding: EdgeInsets.only(top: 15, bottom: 10),
                   child: ImageUploadWidget(),
                 ),
-                Divider(
+                const Divider(
                   thickness: 1,
                   color: AppColors.primaryDark,
                   endIndent: 20,
                   indent: 20,
                 ),
-                SizedBox(height: 10),
-                CustomTitleOfFields('Title of opportunitiy', padding: 20),
-                SizedBox(height: 5),
+                const SizedBox(height: 10),
+                const CustomTitleOfFields('Title of opportunitiy', padding: 20),
+                const SizedBox(height: 5),
                 Padding(
-                  padding: const EdgeInsets.only(left: 15, right: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: CustomTextField(
+                    textEditingController: titleController,
                     onChange: (value) {
-                      context.read<CreateOpportunityCubit>().opportunity.title =
-                          value;
+                      cubit.opportunity.title = value;
                     },
                   ),
                 ),
-                SizedBox(height: 10),
-                CustomTitleOfFields('Description', padding: 20),
-                SizedBox(height: 5),
+                const SizedBox(height: 10),
+                const CustomTitleOfFields('Description', padding: 20),
+                const SizedBox(height: 5),
                 Padding(
-                  padding: const EdgeInsets.only(left: 15, right: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: CustomTextField(
+                    textEditingController: descriptionController,
                     onChange: (value) {
-                      context
-                              .read<CreateOpportunityCubit>()
-                              .opportunity
-                              .description =
-                          value;
+                      cubit.opportunity.description = value;
                     },
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     Padding(
@@ -131,22 +169,22 @@ class _CreateOppViewState extends State<CreateOppView> {
                         width: 25,
                       ),
                     ),
-                    CustomTitleOfFields('Place', padding: 5),
+                    const CustomTitleOfFields('Place', padding: 5),
                   ],
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Padding(
-                  padding: const EdgeInsets.only(left: 15, right: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: CustomTextField(
                     readonly: true,
                     hintText: 'Select places',
-                    suffixIcon: Icon(Icons.add),
+                    suffixIcon: const Icon(Icons.add),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (_) => BlocProvider.value(
-                            value: context.read<CreateOpportunityCubit>(),
+                            value: cubit,
                             child: const AddPlaceView(),
                           ),
                         ),
@@ -154,7 +192,7 @@ class _CreateOppViewState extends State<CreateOppView> {
                     },
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     Padding(
@@ -165,13 +203,13 @@ class _CreateOppViewState extends State<CreateOppView> {
                         width: 25,
                       ),
                     ),
-                    CustomTitleOfFields('Start date', padding: 5),
-                    SizedBox(width: 60),
+                    const CustomTitleOfFields('Start date', padding: 5),
+                    const SizedBox(width: 60),
                     Image.asset(AppAssets.calendarIcon, height: 25, width: 25),
-                    CustomTitleOfFields('End date', padding: 5),
+                    const CustomTitleOfFields('End date', padding: 5),
                   ],
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Row(
                   children: [
                     SizedBox(
@@ -183,23 +221,18 @@ class _CreateOppViewState extends State<CreateOppView> {
                           hintText: 'DD / MM / YY',
                           textEditingController: startDateController,
                           onTap: () async {
-                            final cubit = context
-                                .read<CreateOpportunityCubit>();
-
-                            DateTime? date = await showDatePicker(
+                            final date = await showDatePicker(
                               context: context,
                               initialDate: DateTime.now(),
                               firstDate: DateTime(2026),
                               lastDate: DateTime(2100),
                             );
-                            if (!mounted) return;
-                            if (date != null) {
-                              startDateController.text =
-                                  '${date.day} / ${date.month} / ${date.year}';
+                            if (!mounted || date == null) return;
 
-                              cubit.opportunity.startDate = date
-                                  .toIso8601String();
-                            }
+                            startDateController.text =
+                                '${date.day} / ${date.month} / ${date.year}';
+                            cubit.opportunity.startDate = date
+                                .toIso8601String();
                           },
                         ),
                       ),
@@ -212,93 +245,70 @@ class _CreateOppViewState extends State<CreateOppView> {
                         hintText: 'DD / MM / YY',
                         textEditingController: endDateController,
                         onTap: () async {
-                          final cubit = context.read<CreateOpportunityCubit>();
-
-                          DateTime? date = await showDatePicker(
+                          final date = await showDatePicker(
                             context: context,
                             initialDate: DateTime.now(),
                             firstDate: DateTime(2026),
                             lastDate: DateTime(2100),
                           );
-                          if (!mounted) return;
-                          if (date != null) {
-                            endDateController.text =
-                                '${date.day} / ${date.month} / ${date.year}';
-                            cubit.opportunity.endDate = date.toIso8601String();
-                          }
+                          if (!mounted || date == null) return;
+
+                          endDateController.text =
+                              '${date.day} / ${date.month} / ${date.year}';
+                          cubit.opportunity.endDate = date.toIso8601String();
                         },
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
-                CustomTitleOfFields('Number of volunteers', padding: 20),
-                SizedBox(height: 5),
+                const SizedBox(height: 10),
+                const CustomTitleOfFields('Number of volunteers', padding: 20),
+                const SizedBox(height: 5),
                 Padding(
-                  padding: const EdgeInsets.only(left: 15, right: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: CustomTextField(
-                    keyboardType: TextInputType.numberWithOptions(),
+                    keyboardType: const TextInputType.numberWithOptions(),
                     onChange: (value) {
-                      context
-                          .read<CreateOpportunityCubit>()
-                          .opportunity
-                          .numberOfVolunteers = int.tryParse(
+                      cubit.opportunity.numberOfVolunteers = int.tryParse(
                         value,
                       );
                     },
                   ),
                 ),
-                SizedBox(height: 10),
-                CustomTitleOfFields(
+                const SizedBox(height: 10),
+                const CustomTitleOfFields(
                   'Volunteer Field',
                   padding: 20,
                   requiredMark: false,
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Padding(
-                  padding: const EdgeInsets.only(left: 15, right: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: DropDownList(
-                    // options: [
-                    //   'community service',
-                    //   'Education & Teaching',
-                    //   'Healthcare support',
-                    //   'Environmental Protection',
-                    //   'Charity & Non-profit work',
-                    //   'Event organization',
-                    //   'Adminstravtive Support',
-                    //   'Media & Content creation',
-                    //   'IT & Technical Support',
-                    //   'Human Resources Support',
-                    //   'Fundraising',
-                    // ],
-                    options: tracks.map((e) => e.name).toList(),
+                    options: trackOptions,
                     multiValues: true,
                     labeltext: '',
-                    icon: Icon(Icons.search),
-                    onMultiChanged: (values) {
-                      final selectedTracksId = tracks
-                          .where((tracks) => values.contains(tracks.name))
-                          .map((e) => e.id)
-                          .toList();
-                      context
-                              .read<CreateOpportunityCubit>()
-                              .opportunity
-                              .fieldIds =
-                          selectedTracksId;
-                    },
+                    icon: const Icon(Icons.search),
+                    hintText: 'Select volunteer fields',
+                    enabled: trackOptions.isNotEmpty,
+                    onMultiChanged: cubit.updateFieldIds,
                   ),
                 ),
-                SizedBox(height: 10),
-                CustomTitleOfFields('Work Location', padding: 20),
-                SizedBox(height: 5),
+                const SizedBox(height: 10),
+                const CustomTitleOfFields('Work Location', padding: 20),
+                const SizedBox(height: 5),
                 Padding(
-                  padding: const EdgeInsets.only(left: 15, right: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: DropDownList(
-                    options: ['On-site', 'Remote', 'Hybrid'],
+                    options: const [
+                      DropDownOption(value: 'On-site', label: 'On-site'),
+                      DropDownOption(value: 'Remote', label: 'Remote'),
+                      DropDownOption(value: 'Hybrid', label: 'Hybrid'),
+                    ],
                     labeltext: '',
-                    icon: Icon(Icons.arrow_drop_down),
+                    icon: const Icon(Icons.arrow_drop_down),
+                    hintText: 'Select work location',
                     onChanged: (value) {
-                      final cubit = context.read<CreateOpportunityCubit>();
                       if (value == 'On-site') {
                         cubit.opportunity.locationType = 0;
                       } else if (value == 'Remote') {
@@ -309,18 +319,21 @@ class _CreateOppViewState extends State<CreateOppView> {
                     },
                   ),
                 ),
-                SizedBox(height: 10),
-                CustomTitleOfFields('Work type', padding: 20),
-                SizedBox(height: 5),
+                const SizedBox(height: 10),
+                const CustomTitleOfFields('Work type', padding: 20),
+                const SizedBox(height: 5),
                 Padding(
-                  padding: const EdgeInsets.only(left: 15, right: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: DropDownList(
-                    options: ['Full time', 'Part time', 'Freelance'],
+                    options: const [
+                      DropDownOption(value: 'Full time', label: 'Full time'),
+                      DropDownOption(value: 'Part time', label: 'Part time'),
+                      DropDownOption(value: 'Freelance', label: 'Freelance'),
+                    ],
                     labeltext: '',
-                    icon: Icon(Icons.arrow_drop_down),
+                    icon: const Icon(Icons.arrow_drop_down),
+                    hintText: 'Select work type',
                     onChanged: (value) {
-                      final cubit = context.read<CreateOpportunityCubit>();
-
                       if (value == 'Full time') {
                         cubit.opportunity.workType = 0;
                       } else if (value == 'Part time') {
@@ -331,65 +344,60 @@ class _CreateOppViewState extends State<CreateOppView> {
                     },
                   ),
                 ),
-                SizedBox(height: 10),
-                CustomTitleOfFields(
+                const SizedBox(height: 10),
+                const CustomTitleOfFields(
                   'Skills you must have',
                   padding: 20,
                   requiredMark: false,
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Padding(
-                  padding: const EdgeInsets.only(left: 15, right: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: DropDownList(
-                    options: [
-                      'Education',
-                      'Environment',
-                      'Empathy',
-                      'Event Coordination',
-                    ],
+                    options: skillOptions,
                     multiValues: true,
                     labeltext: '',
-                    icon: Icon(Icons.search),
-                    onMultiChanged: (values) {
-                      context
-                              .read<CreateOpportunityCubit>()
-                              .opportunity
-                              .requiredSkillIds =
-                          values;
-                    },
+                    icon: const Icon(Icons.search),
+                    hintText: isSkillsLoading
+                        ? 'Loading skills...'
+                        : 'Select required skills',
+                    enabled: areSkillsReady,
+                    onMultiChanged: cubit.updateRequiredSkillIds,
                   ),
                 ),
-                SizedBox(height: 10),
-                CustomTitleOfFields(
+                if (state.skillsStatus == SkillsRequestStatus.error)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20, right: 20, top: 8),
+                    child: CustomText(
+                      state.skillsErrorMessage ?? 'Failed to load skills.',
+                      color: Colors.red,
+                      fontSize: 12,
+                    ),
+                  ),
+                const SizedBox(height: 10),
+                const CustomTitleOfFields(
                   'Skills you will acquire',
                   padding: 20,
                   requiredMark: false,
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Padding(
-                  padding: const EdgeInsets.only(left: 15, right: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: DropDownList(
-                    options: [
-                      'Education',
-                      'Environment',
-                      'Empathy',
-                      'Event Coordination',
-                    ],
+                    options: skillOptions,
                     multiValues: true,
                     labeltext: '',
-                    icon: Icon(Icons.search),
-                    onMultiChanged: (values) {
-                      context
-                              .read<CreateOpportunityCubit>()
-                              .opportunity
-                              .providedSkillIds =
-                          values;
-                    },
+                    icon: const Icon(Icons.search),
+                    hintText: isSkillsLoading
+                        ? 'Loading skills...'
+                        : 'Select acquired skills',
+                    enabled: areSkillsReady,
+                    onMultiChanged: cubit.updateProvidedSkillIds,
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Padding(
-                  padding: const EdgeInsets.only(left: 15, right: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: CustomButton(
                     fontColor: AppColors.textBlueDark,
                     text: '+ Add Qusetions',
@@ -399,7 +407,7 @@ class _CreateOppViewState extends State<CreateOppView> {
                         context,
                         MaterialPageRoute(
                           builder: (_) => BlocProvider.value(
-                            value: context.read<CreateOpportunityCubit>(),
+                            value: cubit,
                             child: const AddQuestionsView(),
                           ),
                         ),
@@ -407,19 +415,15 @@ class _CreateOppViewState extends State<CreateOppView> {
                     },
                   ),
                 ),
-                SizedBox(height: 50),
+                const SizedBox(height: 50),
                 Padding(
-                  padding: const EdgeInsets.only(left: 25, right: 25),
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
                   child: CustomButton(
-                    text: 'Create Opportunity',
-                    onTap: () {
-                      context
-                          .read<CreateOpportunityCubit>()
-                          .createOpportunity();
-                    },
+                    text: isSubmitting ? 'Creating...' : 'Create Opportunity',
+                    onTap: isSubmitting ? null : cubit.createOpportunity,
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
               ],
             ),
           );

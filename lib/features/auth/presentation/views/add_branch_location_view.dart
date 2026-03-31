@@ -1,10 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/core/network/dio_helper.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/features/auth/data/models/branch_location_model.dart';
@@ -31,7 +31,7 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
   @override
   void initState() {
     super.initState();
-    _locationRepository = LocationRepository(Dio());
+    _locationRepository = LocationRepository(DioHelper.instance.client);
     fetchGovernorates();
   }
 
@@ -63,6 +63,8 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
         cities = data;
       });
     } catch (e) {
+      if (!mounted) return;
+
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(e.toString())));

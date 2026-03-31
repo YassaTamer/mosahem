@@ -1,74 +1,218 @@
+
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 import 'package:mosahem/core/helpers/cache_helper.dart';
 import 'package:mosahem/features/auth/data/models/branch_location_model.dart';
 import 'package:mosahem/features/organization/createOpp/data/models/create_opportunity_request_model.dart';
+import 'package:mosahem/features/organization/createOpp/data/models/skill_model.dart';
 import 'package:mosahem/features/organization/createOpp/data/repository/create_opportunity_repository.dart';
 
 part 'create_opportunity_state.dart';
 
 class CreateOpportunityCubit extends Cubit<CreateOpportunityState> {
   final CreateOpportunityRepository repository;
-  CreateOpportunityRequestModel opportunity = CreateOpportunityRequestModel();
+  final CreateOpportunityRequestModel opportunity =
+      CreateOpportunityRequestModel();
+  List<SkillModel> skills = [];
 
-  CreateOpportunityCubit(this.repository) : super(CreateOpportunityInitial());
+  CreateOpportunityCubit(this.repository)
+    : super(const CreateOpportunityState());
+
+  Future<void> getSkills() async {
+    emit(
+      state.copyWith(
+        skillsStatus: SkillsRequestStatus.loading,
+        clearSkillsErrorMessage: true,
+      ),
+    );
+
+    try {
+      skills = await repository.getSkills();
+      emit(
+        state.copyWith(
+          skillsStatus: SkillsRequestStatus.success,
+          clearSkillsErrorMessage: true,
+        ),
+      );
+    } catch (error) {
+      emit(
+        state.copyWith(
+          skillsStatus: SkillsRequestStatus.error,
+          skillsErrorMessage: _extractErrorMessage(error),
+        ),
+      );
+    }
+  }
+
   Future<void> createOpportunity() async {
-    final organizationId = await CacheHelper.getOrganizationId();
+    emit(
+      state.copyWith(
+        submissionStatus: CreateOpportunitySubmissionStatus.initial,
+      ),
+    );
+    final organizationId =
+        await CacheHelper.getOrganizationId(); // 🔥 check لو كله فاضي
+    bool isAllEmpty =
+        (opportunity.title == null || opportunity.title!.isEmpty) &&
+        (opportunity.description == null || opportunity.description!.isEmpty) &&
+        (opportunity.addresses == null || opportunity.addresses!.isEmpty) &&
+        (opportunity.startDate == null) &&
+        (opportunity.endDate == null) &&
+        (opportunity.numberOfVolunteers == null ||
+            opportunity.numberOfVolunteers == 0) &&
+        (opportunity.locationType == null) &&
+        (opportunity.workType == null);
+
+    if (isAllEmpty) {
+      emit(
+        state.copyWith(
+          submissionStatus: CreateOpportunitySubmissionStatus.error,
+          submissionErrorMessage: 'Please fill required fields',
+        ),
+      );
+      return;
+    }
     if (organizationId == null || organizationId.isEmpty) {
       emit(
-        CreateOpportunityError(
-          'Organization ID is missing. Please log in again.',
+        state.copyWith(
+          submissionStatus: CreateOpportunitySubmissionStatus.error,
+          submissionErrorMessage:
+              'Organization ID is missing. Please log in again.',
         ),
       );
       return;
     }
 
     opportunity.organizationId = organizationId;
+    if (opportunity.title == null || opportunity.title!.isEmpty) {
+      emit(
+        state.copyWith(
+          submissionStatus: CreateOpportunitySubmissionStatus.error,
+          submissionErrorMessage: 'Title is required',
+        ),
+      );
+      return;
+    }
 
-    print(repository);
-    // opportunity.addresses = [
-    //   AddressModel(
-    //     governorateId: "c3b97f8f-5601-4741-a31f-089e2960161f",
-    //     cityId: "2e3e1371-ceb7-419a-a000-1cbf5c4b825d",
-    //     description: "Test Address",
-    //   ),
-    // ];
+    if (opportunity.description == null || opportunity.description!.isEmpty) {
+      emit(
+        state.copyWith(
+          submissionStatus: CreateOpportunitySubmissionStatus.error,
+          submissionErrorMessage: 'Description is required',
+        ),
+      );
+      return;
+    }
+    if (opportunity.addresses == null) {
+      emit(
+        state.copyWith(
+          submissionStatus: CreateOpportunitySubmissionStatus.error,
+          submissionErrorMessage: 'Address is required',
+        ),
+      );
+      return;
+    }
 
-    // opportunity.title = "Test Opportunity";
-    // opportunity.description = "Test Description";
+    if (opportunity.startDate == null || opportunity.endDate == null) {
+      emit(
+        state.copyWith(
+          submissionStatus: CreateOpportunitySubmissionStatus.error,
+          submissionErrorMessage: 'Start date and End date is required',
+        ),
+      );
+      return;
+    }
+    if (opportunity.numberOfVolunteers == null) {
+      emit(
+        state.copyWith(
+          submissionStatus: CreateOpportunitySubmissionStatus.error,
+          submissionErrorMessage: 'Number Of Volunteers is required',
+        ),
+      );
+      return;
+    }
+    if (opportunity.workType == null || opportunity.locationType == null) {
+      emit(
+        state.copyWith(
+          submissionStatus: CreateOpportunitySubmissionStatus.error,
+          submissionErrorMessage: 'Work location and Work Type  is required',
+        ),
+      );
+      return;
+    }
 
-    // opportunity.workType = 1;
-    // opportunity.locationType = 1;
-
-    // opportunity.startDate = "2026-03-19T00:00:00.000";
-    // opportunity.endDate = "2026-03-27T00:00:00.000";
-
-    // opportunity.numberOfVolunteers = 10;
-    print(opportunity.toJson());
+    //print("HEADERS: ${dio.options.headers}");
+   // print(opportunity.toJson());
+   // print(jsonEncode(opportunity.toJson()));
     try {
-      emit(CreateOpportunityLoading());
+      emit(
+        state.copyWith(
+          submissionStatus: CreateOpportunitySubmissionStatus.loading,
+          clearSubmissionErrorMessage: true,
+        ),
+      );
+
       final response = await repository.createOpportunity(opportunity);
 
-      print(response.statusCode);
-      print(response.data);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        emit(CreateOpportunitySuccess());
+        emit(
+          state.copyWith(
+            submissionStatus: CreateOpportunitySubmissionStatus.success,
+            clearSubmissionErrorMessage: true,
+          ),
+        );
       } else {
-        emit(CreateOpportunityError("Unexpected error"));
+        emit(
+          state.copyWith(
+            submissionStatus: CreateOpportunitySubmissionStatus.error,
+            submissionErrorMessage: 'Unexpected error',
+          ),
+        );
       }
-    } catch (e) {
-      print("ERROR START 🔴");
+    } catch (error) {
+     // print("❌ ERROR: $error");
 
-      // if (e is DioException) {
-      //   print("StatusCode: ${e.response?.statusCode}");
-      //   print("Data: ${e.response?.data}");
-      // } else {
-      //   print(e.toString());
-      // }
+      String errorMessage = _extractErrorMessage(error);
 
-      // print("ERROR END 🔴");
+      if (error is DioException) {
+      //  print("📡 STATUS CODE: ${error.response?.statusCode}");
+     //   print("📩 RESPONSE DATA: ${error.response?.data}");
 
-      emit(CreateOpportunityError(e.toString()));
+        final data = error.response?.data;
+
+        if (data != null) {
+          // لو فيه validation errors
+          if (data['Errors'] != null) {
+            final errors = data['Errors'] as Map<String, dynamic>;
+
+            if (errors.isNotEmpty) {
+              final firstError = errors.values.first;
+
+              if (firstError is List && firstError.isNotEmpty) {
+                errorMessage = firstError.first.toString();
+              }
+            } else if (data['Message'] != null) {
+              // لو مفيش validation errors نستخدم message
+              errorMessage = data['Message'];
+            }
+          }
+          // fallback على message العامة
+          else if (data['Message'] != null) {
+            errorMessage = data['Message'];
+          }
+        }
+      }
+
+     // print("📌 STACK TRACE: $stackTrace");
+
+      /// 🔥 أهم سطر
+      emit(
+        state.copyWith(
+          submissionStatus: CreateOpportunitySubmissionStatus.error,
+          submissionErrorMessage: errorMessage,
+        ),
+      );
     }
   }
 
@@ -82,5 +226,37 @@ class CreateOpportunityCubit extends Cubit<CreateOpportunityState> {
         description: address.details,
       ),
     );
+  }
+
+  void updateFieldIds(List<String> fieldIds) {
+    opportunity.fieldIds = List<String>.from(fieldIds);
+  }
+
+  void updateRequiredSkillIds(List<String> skillIds) {
+    opportunity.requiredSkillIds = List<String>.from(skillIds);
+  }
+
+  void updateProvidedSkillIds(List<String> skillIds) {
+    opportunity.providedSkillIds = List<String>.from(skillIds);
+  }
+
+  List<String> mapSkillNamesToIds(List<String> skillNames) {
+    final selectedNames = skillNames.toSet();
+
+    return skills
+        .where((skill) => selectedNames.contains(skill.name))
+        .map((skill) => skill.id)
+        .toList(growable: false);
+  }
+
+  String _extractErrorMessage(Object error) {
+    const exceptionPrefix = 'Exception: ';
+    final message = error.toString();
+
+    if (message.startsWith(exceptionPrefix)) {
+      return message.substring(exceptionPrefix.length);
+    }
+
+    return message;
   }
 }

@@ -9,8 +9,8 @@ class SkillModel {
 
   factory SkillModel.fromJson(Map<String, dynamic> json) {
     return SkillModel(
-      id: json["SkillId"],   // مهم جدًا
-      name: json["Name"],
+      id: json['SkillId']?.toString() ?? '',
+      name: json['Name']?.toString() ?? '',
     );
   }
 }

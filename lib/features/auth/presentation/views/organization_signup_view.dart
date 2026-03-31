@@ -22,7 +22,7 @@ class OrganizationSignupView extends StatefulWidget {
 class _OrganizationSignupViewState extends State<OrganizationSignupView> {
   bool _isPasswordHidden = true;
   bool _isConfirmPasswordHidden = true;
-  final _formKey = GlobalKey<FormState>();
+ // final _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
