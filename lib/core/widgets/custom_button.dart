@@ -12,9 +12,11 @@ class CustomButton extends StatelessWidget {
     this.width,
     this.color,
     this.fontColor = Colors.white,
+    this.onDoubleTap,
   });
   final String text;
   final VoidCallback? onTap;
+  final VoidCallback? onDoubleTap;
   final double? height;
   final double? fontSize;
   final double? width;
@@ -23,7 +25,7 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      
+      onDoubleTap: onDoubleTap,
       onTap: onTap,
       child: Container(
         width: width ?? double.infinity,

@@ -40,7 +40,6 @@ class MyApp extends StatelessWidget {
             FocusManager.instance.primaryFocus?.unfocus();
           },
           child: const MaterialApp(
-            title: "Mosahem",
             debugShowCheckedModeBanner: false,
             home: SplashView(),
           ),
