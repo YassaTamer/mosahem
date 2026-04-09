@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_cubit.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_state.dart';
 import 'package:mosahem/features/admin/profile/presentation/widgets/custom_container_recent_opp.dart';
 
 class RecentOpportunitiesView extends StatefulWidget {
@@ -52,6 +55,13 @@ class _RecentOpportunitiesViewState extends State<RecentOpportunitiesView> {
     "12/4/2026",
     "15/4/2026",
   ];
+  @override
+  void initState() {
+    super.initState();
+
+    context.read<OpportunityCubit>().getOpportunities();
+  }
+
   bool isSearching = false;
   TextEditingController searchController = TextEditingController();
   @override
@@ -107,16 +117,36 @@ class _RecentOpportunitiesViewState extends State<RecentOpportunitiesView> {
         ],
       ),
 
-      body: ListView.builder(
-        itemCount: orgLogos.length,
-        itemBuilder: (context, index) {
-          return CustomContainerRecentOpp(
-            orgLogo: orgLogos[index],
-            orgName: orgNames[index],
-            oppName: oppNames[index],
-            startDate: startDates[index],
-            endDate: endDates[index],
-          );
+      body: BlocBuilder<OpportunityCubit, OpportunityState>(
+        builder: (context, state) {
+          if (state is OpportunityLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state is OpportunityError) {
+            return Center(child: Text(state.message));
+          }
+
+          if (state is OpportunitySuccess) {
+            final opportunities = state.opportunities;
+            return ListView.builder(
+              itemCount: opportunities.length,
+              itemBuilder: (context, index) {
+                final opp = opportunities[index];
+
+                return CustomContainerRecentOpp(
+                  orgLogo: (opp.logoUrl != null && opp.logoUrl!.isNotEmpty)
+                      ? opp.logoUrl!
+                      : AppAssets.orgLogo,
+                  orgName: opp.organizationName,
+                  oppName: opp.name,
+                  startDate: opp.startDate,
+                  endDate: opp.endDate,
+                );
+              },
+            );
+          }
+          return const SizedBox();
         },
       ),
     );

@@ -26,6 +26,8 @@ class _AdminProfileViewState extends State<AdminProfileView> {
   @override
   void initState() {
     super.initState();
+   // OpportunitiesApiService(DioHelper.instance.client).getOpportunities();
+
     context.read<ProfileCubit>().getMyProfile();
   }
 

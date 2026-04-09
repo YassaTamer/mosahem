@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_cubit.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_state.dart';
 import 'package:mosahem/features/admin/profile/presentation/views/accepted_opp_view.dart';
 import 'package:mosahem/features/admin/profile/presentation/views/rejected_opp_view.dart';
 
@@ -28,6 +31,7 @@ class _TotalOpportunitiesViewState extends State<TotalOpportunitiesView>
         indicatorColor = _tabController.index == 0 ? Colors.green : Colors.red;
       });
     });
+    context.read<OpportunityCubit>().getOpportunities();
   }
 
   @override
@@ -157,35 +161,104 @@ class _TotalOpportunitiesViewState extends State<TotalOpportunitiesView>
         ),
       ),
 
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          ListView.builder(
-            itemCount: orgLogos.length,
-            itemBuilder: (context, index) {
-              return AcceptedOppView(
-                orgLogo: orgLogos[index],
-                orgName: orgNames[index],
-                oppName: oppNames[index],
-                startDate: startDates[index],
-                endDate: endDates[index],
-              );
-            },
-          ),
+      body: BlocBuilder<OpportunityCubit, OpportunityState>(
+        builder: (context, state) {
+          if (state is OpportunityLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-          ListView.builder(
-            itemCount: orgLogos.length,
-            itemBuilder: (context, index) {
-              return RejectedOppView(
-                orgLogo: orgLogos[index],
-                orgName: orgNames[index],
-                oppName: oppNames[index],
-                startDate: startDates[index],
-                endDate: endDates[index],
-              );
-            },
-          ),
-        ],
+          if (state is OpportunityError) {
+            return Center(child: Text(state.message));
+          }
+
+          if (state is OpportunitySuccess) {
+            final opportunities = state.opportunities;
+
+            //   return TabBarView(
+            //     controller: _tabController,
+            //     children: [
+            //       ListView.builder(
+            //         itemCount: orgLogos.length,
+            //         itemBuilder: (context, index) {
+            //           return AcceptedOppView(
+            //             orgLogo: orgLogos[index],
+            //             orgName: orgNames[index],
+            //             oppName: oppNames[index],
+            //             startDate: startDates[index],
+            //             endDate: endDates[index],
+            //           );
+            //         },
+            //       ),
+
+            //       ListView.builder(
+            //         itemCount: orgLogos.length,
+            //         itemBuilder: (context, index) {
+            //           return RejectedOppView(
+            //             orgLogo: orgLogos[index],
+            //             orgName: orgNames[index],
+            //             oppName: oppNames[index],
+            //             startDate: startDates[index],
+            //             endDate: endDates[index],
+            //           );
+            //         },
+            //       ),
+            //     ],
+            //   );
+            // }
+
+            //  final opportunities = state.opportunities;
+
+            final accepted = opportunities
+                .where((e) => (e.status ?? '').toLowerCase() == 'approved')
+                .toList();
+
+            final rejected = opportunities
+                .where((e) => (e.status ?? '').toLowerCase() == 'rejected')
+                .toList();
+
+            return TabBarView(
+              controller: _tabController,
+              children: [
+                // ✅ Accepted
+                ListView.builder(
+                  itemCount: accepted.length,
+                  itemBuilder: (context, index) {
+                    final opp = accepted[index];
+
+                    return AcceptedOppView(
+                      orgLogo: (opp.logoUrl != null && opp.logoUrl!.isNotEmpty)
+                          ? opp.logoUrl!
+                          : AppAssets.orgLogo,
+                      orgName: opp.organizationName,
+                      oppName: opp.name,
+                      startDate: opp.startDate,
+                      endDate: opp.endDate,
+                    );
+                  },
+                ),
+
+                // ✅ Rejected
+                ListView.builder(
+                  itemCount: rejected.length,
+                  itemBuilder: (context, index) {
+                    final opp = rejected[index];
+
+                    return RejectedOppView(
+                      orgLogo: (opp.logoUrl != null && opp.logoUrl!.isNotEmpty)
+                          ? opp.logoUrl!
+                          : AppAssets.orgLogo,
+                      orgName: opp.organizationName,
+                      oppName: opp.name,
+                      startDate: opp.startDate,
+                      endDate: opp.endDate,
+                    );
+                  },
+                ),
+              ],
+            );
+          }
+          return SizedBox();
+        },
       ),
     );
   }
