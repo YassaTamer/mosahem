@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/user_role.dart';
+import 'package:mosahem/features/admin/profile/presentation/views/profile_view.dart';
 import 'package:mosahem/features/layout/logic/cubit/layout_cubit.dart';
 import 'package:mosahem/features/organization/createOpp/presentation/views/create_opp_view.dart';
 
@@ -101,8 +102,9 @@ class MainLayoutView extends StatelessWidget {
   List<Widget> _getScreens() {
     if (role == UserRole.admin) {
       return const [
+        AdminProfileView(),
+        Center(child: Text("Admin Profile")),
         Center(child: Text("Admin Home")),
-        Center(child: Text("Admin Users")),
       ];
     } else if (role == UserRole.organization) {
       return const [
@@ -123,6 +125,7 @@ class MainLayoutView extends StatelessWidget {
   List<BottomNavigationBarItem> _getNavItems() {
     if (role == UserRole.admin) {
       return const [
+        BottomNavigationBarItem(icon: Icon(Icons.people), label: "Profile"),
         BottomNavigationBarItem(
           icon: Icon(Icons.dashboard),
           label: "Dashboard",

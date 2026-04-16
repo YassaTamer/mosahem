@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/organization_cubit.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/organization_state.dart';
 import 'package:mosahem/features/admin/profile/presentation/widgets/custom_container_recent_org.dart';
 
 class RecentOrganizationsView extends StatefulWidget {
@@ -91,14 +94,37 @@ class _RecentOrganizationsViewState extends State<RecentOrganizationsView> {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: orgLogos.length,
-        itemBuilder: (context, index) {
-          return CustomContainerRecentOrg(
-            orgLogo: orgLogos[index],
-            orgName: orgNames[index],
-            date: dates[index],
-          );
+      body: BlocBuilder<OrganizationCubit, OrganizationState>(
+        builder: (context, state) {
+          if (state is OrganizationLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state is OrganizationError) {
+            return Center(child: Text(state.message));
+          }
+
+          if (state is OrganizationSuccess) {
+            final orgs = state.organizations;
+
+            /// 🔥 فلترة pending بس
+            final pending = orgs
+                .where((e) => (e.status ?? '').toLowerCase() == 'pending')
+                .toList();
+            return ListView.builder(
+              itemCount: pending.length,
+              itemBuilder: (context, index) {
+                final org = pending[index];
+
+                return CustomContainerRecentOrg(
+                  orgLogo: AppAssets.orgLogo,
+                  orgName: org.name,
+                  date: org.description, // مؤقت
+                );
+              },
+            );
+          }
+          return const SizedBox();
         },
       ),
     );

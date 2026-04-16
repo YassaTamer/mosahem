@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/organization_cubit.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/organization_state.dart';
 import 'package:mosahem/features/admin/profile/presentation/views/accepted_org_view.dart';
 import 'package:mosahem/features/admin/profile/presentation/views/rejected_org_view.dart';
 
@@ -20,6 +23,7 @@ class _TotalOrganizationsViewState extends State<TotalOrganizationsView>
     super.initState();
 
     _tabController = TabController(length: 2, vsync: this);
+    context.read<OrganizationCubit>().getOrganizations(); // 🔥 دي أهم سطر
 
     _tabController.addListener(() {
       setState(() {
@@ -132,34 +136,59 @@ class _TotalOrganizationsViewState extends State<TotalOrganizationsView>
         ),
       ),
 
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          ListView.builder(
-            itemCount: orgNames.length,
-            itemBuilder: (context, index) {
-              return AcceptedOrgView(
-                orgLogo: orgLogos[index],
-                orgName: orgNames[index],
-                onDelete: () {
-                  setState(() {
-                    orgLogos.removeAt(index);
-                    orgNames.removeAt(index);
-                  });
-                },
-              );
-            },
-          ),
-          ListView.builder(
-            itemCount: orgNames.length,
-            itemBuilder: (context, index) {
-              return RejectedOrgView(
-                orgLogo: orgLogos[index],
-                orgName: orgNames[index],
-              );
-            },
-          ),
-        ],
+      body: BlocBuilder<OrganizationCubit, OrganizationState>(
+        builder: (context, state) {
+          if (state is OrganizationLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state is OrganizationError) {
+            return Center(child: Text(state.message));
+          }
+
+          if (state is OrganizationSuccess) {
+            final orgs = state.organizations;
+            final accepted = orgs.where((e) => e.status == 'Approved').toList();
+
+            final rejected = orgs.where((e) => e.status == 'Rejected').toList();
+            return TabBarView(
+              controller: _tabController,
+              children: [
+                ListView.builder(
+                  itemCount: accepted.length,
+                  itemBuilder: (context, index) {
+                    final org = accepted[index];
+                    return AcceptedOrgView(
+                      // orgLogo: orgLogos[index],
+                      // orgName: orgNames[index],
+                      // onDelete: () {
+                      //   setState(() {
+                      //     orgLogos.removeAt(index);
+                      //     orgNames.removeAt(index);
+                      //   });
+                      // },
+                      orgLogo: AppAssets.orgLogo,
+                      orgName: org.name,
+                      onDelete: () {},
+                    );
+                  },
+                ),
+                ListView.builder(
+                  itemCount: rejected.length,
+                  itemBuilder: (context, index) {
+                    final org = rejected[index];
+
+                    return RejectedOrgView(
+                      orgLogo: AppAssets.orgLogo,
+                      orgName: org.name,
+                    );
+                  },
+                ),
+              ],
+            );
+          }
+          return const SizedBox();
+        },
       ),
     );
   }
