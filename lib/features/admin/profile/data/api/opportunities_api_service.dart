@@ -7,38 +7,35 @@ class OpportunitiesApiService {
 
   OpportunitiesApiService(this.dio);
 
-  Future<List<OpportunityModel>> getOpportunities() async {
+  Future<List<OpportunityModel>> getOpportunities(String status) async {
     final token = await CacheHelper.getToken();
 
-    final response = await dio.get( // 👈 هنا بيستخدمه صح
+    final response = await dio.get(
+      // 👈 هنا بيستخدمه صح
       '/api/v1/opportunities/by-verification-status',
       queryParameters: {
-        "OpportunityVerificationStatus": "approved",
+        "OpportunityVerificationStatus": status,
         "Page": 1,
         "PageSize": 10,
       },
-      options: Options(
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
-      ),
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
-
+    print(response.data);
     final items = response.data['Data']['Items'];
 
-    if (items.isEmpty) {
-      return [
-        OpportunityModel(
-          id: '1',
-          name: 'Medical Campaign',
-          organizationName: 'Resala',
-          startDate: '2025-01-01',
-          endDate: '2025-01-10',
-          logoUrl: '',
-          status: 'approved',
-        ),
-      ];
-    }
+    // if (items.isEmpty) {
+    //   return [
+    //     OpportunityModel(
+    //       id: '1',
+    //       name: 'Medical Campaign',
+    //       organizationName: 'Resala',
+    //       startDate: '2025-01-01',
+    //       endDate: '2025-01-10',
+    //       logoUrl: '',
+    //       status: 'approved',
+    //     ),
+    //   ];
+    // }
 
     return items
         .map<OpportunityModel>((e) => OpportunityModel.fromJson(e))

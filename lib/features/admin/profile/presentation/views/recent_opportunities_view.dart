@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/core/helpers/date_helper.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_cubit.dart';
 import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_state.dart';
@@ -59,7 +60,7 @@ class _RecentOpportunitiesViewState extends State<RecentOpportunitiesView> {
   void initState() {
     super.initState();
 
-    context.read<OpportunityCubit>().getOpportunities();
+    context.read<OpportunityCubit>().getOpportunities("pending");
   }
 
   bool isSearching = false;
@@ -140,8 +141,8 @@ class _RecentOpportunitiesViewState extends State<RecentOpportunitiesView> {
                       : AppAssets.orgLogo,
                   orgName: opp.organizationName,
                   oppName: opp.name,
-                  startDate: opp.startDate,
-                  endDate: opp.endDate,
+                  startDate: DateHelper.format(opp.startDate),
+                  endDate: DateHelper.format(opp.endDate),
                 );
               },
             );

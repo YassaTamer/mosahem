@@ -6,7 +6,7 @@ class OpportunitiesRepository {
 
   OpportunitiesRepository(this.apiService);
 
-  Future<List<OpportunityModel>> getOpportunities() async {
-    return await apiService.getOpportunities();
+  Future<List<OpportunityModel>> getOpportunities(String status) async {
+    return await apiService.getOpportunities(status);
   }
 }

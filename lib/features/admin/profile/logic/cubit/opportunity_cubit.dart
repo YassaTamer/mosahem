@@ -8,11 +8,11 @@ class OpportunityCubit extends Cubit<OpportunityState> {
 
   OpportunityCubit(this.repository) : super(OpportunityInitial());
 
-  Future<void> getOpportunities() async {
+  Future<void> getOpportunities(String status) async {
     emit(OpportunityLoading());
 
     try {
-      final opportunities = await repository.getOpportunities();
+      final opportunities = await repository.getOpportunities(status);
       emit(OpportunitySuccess(opportunities));
     } catch (e) {
       emit(OpportunityError(e.toString()));

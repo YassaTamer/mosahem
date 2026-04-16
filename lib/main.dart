@@ -4,12 +4,15 @@ import 'package:mosahem/core/network/dio_helper.dart';
 import 'package:mosahem/features/admin/profile/data/api/opportunities_api_service.dart';
 import 'package:mosahem/features/admin/profile/data/api/organizations_api_service.dart';
 import 'package:mosahem/features/admin/profile/data/api/profile_api_service.dart';
+import 'package:mosahem/features/admin/profile/data/api/volunteers_api_service.dart';
 import 'package:mosahem/features/admin/profile/data/repository/opportunities_repository.dart';
 import 'package:mosahem/features/admin/profile/data/repository/organizations_repository.dart';
 import 'package:mosahem/features/admin/profile/data/repository/profile_repository.dart';
+import 'package:mosahem/features/admin/profile/data/repository/volunteers_repository.dart';
 import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_cubit.dart';
 import 'package:mosahem/features/admin/profile/logic/cubit/organization_cubit.dart';
 import 'package:mosahem/features/admin/profile/logic/cubit/profile_cubit.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/volunteer_cubit.dart';
 import 'package:mosahem/features/organization/createOpp/data/api/create_opportunity_api_service.dart';
 import 'package:mosahem/features/organization/createOpp/data/repository/create_opportunity_repository.dart';
 import 'package:mosahem/features/splash/presentation/views/splash_view.dart';
@@ -32,6 +35,9 @@ class MyApp extends StatelessWidget {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider(
+          create: (_) => VolunteersRepository(VolunteersApiService(dio)),
+        ),
+        RepositoryProvider(
           create: (_) => OpportunitiesRepository(
             OpportunitiesApiService(DioHelper.instance.client),
           ),
@@ -50,6 +56,10 @@ class MyApp extends StatelessWidget {
       ],
       child: MultiBlocProvider(
         providers: [
+          BlocProvider(
+            create: (context) =>
+                VolunteerCubit(context.read<VolunteersRepository>()),
+          ),
           BlocProvider(
             create: (context) =>
                 OpportunityCubit(context.read<OpportunitiesRepository>()),

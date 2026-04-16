@@ -21,17 +21,25 @@ class _TotalOpportunitiesViewState extends State<TotalOpportunitiesView>
   Color indicatorColor = Colors.green;
 
   @override
+  @override
   void initState() {
     super.initState();
 
     _tabController = TabController(length: 2, vsync: this);
 
     _tabController.addListener(() {
+      if (_tabController.index == 0) {
+        context.read<OpportunityCubit>().getOpportunities("approved");
+      } else {
+        context.read<OpportunityCubit>().getOpportunities("rejected");
+      }
+
       setState(() {
         indicatorColor = _tabController.index == 0 ? Colors.green : Colors.red;
       });
     });
-    context.read<OpportunityCubit>().getOpportunities();
+
+    context.read<OpportunityCubit>().getOpportunities("approved");
   }
 
   @override
