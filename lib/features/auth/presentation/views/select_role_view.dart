@@ -4,6 +4,7 @@ import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/features/auth/presentation/views/organization_signup_view.dart';
+import 'package:mosahem/features/auth/presentation/views/volunteer_signup_view.dart';
 import 'package:mosahem/features/auth/presentation/widgets/role_card.dart';
 
 class SelectRoleView extends StatelessWidget {
@@ -73,7 +74,14 @@ class SelectRoleView extends StatelessWidget {
                         SizedBox(height: screenHeight * 0.03),
 
                         RoleCard(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const VolunteerSignupView(),
+                              ),
+                            );
+                          },
                           text: 'Volunteer',
                           iconPath: AppAssets.volunteerIcon,
                         ),

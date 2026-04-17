@@ -438,4 +438,144 @@ class AuthApiService {
       throw Exception(responseData?["Message"] ?? "Network error");
     }
   }
+
+  Future<void> validateVolunteerBasicInfo({
+    required String fullName,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required String confirmPassword,
+    required String dateOfBirth,
+    required int gender,
+    required String nationalId,
+  }) async {
+    try {
+      final response = await _dio.post(
+        "$_baseUrl/volunteer/validate-basic-info",
+        data: {
+          "FullName": fullName,
+          "Email": email,
+          "PhoneNumber": phoneNumber,
+          "Password": password,
+          "ConfirmPassword": confirmPassword,
+          "DateOfBirth": dateOfBirth,
+          "Gender": gender,
+          "NationalId": nationalId,
+        },
+        options: _publicJsonOptions(),
+      );
+
+      final data = response.data;
+
+      if (data["Succeeded"] != true) {
+        final errors = data["Errors"];
+
+        if (errors != null && errors is Map) {
+          Map<String, String> fieldErrors = {};
+          errors.forEach((key, value) {
+            fieldErrors[key] = (value as List).join("\n");
+          });
+
+          throw ExceptionWithFields(
+            message: data["Message"] ?? "Validation failed",
+            fieldErrors: fieldErrors,
+          );
+        }
+
+        throw Exception(data["Message"] ?? "Validation failed");
+      }
+    } on DioException catch (e) {
+      final responseData = e.response?.data;
+
+      if (responseData is Map && responseData["Errors"] != null) {
+        Map<String, String> fieldErrors = {};
+        responseData["Errors"].forEach((key, value) {
+          fieldErrors[key] = (value as List).join("\n");
+        });
+
+        throw ExceptionWithFields(
+          message: responseData["Message"] ?? "Validation error",
+          fieldErrors: fieldErrors,
+        );
+      }
+
+      throw Exception(responseData?["Message"] ?? "Network error");
+    }
+  }
+
+  Future<void> registerVolunteer({
+    required String fullName,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required String dateOfBirth,
+    required int gender,
+    required String nationalId,
+    required String governorateId,
+    required String cityId,
+    required String details,
+    required List<String> fieldIds,
+    required List<String> skillIds,
+    String? cvUrl,
+  }) async {
+    try {
+      final response = await _dio.post(
+        "$_baseUrl/volunteer",
+        data: {
+          "FullName": fullName,
+          "Email": email,
+          "PhoneNumber": phoneNumber,
+          "Password": password,
+          "DateOfBirth": dateOfBirth,
+          "Gender": gender,
+          "NationalId": nationalId,
+          "CvUrl": cvUrl ?? "",
+          "Location": {
+            "GovernorateId": governorateId,
+            "CityId": cityId,
+            "Details": details,
+          },
+          "FieldIds": fieldIds,
+          "SkillIds": skillIds,
+        },
+        options: _publicJsonOptions(),
+      );
+
+      final data = response.data;
+
+      if (data["Succeeded"] != true) {
+        final errors = data["Errors"];
+
+        if (errors != null && errors is Map) {
+          Map<String, String> fieldErrors = {};
+          errors.forEach((key, value) {
+            fieldErrors[key] = (value as List).join("\n");
+          });
+
+          throw ExceptionWithFields(
+            message: data["Message"] ?? "Registration failed",
+            fieldErrors: fieldErrors,
+          );
+        }
+
+        throw Exception(data["Message"] ?? "Registration failed");
+      }
+    } on DioException catch (e) {
+      final responseData = e.response?.data;
+
+      if (responseData is Map && responseData["Errors"] != null) {
+        Map<String, String> fieldErrors = {};
+        responseData["Errors"].forEach((key, value) {
+          fieldErrors[key] = (value as List).join("\n");
+        });
+
+        throw ExceptionWithFields(
+          message: responseData["Message"] ?? "Validation error",
+          fieldErrors: fieldErrors,
+        );
+      }
+
+      throw Exception(responseData?["Message"] ?? "Network error");
+    }
+  }
 }

@@ -23,7 +23,22 @@ class AuthCubit extends Cubit<AuthState> {
 
   List<BranchLocationModel> locations = [];
   List<String> fieldIds = [];
+  // ===== Volunteer Temp Data =====
+  String? fullName;
+  String? volunteerEmail;
+  String? volunteerPhone;
+  String? volunteerPassword;
+  String? volunteerConfirmPassword;
+  String? nationalId;
+  String? dateOfBirth;
+  int? gender;
 
+  List<String> volunteerFieldIds = [];
+  List<String> volunteerSkillIds = [];
+  String? governorateId;
+  String? cityId;
+  String? locationDetails;
+  String? cvUrl;
   Future<void> login({required String email, required String password}) async {
     if (email.isEmpty || password.isEmpty) {
       emit(AuthError('Please enter email and password'));
@@ -68,9 +83,9 @@ class AuthCubit extends Cubit<AuthState> {
     String? description,
     String? licenseUrl,
   }) async {
-  //  print("REGISTER FUNCTION STARTED");
-   // print("Locations: ${locations.map((e) => e.toJson()).toList()}");
-   // print("FieldIds: $fieldIds");
+    //  print("REGISTER FUNCTION STARTED");
+    // print("Locations: ${locations.map((e) => e.toJson()).toList()}");
+    // print("FieldIds: $fieldIds");
     emit(AuthLoading());
 
     try {
@@ -180,5 +195,82 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> logout() async {
     await CacheHelper.clearSession();
     emit(AuthLoggedOut());
+  }
+
+  Future<void> validateVolunteerBasicInfo({
+    required String fullName,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required String confirmPassword,
+    required String dateOfBirth,
+    required int gender,
+    required String nationalId,
+  }) async {
+    emit(AuthLoading());
+
+    try {
+      await _authRepository.validateVolunteerBasicInfo(
+        fullName: fullName,
+        email: email,
+        phoneNumber: phoneNumber,
+        password: password,
+        confirmPassword: confirmPassword,
+        dateOfBirth: dateOfBirth,
+        gender: gender,
+        nationalId: nationalId,
+      );
+
+      // 🔥 خزّن البيانات
+      this.fullName = fullName;
+      this.volunteerEmail = email;
+      this.volunteerPhone = phoneNumber;
+      this.volunteerPassword = password;
+      this.volunteerConfirmPassword = confirmPassword;
+      this.dateOfBirth = dateOfBirth;
+      this.gender = gender;
+      this.nationalId = nationalId;
+
+      // 🔥 ابعت OTP
+      await _authRepository.sendEmailVerification(email);
+
+      emit(AuthOtpSent());
+    } catch (e) {
+      if (e is ExceptionWithFields) {
+        emit(AuthError(e.message, fieldErrors: e.fieldErrors));
+      } else {
+        emit(AuthError(e.toString()));
+      }
+    }
+  }
+
+  Future<void> registerVolunteer() async {
+    emit(AuthLoading());
+
+    try {
+      await _authRepository.registerVolunteer(
+        fullName: fullName!,
+        email: volunteerEmail!,
+        phoneNumber: volunteerPhone!,
+        password: volunteerPassword!,
+        dateOfBirth: dateOfBirth!,
+        gender: gender!,
+        nationalId: nationalId!,
+        governorateId: governorateId!,
+        cityId: cityId!,
+        details: locationDetails ?? "",
+        fieldIds: volunteerFieldIds,
+        skillIds: volunteerSkillIds,
+        cvUrl: cvUrl,
+      );
+
+      emit(AuthRegistered());
+    } catch (e) {
+      if (e is ExceptionWithFields) {
+        emit(AuthError(e.message, fieldErrors: e.fieldErrors));
+      } else {
+        emit(AuthError(e.toString()));
+      }
+    }
   }
 }
