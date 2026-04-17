@@ -10,14 +10,22 @@ class LabeledFieldRow extends StatelessWidget {
     required this.isRequired,
     required this.items,
     required this.onSelect,
+    this.lableFontSize,
+    this.lablefontWeight,
+    required this.selectedItems,
+    this.isMultiSelect = false,
   });
-  final String label;
+  final String? label;
   final String hint;
   final bool isRequired;
   final List<String> items;
-  final Function(String) onSelect;
+  final Function(List<String>) onSelect;
+  final List<String> selectedItems;
+  final bool isMultiSelect;
   final GlobalKey _fieldKey = GlobalKey();
 
+  final double? lableFontSize;
+  final FontWeight? lablefontWeight;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -27,7 +35,12 @@ class LabeledFieldRow extends StatelessWidget {
           flex: 4,
           child: Row(
             children: [
-              CustomText(label, fontSize: 14, fontWeight: FontWeight.w500),
+              if (label != null)
+                CustomText(
+                  label!,
+                  fontSize: lableFontSize ?? 14,
+                  fontWeight: lablefontWeight ?? FontWeight.w500,
+                ),
               if (isRequired) const CustomText(' *', color: Colors.red),
             ],
           ),
@@ -37,6 +50,7 @@ class LabeledFieldRow extends StatelessWidget {
           child: GestureDetector(
             onTap: () async {
               if (items.isEmpty) return;
+              List<String> tempSelected = [...selectedItems];
 
               final RenderBox renderBox =
                   _fieldKey.currentContext!.findRenderObject() as RenderBox;
@@ -64,13 +78,12 @@ class LabeledFieldRow extends StatelessWidget {
                 items: items.asMap().entries.map((entry) {
                   int index = entry.key;
                   String item = entry.value;
-
                   return PopupMenuItem<String>(
                     value: item,
                     padding: EdgeInsets.zero,
-                    height: 0, // 👈 مهم
+                    height: 0, //  مهم
                     child: Container(
-                      width: double.infinity, // 👈 ياخد العرض كامل
+                      width: double.infinity, //  ياخد العرض كامل
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 12,
@@ -80,7 +93,7 @@ class LabeledFieldRow extends StatelessWidget {
                           bottom: BorderSide(
                             color: index == items.length - 1
                                 ? Colors
-                                      .transparent // 👈 آخر عنصر ملوش خط
+                                      .transparent //  آخر عنصر ملوش خط
                                 : Colors.white,
                             width: 1,
                           ),
@@ -98,7 +111,12 @@ class LabeledFieldRow extends StatelessWidget {
               );
 
               if (selected != null) {
-                onSelect(selected);
+                if (isMultiSelect) {
+                  tempSelected.add(selected);
+                  onSelect(tempSelected);
+                } else {
+                  onSelect([selected]);
+                }
               }
             },
 

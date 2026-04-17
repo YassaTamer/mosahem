@@ -1,10 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/core/network/dio_helper.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/features/auth/data/models/branch_location_model.dart';
@@ -31,7 +31,7 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
   @override
   void initState() {
     super.initState();
-    _locationRepository = LocationRepository(Dio());
+    _locationRepository = LocationRepository(DioHelper.instance.client);
     fetchGovernorates();
   }
 
@@ -45,7 +45,7 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
         governorates = result;
       });
     } catch (e) {
-      print(e);
+      //print(e);
     }
   }
 
@@ -63,6 +63,8 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
         cities = data;
       });
     } catch (e) {
+      if (!mounted) return;
+
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(e.toString())));
@@ -166,14 +168,37 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
                             isRequired: true,
                             items: governorates.map((e) => e.name).toList(),
 
-                            onSelect: (value) {
-                              final gov = governorates.firstWhere(
+                            onSelect: (values) {
+                              if (values.isEmpty || governorates.isEmpty) {
+                                setState(() {
+                                  selectedGovernorate = null;
+                                  selectedGovernorateModel = null;
+                                  selectedCity = null;
+                                  selectedCityModel = null;
+                                  cities = [];
+                                });
+                                return;
+                              }
+
+                              final value = values.first;
+                              final govIndex = governorates.indexWhere(
                                 (element) => element.name == value,
                               );
+                              if (govIndex == -1) {
+                                setState(() {
+                                  selectedGovernorate = null;
+                                  selectedGovernorateModel = null;
+                                  selectedCity = null;
+                                  selectedCityModel = null;
+                                  cities = [];
+                                });
+                                return;
+                              }
+                              final gov = governorates[govIndex];
 
                               setState(() {
                                 selectedGovernorate = value;
-                                selectedGovernorateModel = gov; // ✅
+                                selectedGovernorateModel = gov;
                                 selectedCity = null;
                                 selectedCityModel = null;
                                 governorateError = null;
@@ -182,6 +207,9 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
 
                               fetchCities(gov.id);
                             },
+                            selectedItems: selectedGovernorate == null
+                                ? []
+                                : [selectedGovernorate!], // selectedItems: [],
                           ),
                           if (governorateError != null)
                             Padding(
@@ -206,17 +234,37 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
                             isRequired: true,
                             items: cities.map((e) => e.name).toList(),
 
-                            onSelect: (value) {
-                              final city = cities.firstWhere(
+                            onSelect: (values) {
+                              if (values.isEmpty || cities.isEmpty) {
+                                setState(() {
+                                  selectedCity = null;
+                                  selectedCityModel = null;
+                                });
+                                return;
+                              }
+
+                              final value = values.first;
+                              final cityIndex = cities.indexWhere(
                                 (element) => element.name == value,
                               );
+                              if (cityIndex == -1) {
+                                setState(() {
+                                  selectedCity = null;
+                                  selectedCityModel = null;
+                                });
+                                return;
+                              }
+                              final city = cities[cityIndex];
 
                               setState(() {
                                 selectedCity = value;
-                                selectedCityModel = city; // ✅
+                                selectedCityModel = city;
                                 cityError = null;
                               });
                             },
+                            selectedItems: selectedCity == null
+                                ? []
+                                : [selectedCity!],
                           ),
                           if (cityError != null)
                             Padding(

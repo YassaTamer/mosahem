@@ -37,8 +37,14 @@ class AuthCubit extends Cubit<AuthState> {
         password: password,
       );
 
-      await CacheHelper.saveToken(response.data.accessToken);
-      final savedToken = await CacheHelper.getToken();
+      await CacheHelper.saveLoginSession(
+        token: response.data.accessToken,
+        refreshToken: response.data.refreshToken,
+        role: response.data.role,
+        accessTokenExpiration: response.data.accessTokenExpiration,
+        organizationId: response.data.id,
+      );
+
       final userRole = parseUserRole(response.data.role);
 
       emit(AuthSuccess(isVerified: response.data.isVerified, role: userRole));
@@ -56,10 +62,15 @@ class AuthCubit extends Cubit<AuthState> {
     required String email,
     required String phoneNumber,
     required String password,
-    required String confirmPassword,
+    //required String confirmPassword,
     required List<BranchLocationModel> locations,
     required List<String> fieldIds,
+    String? description,
+    String? licenseUrl,
   }) async {
+  //  print("REGISTER FUNCTION STARTED");
+   // print("Locations: ${locations.map((e) => e.toJson()).toList()}");
+   // print("FieldIds: $fieldIds");
     emit(AuthLoading());
 
     try {
@@ -68,10 +79,11 @@ class AuthCubit extends Cubit<AuthState> {
         email: email,
         phoneNumber: phoneNumber,
         password: password,
-        confirmPassword: confirmPassword,
+        //confirmPassword: confirmPassword,
         locations: locations,
         fieldIds: fieldIds,
-        licenseUrl: licenseUrl, // 👈 هنا
+        licenseUrl: licenseUrl,
+        description: description ?? "",
       );
 
       emit(AuthRegistered());
@@ -163,5 +175,10 @@ class AuthCubit extends Cubit<AuthState> {
 
   void setLicenseUrl(String url) {
     licenseUrl = url;
+  }
+
+  Future<void> logout() async {
+    await CacheHelper.clearSession();
+    emit(AuthLoggedOut());
   }
 }
