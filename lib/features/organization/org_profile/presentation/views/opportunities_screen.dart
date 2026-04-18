@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/opportunities_header.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/post_card.dart';
-import 'package:mosahem/features/organization/org_profile/presentation/widgets/profile_header.dart';
 
 class OpportunitiesScreen extends StatefulWidget {
   const OpportunitiesScreen({super.key});

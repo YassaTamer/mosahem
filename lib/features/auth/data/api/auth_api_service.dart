@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:mosahem/core/network/network_request_flags.dart';
 import 'package:mosahem/features/auth/data/models/branch_location_model.dart';
 import 'package:mosahem/features/auth/data/models/login_response_model.dart';
 import 'package:mosahem/features/auth/data/models/validation_exception.dart';
@@ -9,6 +10,13 @@ class AuthApiService {
   AuthApiService(this._dio);
   static const String _baseUrl = 'https://mosahemapi.runasp.net/api/v1/auth';
 
+  Options _publicJsonOptions() {
+    return Options(
+      headers: {'Content-Type': 'application/json'},
+      extra: {kSkipAuth: true, kSkipRefresh: true},
+    );
+  }
+
   Future<LoginResponseModel> login({
     required String emailOrPhone,
     required String password,
@@ -17,9 +25,8 @@ class AuthApiService {
       final response = await _dio.post(
         '$_baseUrl/login',
         data: {'emailOrPhone': emailOrPhone, 'password': password},
-        options: Options(headers: {'Content-Type': 'application/json'}),
+        options: _publicJsonOptions(),
       );
-
 
       final data = response.data;
 
@@ -54,6 +61,35 @@ class AuthApiService {
     }
   }
 
+  Future<LoginResponseModel> refreshToken({
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '$_baseUrl/refresh-token',
+        data: {"AccessToken": accessToken, "RefreshToken": refreshToken},
+        options: _publicJsonOptions(),
+      );
+
+      final data = response.data;
+
+      if (data['Succeeded'] == true) {
+        return LoginResponseModel.fromJson(data);
+      } else {
+        throw Exception(data['Message'] ?? 'Refresh token failed');
+      }
+    } on DioException catch (e) {
+      final responseData = e.response?.data;
+
+      if (responseData is Map && responseData['Message'] != null) {
+        throw Exception(responseData['Message']);
+      }
+
+      throw Exception('Refresh token error');
+    }
+  }
+
   Future<void> registerOrganization({
     required String organizationName,
     required String email,
@@ -76,11 +112,12 @@ class AuthApiService {
         "Description": description ?? "",
       };
 
-   //   print("REGISTER BODY: $body");
+      //   print("REGISTER BODY: $body");
 
       final response = await _dio.post(
         "$_baseUrl/organization/register-organization",
         data: body,
+        options: _publicJsonOptions(),
       );
 
       final data = response.data;
@@ -189,6 +226,7 @@ class AuthApiService {
       final response = await _dio.post(
         '$_baseUrl/forgot-password',
         data: {"Email": email},
+        options: _publicJsonOptions(),
       );
       final data = response.data;
       if (data["Succeeded"] == false) {
@@ -217,6 +255,7 @@ class AuthApiService {
       final response = await _dio.post(
         '$_baseUrl/verify-otp',
         data: {"Email": email, "Code": code},
+        options: _publicJsonOptions(),
       );
 
       final data = response.data;
@@ -252,6 +291,7 @@ class AuthApiService {
           "NewPassword": newPassword,
           "ConfirmPassword": confirmPassword,
         },
+        options: _publicJsonOptions(),
       );
 
       final data = response.data;
@@ -283,6 +323,7 @@ class AuthApiService {
       final response = await _dio.post(
         '$_baseUrl/send-email-verification',
         data: {"Email": email.trim()},
+        options: _publicJsonOptions(),
       );
 
       final data = response.data;
@@ -301,7 +342,7 @@ class AuthApiService {
     } on DioException catch (e) {
       final data = e.response?.data;
 
-     // print("❌ OTP ERROR RESPONSE: $data");
+      // print("❌ OTP ERROR RESPONSE: $data");
 
       if (data?["Errors"] != null && data["Errors"]["Email"] != null) {
         throw Exception(data["Errors"]["Email"][0]);
@@ -319,6 +360,7 @@ class AuthApiService {
       final response = await _dio.post(
         '$_baseUrl/verify-email',
         data: {"Email": email, "Code": code},
+        options: _publicJsonOptions(),
       );
 
       final data = response.data;
@@ -356,6 +398,7 @@ class AuthApiService {
           "Password": password,
           "ConfirmPassword": confirmPassword,
         },
+        options: _publicJsonOptions(),
       );
 
       final data = response.data;
@@ -376,6 +419,146 @@ class AuthApiService {
         }
 
         throw Exception(data["Message"] ?? "Validation failed");
+      }
+    } on DioException catch (e) {
+      final responseData = e.response?.data;
+
+      if (responseData is Map && responseData["Errors"] != null) {
+        Map<String, String> fieldErrors = {};
+        responseData["Errors"].forEach((key, value) {
+          fieldErrors[key] = (value as List).join("\n");
+        });
+
+        throw ExceptionWithFields(
+          message: responseData["Message"] ?? "Validation error",
+          fieldErrors: fieldErrors,
+        );
+      }
+
+      throw Exception(responseData?["Message"] ?? "Network error");
+    }
+  }
+
+  Future<void> validateVolunteerBasicInfo({
+    required String fullName,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required String confirmPassword,
+    required String dateOfBirth,
+    required int gender,
+    required String nationalId,
+  }) async {
+    try {
+      final response = await _dio.post(
+        "$_baseUrl/volunteer/validate-basic-info",
+        data: {
+          "FullName": fullName,
+          "Email": email,
+          "PhoneNumber": phoneNumber,
+          "Password": password,
+          "ConfirmPassword": confirmPassword,
+          "DateOfBirth": dateOfBirth,
+          "Gender": gender,
+          "NationalId": nationalId,
+        },
+        options: _publicJsonOptions(),
+      );
+
+      final data = response.data;
+
+      if (data["Succeeded"] != true) {
+        final errors = data["Errors"];
+
+        if (errors != null && errors is Map) {
+          Map<String, String> fieldErrors = {};
+          errors.forEach((key, value) {
+            fieldErrors[key] = (value as List).join("\n");
+          });
+
+          throw ExceptionWithFields(
+            message: data["Message"] ?? "Validation failed",
+            fieldErrors: fieldErrors,
+          );
+        }
+
+        throw Exception(data["Message"] ?? "Validation failed");
+      }
+    } on DioException catch (e) {
+      final responseData = e.response?.data;
+
+      if (responseData is Map && responseData["Errors"] != null) {
+        Map<String, String> fieldErrors = {};
+        responseData["Errors"].forEach((key, value) {
+          fieldErrors[key] = (value as List).join("\n");
+        });
+
+        throw ExceptionWithFields(
+          message: responseData["Message"] ?? "Validation error",
+          fieldErrors: fieldErrors,
+        );
+      }
+
+      throw Exception(responseData?["Message"] ?? "Network error");
+    }
+  }
+
+  Future<void> registerVolunteer({
+    required String fullName,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required String dateOfBirth,
+    required int gender,
+    required String nationalId,
+    required String governorateId,
+    required String cityId,
+    required String details,
+    required List<String> fieldIds,
+    required List<String> skillIds,
+    String? cvUrl,
+  }) async {
+    try {
+      final response = await _dio.post(
+        "$_baseUrl/volunteer",
+        data: {
+          "FullName": fullName,
+          "Email": email,
+          "PhoneNumber": phoneNumber,
+          "Password": password,
+          "DateOfBirth": dateOfBirth,
+          "Gender": gender,
+          "NationalId": nationalId,
+          "CvUrl": cvUrl ?? "",
+          "Location": {
+            "GovernorateId": governorateId,
+            "CityId": cityId,
+            "Details": details,
+          },
+          "FieldIds": fieldIds,
+          "SkillIds": skillIds,
+        },
+        options: _publicJsonOptions(),
+      );
+
+      final data = response.data;
+
+      if (data["Succeeded"] != true) {
+        final errors = data["Errors"];
+
+        if (errors != null && errors is Map) {
+          Map<String, String> fieldErrors = {};
+          errors.forEach((key, value) {
+            fieldErrors[key] = (value as List).join("\n");
+          });
+
+          throw ExceptionWithFields(
+            message: data["Message"] ?? "Registration failed",
+            fieldErrors: fieldErrors,
+          );
+        }
+
+        throw Exception(data["Message"] ?? "Registration failed");
       }
     } on DioException catch (e) {
       final responseData = e.response?.data;

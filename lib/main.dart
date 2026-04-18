@@ -1,34 +1,77 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:mosahem/features/organization/createOpp/presentation/views/add_place_view.dart';
-import 'package:mosahem/features/organization/createOpp/presentation/views/add_questions_view.dart';
-import 'package:mosahem/features/organization/createOpp/presentation/views/create_opp_view.dart';
-import 'package:mosahem/features/organization/org_profile/presentation/views/bottom_nav_bar_screen.dart';
-import 'package:mosahem/features/organization/org_profile/presentation/views/home_screen.dart';
-import 'package:mosahem/features/organization/org_profile/presentation/views/private_org_profile_screen.dart';
-import 'package:mosahem/features/splash/presentation/views/splash_view.dart';
+import 'package:mosahem/core/network/dio_helper.dart';
+import 'package:mosahem/features/admin/profile/data/api/opportunities_api_service.dart';
+import 'package:mosahem/features/admin/profile/data/api/organizations_api_service.dart';
+import 'package:mosahem/features/admin/profile/data/api/profile_api_service.dart';
+import 'package:mosahem/features/admin/profile/data/api/volunteers_api_service.dart';
+import 'package:mosahem/features/admin/profile/data/repository/opportunities_repository.dart';
+import 'package:mosahem/features/admin/profile/data/repository/organizations_repository.dart';
+import 'package:mosahem/features/admin/profile/data/repository/profile_repository.dart';
+import 'package:mosahem/features/admin/profile/data/repository/volunteers_repository.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_cubit.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/organization_cubit.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/profile_cubit.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/volunteer_cubit.dart';
+import 'package:mosahem/features/organization/createOpp/data/api/create_opportunity_api_service.dart';
+import 'package:mosahem/features/organization/createOpp/data/repository/create_opportunity_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/features/auth/data/api/auth_api_service.dart';
 import 'package:mosahem/features/auth/data/repository/auth_repository.dart';
 import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
+import 'package:mosahem/features/splash/presentation/views/splash_view.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp(dio: DioHelper.instance.client));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Dio dio;
+
+  const MyApp({super.key, required this.dio});
 
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider(
-          create: (_) => AuthRepository(AuthApiService(Dio())),
+          create: (_) => VolunteersRepository(VolunteersApiService(dio)),
+        ),
+        RepositoryProvider(
+          create: (_) => OpportunitiesRepository(
+            OpportunitiesApiService(DioHelper.instance.client),
+          ),
+        ),
+        RepositoryProvider(
+          create: (_) => OrganizationsRepository(OrganizationsApiService(dio)),
+        ),
+        RepositoryProvider(
+          create: (_) => ProfileRepository(ProfileApiService(dio)),
+        ),
+        RepositoryProvider(create: (_) => AuthRepository(AuthApiService(dio))),
+        RepositoryProvider(
+          create: (_) =>
+              CreateOpportunityRepository(CreateOpportunityApiService(dio)),
         ),
       ],
       child: MultiBlocProvider(
         providers: [
+          BlocProvider(
+            create: (context) =>
+                VolunteerCubit(context.read<VolunteersRepository>()),
+          ),
+          BlocProvider(
+            create: (context) =>
+                OpportunityCubit(context.read<OpportunitiesRepository>()),
+          ),
+          BlocProvider(
+            create: (context) =>
+                OrganizationCubit(context.read<OrganizationsRepository>()),
+          ),
+          BlocProvider(
+            create: (context) =>
+                ProfileCubit(context.read<ProfileRepository>()),
+          ),
           BlocProvider(
             create: (context) => AuthCubit(context.read<AuthRepository>()),
           ),
@@ -39,9 +82,8 @@ class MyApp extends StatelessWidget {
             FocusManager.instance.primaryFocus?.unfocus();
           },
           child: const MaterialApp(
-            title: "Mosahem",
             debugShowCheckedModeBanner: false,
-            home: PrivateOrgProfileScreen(),
+            home: SplashView(),
           ),
         ),
       ),

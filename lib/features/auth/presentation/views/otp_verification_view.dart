@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/core/constants/user_role.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
@@ -13,8 +14,13 @@ import 'package:mosahem/features/auth/presentation/views/upload_organization_doc
 
 class OtpVerificationView extends StatefulWidget {
   final String email;
+  final UserRole role;
 
-  const OtpVerificationView({super.key, required this.email});
+  const OtpVerificationView({
+    super.key,
+    required this.email,
+    this.role = UserRole.organization,
+  });
 
   @override
   State<OtpVerificationView> createState() => _OtpVerificationViewState();
@@ -94,8 +100,10 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) =>
-                  UploadOrganizationDocumentView(email: widget.email),
+              builder: (_) => UploadOrganizationDocumentView(
+                email: widget.email,
+                role: widget.role,
+              ),
             ),
           );
         }

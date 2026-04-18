@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/photo_section.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/profile_form.dart';
-import 'package:mosahem/features/organization/org_profile/presentation/widgets/save_bottom.dart';
 
 class EditProfileScreen extends StatelessWidget {
   const EditProfileScreen({super.key});

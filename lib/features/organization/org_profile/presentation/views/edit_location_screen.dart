@@ -12,7 +12,6 @@ import 'package:mosahem/features/auth/data/models/city_model.dart';
 import 'package:mosahem/features/auth/data/models/governorate_model.dart';
 import 'package:mosahem/features/auth/data/repository/location_repository.dart';
 import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
-import 'package:mosahem/features/auth/presentation/views/select_tracks_view.dart';
 import 'package:mosahem/features/auth/presentation/widgets/labeled_field_row.dart';
 import 'package:mosahem/features/auth/presentation/widgets/labled_text_field_row.dart';
 

@@ -26,18 +26,18 @@ class AppSnackBar extends StatelessWidget {
 
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [color.withOpacity(.9), color],
+              colors: [color.withValues(alpha: .9), color],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
 
             borderRadius: BorderRadius.circular(22),
 
-            border: Border.all(color: Colors.white.withOpacity(.25)),
+            border: Border.all(color: Colors.white.withValues(alpha: .25)),
 
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(.4),
+                color: color.withValues(alpha: .4),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -52,8 +52,8 @@ class AppSnackBar extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Colors.white.withOpacity(.35),
-                      Colors.white.withOpacity(.15),
+                      Colors.white.withValues(alpha: .35),
+                      Colors.white.withValues(alpha: .15),
                     ],
                   ),
                   shape: BoxShape.circle,
@@ -86,7 +86,7 @@ class AppSnackBar extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(.2),
+                    color: Colors.white.withValues(alpha: .2),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.close, size: 16, color: Colors.white),

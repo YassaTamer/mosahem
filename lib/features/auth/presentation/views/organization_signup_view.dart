@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/core/constants/user_role.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/core/widgets/custom_text_field.dart';
@@ -22,7 +23,7 @@ class OrganizationSignupView extends StatefulWidget {
 class _OrganizationSignupViewState extends State<OrganizationSignupView> {
   bool _isPasswordHidden = true;
   bool _isConfirmPasswordHidden = true;
-  final _formKey = GlobalKey<FormState>();
+  // final _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
@@ -53,8 +54,10 @@ class _OrganizationSignupViewState extends State<OrganizationSignupView> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) =>
-                  OtpVerificationView(email: emailController.text.trim()),
+              builder: (_) => OtpVerificationView(
+                email: emailController.text.trim(),
+                role: UserRole.organization,
+              ),
             ),
           );
         }
