@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/constants/user_role.dart';
+import 'package:mosahem/core/helpers/date_helper.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/core/widgets/custom_text_field.dart';
@@ -13,14 +14,14 @@ import 'package:mosahem/features/auth/presentation/views/login_view.dart';
 import 'package:mosahem/features/auth/presentation/views/otp_verification_view.dart';
 import 'package:mosahem/core/widgets/custom_phone_number_field.dart';
 
-class OrganizationSignupView extends StatefulWidget {
-  const OrganizationSignupView({super.key});
+class VolunteerSignupView extends StatefulWidget {
+  const VolunteerSignupView({super.key});
 
   @override
-  State<OrganizationSignupView> createState() => _OrganizationSignupViewState();
+  State<VolunteerSignupView> createState() => _VolunteerSignupViewState();
 }
 
-class _OrganizationSignupViewState extends State<OrganizationSignupView> {
+class _VolunteerSignupViewState extends State<VolunteerSignupView> {
   bool _isPasswordHidden = true;
   bool _isConfirmPasswordHidden = true;
   // final _formKey = GlobalKey<FormState>();
@@ -30,12 +31,18 @@ class _OrganizationSignupViewState extends State<OrganizationSignupView> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  final TextEditingController nationalIdController = TextEditingController();
+  final TextEditingController dateController = TextEditingController();
+  String? selectedGender;
   String? emailError;
   String? passwordError;
   String? confirmPasswordError;
-  String? organizationNameError;
+  String? fullNameError;
   String? phoneError;
-
+  String? nationalIdError;
+  String? dateOfBirthError;
+  String? genderError;
+  DateTime? selectedDate;
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
@@ -56,7 +63,7 @@ class _OrganizationSignupViewState extends State<OrganizationSignupView> {
             MaterialPageRoute(
               builder: (_) => OtpVerificationView(
                 email: emailController.text.trim(),
-                role: UserRole.organization,
+                role: UserRole.volunteer,
               ),
             ),
           );
@@ -66,8 +73,7 @@ class _OrganizationSignupViewState extends State<OrganizationSignupView> {
           Navigator.pop(context); // يقفل اللودينج
 
           setState(() {
-            organizationNameError = state.fieldErrors?["OrganizationName"];
-
+            fullNameError = state.fieldErrors?["FullName"];
             emailError = state.fieldErrors?["Email"];
 
             passwordError = state.fieldErrors?["Password"];
@@ -75,6 +81,9 @@ class _OrganizationSignupViewState extends State<OrganizationSignupView> {
             confirmPasswordError = state.fieldErrors?["ConfirmPassword"];
 
             phoneError = state.fieldErrors?["PhoneNumber"];
+            nationalIdError = state.fieldErrors?["NationalId"];
+            dateOfBirthError = state.fieldErrors?["DateOfBirth"];
+            genderError = state.fieldErrors?["Gender"];
           });
         }
       },
@@ -118,20 +127,93 @@ class _OrganizationSignupViewState extends State<OrganizationSignupView> {
                       fontWeight: FontWeight.w500,
                     ),
                     Gap(8),
-                    CustomText(
-                      ' Organization Name',
-                      fontWeight: FontWeight.w600,
-                    ),
+                    CustomText('Full Name', fontWeight: FontWeight.w600),
                     Gap(4),
                     CustomTextField(
-                      errorText: organizationNameError,
+                      errorText: fullNameError,
 
                       textEditingController: nameController,
                       keyboardType: TextInputType.name,
-                      hintText: 'Enter organization name',
+                      hintText: 'Enter name',
+                    ),
+                    CustomText(' National ID', fontWeight: FontWeight.w600),
+                    Gap(4),
+                    CustomTextField(
+                      errorText: nationalIdError,
+                      textEditingController: nationalIdController,
+                      hintText: 'Enter your national ID',
                     ),
                     Gap(8),
+                    CustomText(' Date Of Birth', fontWeight: FontWeight.w600),
+                    Gap(4),
+                    // CustomTextField(
+                    //   errorText: dateOfBirthError,
+                    //   textEditingController: dateController,
+                    //   hintText: 'YYYY-MM-DD',
+                    // ),
+                    CustomTextField(
+                      errorText: dateOfBirthError,
+                      textEditingController: dateController,
+                      hintText: 'Select your birth date',
+                      //   readOnly: true,
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime(2000),
+                          firstDate: DateTime(1950),
+                          lastDate: DateTime.now(),
+                        );
 
+                        if (pickedDate != null) {
+                          setState(() {
+                            selectedDate = pickedDate;
+
+                            dateController.text = DateHelper.format(
+                              pickedDate.toIso8601String(),
+                            );
+
+                            dateOfBirthError = null;
+                          });
+                        }
+                      },
+                    ),
+                    Gap(8),
+                    CustomText(' Gender', fontWeight: FontWeight.w600),
+                    Gap(4),
+
+                    DropdownButtonFormField<String>(
+                      initialValue: selectedGender,
+                      hint: const Text('Select Gender'),
+
+                      decoration: InputDecoration(
+                        errorText: genderError,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(color: AppColors.primaryDark),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: AppColors.primaryDark),
+                        ),
+                      ),
+
+                      items: const [
+                        DropdownMenuItem(value: "Male", child: Text("Male")),
+                        DropdownMenuItem(
+                          value: "Female",
+                          child: Text("Female"),
+                        ),
+                      ],
+
+                      onChanged: (value) {
+                        setState(() {
+                          selectedGender = value;
+                          genderError = null;
+                        });
+                      },
+                    ),
+                    Gap(8),
+                    Gap(8),
                     CustomText(' Email', fontWeight: FontWeight.w600),
                     Gap(4),
                     CustomTextField(
@@ -281,12 +363,31 @@ class _OrganizationSignupViewState extends State<OrganizationSignupView> {
           child: CustomButton(
             text: 'Continue',
             onTap: () {
-              context.read<AuthCubit>().validateBasicInfo(
-                organizationName: nameController.text.trim(),
+              if (selectedGender == null) {
+                setState(() {
+                  genderError = "Please select gender";
+                });
+                return;
+              }
+
+              if (selectedDate == null) {
+                setState(() {
+                  dateOfBirthError = "Please select date";
+                });
+                return;
+              }
+
+              int genderValue = selectedGender == "Male" ? 1 : 2;
+
+              context.read<AuthCubit>().validateVolunteerBasicInfo(
+                fullName: nameController.text.trim(),
                 email: emailController.text.trim(),
                 phoneNumber: phoneController.text.trim(),
                 password: passwordController.text.trim(),
                 confirmPassword: confirmPasswordController.text.trim(),
+                dateOfBirth: selectedDate!.toIso8601String(),
+                gender: genderValue,
+                nationalId: nationalIdController.text.trim(),
               );
             },
           ),

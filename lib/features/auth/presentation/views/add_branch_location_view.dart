@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/core/constants/user_role.dart';
 import 'package:mosahem/core/network/dio_helper.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
@@ -17,13 +18,17 @@ import 'package:mosahem/features/auth/presentation/widgets/labeled_field_row.dar
 import 'package:mosahem/features/auth/presentation/widgets/labled_text_field_row.dart';
 
 class AddBranchLocationView extends StatefulWidget {
-  const AddBranchLocationView({super.key});
+  final UserRole role;
+
+  const AddBranchLocationView({super.key, this.role = UserRole.organization});
 
   @override
   State<AddBranchLocationView> createState() => _AddBranchLocationViewState();
 }
 
 class _AddBranchLocationViewState extends State<AddBranchLocationView> {
+  bool get _isVolunteer => widget.role == UserRole.volunteer;
+
   String? selectedGovernorate;
   String? selectedCity;
   late final LocationRepository _locationRepository;
@@ -77,6 +82,7 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
 
   String? governorateError;
   String? cityError;
+  String? addressError;
   bool isCitiesLoading = false;
 
   BranchLocationModel? branch;
@@ -119,14 +125,16 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomText(
-                  'Add Branch Location',
+                  _isVolunteer ? 'Add Location' : 'Add Branch Location',
                   color: AppColors.primary,
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
                 ),
                 Gap(6),
                 CustomText(
-                  'Please enter the details of your Branch Location.',
+                  _isVolunteer
+                      ? 'Please enter your location details.'
+                      : 'Please enter the details of your Branch Location.',
                   color: Color(0xff072132),
                   fontSize: 15,
                   fontWeight: FontWeight.w300,
@@ -281,10 +289,23 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
                       LabeledTextFieldRow(
                         controller: addressController,
 
-                        label: 'Branch Address:',
-                        hint: 'enter full address',
+                        label: _isVolunteer
+                            ? 'Address Details:'
+                            : 'Branch Address:',
+                        hint: _isVolunteer
+                            ? 'enter your full address'
+                            : 'enter full address',
                         isRequired: true,
                       ),
+                      if (addressError != null)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 120, top: 4),
+                          child: CustomText(
+                            addressError!,
+                            color: Colors.red,
+                            fontSize: 12,
+                          ),
+                        ),
                       Gap(6),
                       Column(
                         children: [
@@ -319,8 +340,9 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
                               maxLines: null,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText:
-                                    'Enter additional details about this branch...',
+                                hintText: _isVolunteer
+                                    ? 'Enter extra location details (optional)...'
+                                    : 'Enter additional details about this branch...',
                                 hintStyle: TextStyle(
                                   color: Colors.grey.shade600,
                                   fontSize: 13,
@@ -348,6 +370,9 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
                             child: CustomButton(
                               onTap: () {
                                 bool isValid = true;
+                                final address = addressController.text.trim();
+                                final description = descriptionController.text
+                                    .trim();
 
                                 if (selectedGovernorateModel == null) {
                                   governorateError = "Governorate is required";
@@ -359,21 +384,39 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
                                   isValid = false;
                                 }
 
+                                if (_isVolunteer && address.isEmpty) {
+                                  addressError = "Address is required";
+                                  isValid = false;
+                                } else {
+                                  addressError = null;
+                                }
+
                                 setState(() {});
                                 if (!isValid) return;
+                                final details = _isVolunteer
+                                    ? (description.isEmpty
+                                          ? address
+                                          : '$address\n$description')
+                                    : description;
                                 final newBranch = BranchLocationModel(
                                   governorateId: selectedGovernorateModel!.id,
                                   cityId: selectedCityModel!.id,
-                                  details: descriptionController.text,
+                                  details: details,
                                   governorateName: selectedGovernorate!,
                                   cityName: selectedCity!,
-                                  address: addressController.text,
+                                  address: address,
                                 );
 
                                 // ✅ خزنه في الكيوبت
-                                context.read<AuthCubit>().locations.add(
-                                  newBranch,
-                                );
+                                final cubit = context.read<AuthCubit>();
+                                if (_isVolunteer) {
+                                  cubit.governorateId =
+                                      selectedGovernorateModel!.id;
+                                  cubit.cityId = selectedCityModel!.id;
+                                  cubit.locationDetails = details;
+                                } else {
+                                  cubit.locations.add(newBranch);
+                                }
 
                                 setState(() {
                                   branch = newBranch;
@@ -384,6 +427,9 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
                                   selectedCity = null;
                                   selectedGovernorateModel = null;
                                   selectedCityModel = null;
+                                  governorateError = null;
+                                  cityError = null;
+                                  addressError = null;
                                   cities = [];
                                 });
                               },
@@ -452,8 +498,14 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
                           IconButton(
                             icon: const Icon(Icons.delete, color: Colors.red),
                             onPressed: () {
+                              final cubit = context.read<AuthCubit>();
                               setState(() {
                                 branch = null;
+                                if (_isVolunteer) {
+                                  cubit.governorateId = null;
+                                  cubit.cityId = null;
+                                  cubit.locationDetails = null;
+                                }
                               });
                             },
                           ),
@@ -471,21 +523,24 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
         padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
         child: Row(
           children: [
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const SelectTracksView()),
-                );
-              },
-
-              child: const CustomText(
-                'Skip',
-                color: Color(0xffD8B50C),
-                fontSize: 18,
+            if (!_isVolunteer) ...[
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SelectTracksView(role: widget.role),
+                    ),
+                  );
+                },
+                child: const CustomText(
+                  'Skip',
+                  color: Color(0xffD8B50C),
+                  fontSize: 18,
+                ),
               ),
-            ),
-            const Gap(12),
+              const Gap(12),
+            ],
             Expanded(
               child: CustomButton(
                 text: 'Continue',
@@ -498,7 +553,7 @@ class _AddBranchLocationViewState extends State<AddBranchLocationView> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const SelectTracksView(),
+                            builder: (_) => SelectTracksView(role: widget.role),
                           ),
                         );
                       },
