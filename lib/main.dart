@@ -15,11 +15,11 @@ import 'package:mosahem/features/admin/profile/logic/cubit/profile_cubit.dart';
 import 'package:mosahem/features/admin/profile/logic/cubit/volunteer_cubit.dart';
 import 'package:mosahem/features/organization/createOpp/data/api/create_opportunity_api_service.dart';
 import 'package:mosahem/features/organization/createOpp/data/repository/create_opportunity_repository.dart';
-import 'package:mosahem/features/splash/presentation/views/splash_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/features/auth/data/api/auth_api_service.dart';
 import 'package:mosahem/features/auth/data/repository/auth_repository.dart';
 import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
+import 'package:mosahem/features/splash/presentation/views/splash_view.dart';
 
 void main() {
   runApp(MyApp(dio: DioHelper.instance.client));
