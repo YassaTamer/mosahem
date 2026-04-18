@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/core/constants/user_role.dart';
 import 'package:mosahem/core/helpers/app_snackbar_helper.dart';
 import 'package:mosahem/core/network/dio_helper.dart';
 import 'package:mosahem/core/network/network_request_flags.dart';
@@ -16,8 +17,13 @@ import 'package:mosahem/features/auth/presentation/views/add_branch_location_vie
 
 class UploadOrganizationDocumentView extends StatefulWidget {
   final String email;
+  final UserRole role;
 
-  const UploadOrganizationDocumentView({super.key, required this.email});
+  const UploadOrganizationDocumentView({
+    super.key,
+    required this.email,
+    this.role = UserRole.organization,
+  });
 
   @override
   State<UploadOrganizationDocumentView> createState() =>
@@ -26,6 +32,8 @@ class UploadOrganizationDocumentView extends StatefulWidget {
 
 class _UploadOrganizationDocumentViewState
     extends State<UploadOrganizationDocumentView> {
+  bool get _isVolunteer => widget.role == UserRole.volunteer;
+
   PlatformFile? _pickedFile;
   Future<void> _pickFile() async {
     final result = await FilePicker.platform.pickFiles(
@@ -78,15 +86,22 @@ class _UploadOrganizationDocumentViewState
       } else {
         if (!mounted) return;
 
-        final String licenseUrl = data["Data"];
+        final String uploadedUrl = data["Data"];
 
         // 🔥 خزّن في الكيوبت
-        context.read<AuthCubit>().licenseUrl = licenseUrl;
+        final cubit = context.read<AuthCubit>();
+        if (_isVolunteer) {
+          cubit.cvUrl = uploadedUrl;
+        } else {
+          cubit.licenseUrl = uploadedUrl;
+        }
 
         // نروح للصفحة اللي بعدها
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => AddBranchLocationView()),
+          MaterialPageRoute(
+            builder: (_) => AddBranchLocationView(role: widget.role),
+          ),
         );
       }
     } on DioException catch (e) {
@@ -164,7 +179,7 @@ class _UploadOrganizationDocumentViewState
                     Gap(12),
                     SvgPicture.asset('assets/logos/upload_icon.svg'),
                     CustomText(
-                      'Upload File',
+                      _isVolunteer ? 'Upload CV' : 'Upload File',
                       color: AppColors.primaryDark,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -235,7 +250,9 @@ class _UploadOrganizationDocumentViewState
               ],
               if (_pickedFile == null)
                 CustomText(
-                  'Please upload any documentation proving that you are an organization.',
+                  _isVolunteer
+                      ? 'Please upload your CV (optional).'
+                      : 'Please upload any documentation proving that you are an organization.',
                   fontSize: 16,
                   color: Colors.red,
                 ),
@@ -262,7 +279,9 @@ class _UploadOrganizationDocumentViewState
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => AddBranchLocationView()),
+                  MaterialPageRoute(
+                    builder: (_) => AddBranchLocationView(role: widget.role),
+                  ),
                 );
               },
               child: const CustomText(

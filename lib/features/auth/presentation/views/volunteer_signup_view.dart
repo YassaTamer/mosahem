@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/core/constants/user_role.dart';
 import 'package:mosahem/core/helpers/date_helper.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
@@ -60,8 +61,10 @@ class _VolunteerSignupViewState extends State<VolunteerSignupView> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) =>
-                  OtpVerificationView(email: emailController.text.trim()),
+              builder: (_) => OtpVerificationView(
+                email: emailController.text.trim(),
+                role: UserRole.volunteer,
+              ),
             ),
           );
         }
@@ -179,7 +182,7 @@ class _VolunteerSignupViewState extends State<VolunteerSignupView> {
                     Gap(4),
 
                     DropdownButtonFormField<String>(
-                      value: selectedGender,
+                      initialValue: selectedGender,
                       hint: const Text('Select Gender'),
 
                       decoration: InputDecoration(
