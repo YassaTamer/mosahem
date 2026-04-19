@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:mosahem/features/splash/presentation/views/splash_view.dart';
+import 'package:mosahem/features/admin/home/presentation/views/admin_home_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/features/auth/data/api/auth_api_service.dart';
 import 'package:mosahem/features/auth/data/repository/auth_repository.dart';
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
           },
           child: const MaterialApp(
             debugShowCheckedModeBanner: false,
-            home: SplashView(),
+            home: AdminHomeView(),
           ),
         ),
       ),

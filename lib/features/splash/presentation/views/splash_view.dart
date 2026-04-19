@@ -7,7 +7,7 @@ import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_constant.dart';
 import 'package:mosahem/core/helpers/cache_helper.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
-import 'package:mosahem/features/admin/presentation/views/admin_home_view.dart';
+import 'package:mosahem/features/admin/home/presentation/views/admin_home_view.dart';
 import 'package:mosahem/features/auth/data/api/auth_api_service.dart';
 import 'package:mosahem/features/auth/data/repository/auth_repository.dart';
 import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';

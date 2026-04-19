@@ -33,4 +33,5 @@ class AppAssets {
   static const startDateIcon = "assets/logos/start_date_icon.png";
   static const endDateIcon = "assets/logos/end_date_icon.png";
   static const documentationIcon = "assets/logos/documentation_icon.png";
+  static const filterIcon = "assets/logos/filter_icon.png";
 }
