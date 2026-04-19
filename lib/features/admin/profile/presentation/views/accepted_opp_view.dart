@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/core/helpers/date_helper.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 
@@ -63,13 +64,19 @@ class _AcceptedOppViewState extends State<AcceptedOppView> {
                       children: [
                         Image.asset(AppAssets.startDateIcon),
                         SizedBox(width: 5),
-                        CustomText(widget.startDate, fontSize: 10),
+                        CustomText(
+                          DateHelper.format(widget.startDate),
+                          fontSize: 10,
+                        ),
 
                         SizedBox(width: 10),
 
                         Image.asset(AppAssets.endDateIcon),
                         SizedBox(width: 5),
-                        CustomText(widget.endDate, fontSize: 10),
+                        CustomText(
+                          DateHelper.format(widget.endDate),
+                          fontSize: 10,
+                        ),
                       ],
                     ),
                   ],

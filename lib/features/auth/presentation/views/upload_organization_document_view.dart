@@ -6,6 +6,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/core/constants/user_role.dart';
+import 'package:mosahem/core/helpers/app_snackbar_helper.dart';
+import 'package:mosahem/core/network/dio_helper.dart';
+import 'package:mosahem/core/network/network_request_flags.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
@@ -13,8 +17,13 @@ import 'package:mosahem/features/auth/presentation/views/add_branch_location_vie
 
 class UploadOrganizationDocumentView extends StatefulWidget {
   final String email;
+  final UserRole role;
 
-  const UploadOrganizationDocumentView({super.key, required this.email});
+  const UploadOrganizationDocumentView({
+    super.key,
+    required this.email,
+    this.role = UserRole.organization,
+  });
 
   @override
   State<UploadOrganizationDocumentView> createState() =>
@@ -23,6 +32,8 @@ class UploadOrganizationDocumentView extends StatefulWidget {
 
 class _UploadOrganizationDocumentViewState
     extends State<UploadOrganizationDocumentView> {
+  bool get _isVolunteer => widget.role == UserRole.volunteer;
+
   PlatformFile? _pickedFile;
   Future<void> _pickFile() async {
     final result = await FilePicker.platform.pickFiles(
@@ -42,20 +53,15 @@ class _UploadOrganizationDocumentViewState
   String? _uploadError;
   Future<void> _uploadFile() async {
     if (_pickedFile == null) {
-      setState(() {
-        _uploadError = "Please select a file first";
-      });
+      AppSnackBarHelper.error(context, "Please select a file first");
       return;
     }
-
     setState(() {
       _isLoading = true;
       _uploadError = null;
     });
 
     try {
-      final dio = Dio();
-
       final formData = FormData.fromMap({
         "file": MultipartFile.fromBytes(
           _pickedFile!.bytes!,
@@ -64,11 +70,12 @@ class _UploadOrganizationDocumentViewState
         "folderName": "images",
       });
 
-      final response = await dio.post(
+      final response = await DioHelper.instance.client.post(
         "https://mosahemapi.runasp.net/api/v1/files/upload",
         data: formData,
+        options: Options(extra: {kSkipAuth: true, kSkipRefresh: true}),
       );
-      print("UPLOAD RESPONSE: ${response.data}");
+      //   print("UPLOAD RESPONSE: ${response.data}");
 
       final data = response.data;
 
@@ -77,38 +84,50 @@ class _UploadOrganizationDocumentViewState
           _uploadError = data["Message"] ?? "Upload failed";
         });
       } else {
-        final String licenseUrl = data["Data"];
+        if (!mounted) return;
+
+        final String uploadedUrl = data["Data"];
 
         // 🔥 خزّن في الكيوبت
-        context.read<AuthCubit>().licenseUrl = licenseUrl;
+        final cubit = context.read<AuthCubit>();
+        if (_isVolunteer) {
+          cubit.cvUrl = uploadedUrl;
+        } else {
+          cubit.licenseUrl = uploadedUrl;
+        }
 
         // نروح للصفحة اللي بعدها
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => AddBranchLocationView()),
+          MaterialPageRoute(
+            builder: (_) => AddBranchLocationView(role: widget.role),
+          ),
         );
       }
     } on DioException catch (e) {
       if (e.response?.statusCode == 422) {
         final data = e.response?.data;
 
-        print("422 DATA: $data");
+        //print("422 DATA: $data");
 
         if (data != null && data["Errors"] != null) {
           final errors = data["Errors"];
 
           if (errors["File"] != null) {
-            setState(() {
-              _uploadError = errors["File"].first;
-            });
+            if (!mounted) return;
+
+            AppSnackBarHelper.error(context, errors["File"].first);
           } else if (errors["FolderName"] != null) {
             setState(() {
               _uploadError = errors["FolderName"].first;
             });
           } else {
-            setState(() {
-              _uploadError = data["Message"] ?? "Validation error";
-            });
+            if (!mounted) return;
+
+            AppSnackBarHelper.error(
+              context,
+              data["Message"] ?? "Upload failed",
+            );
           }
         }
       } else {
@@ -160,7 +179,7 @@ class _UploadOrganizationDocumentViewState
                     Gap(12),
                     SvgPicture.asset('assets/logos/upload_icon.svg'),
                     CustomText(
-                      'Upload File',
+                      _isVolunteer ? 'Upload CV' : 'Upload File',
                       color: AppColors.primaryDark,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -231,9 +250,20 @@ class _UploadOrganizationDocumentViewState
               ],
               if (_pickedFile == null)
                 CustomText(
-                  'Please upload any documentation proving that you are an organization.',
+                  _isVolunteer
+                      ? 'Please upload your CV (optional).'
+                      : 'Please upload any documentation proving that you are an organization.',
                   fontSize: 16,
                   color: Colors.red,
+                ),
+              if (_uploadError != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: CustomText(
+                    _uploadError!,
+                    fontSize: 14,
+                    color: Colors.red,
+                  ),
                 ),
               Spacer(),
               Gap(4),
@@ -249,7 +279,9 @@ class _UploadOrganizationDocumentViewState
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => AddBranchLocationView()),
+                  MaterialPageRoute(
+                    builder: (_) => AddBranchLocationView(role: widget.role),
+                  ),
                 );
               },
               child: const CustomText(

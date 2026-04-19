@@ -34,3 +34,5 @@ class AuthBasicInfoValidated extends AuthState {}
 class AuthOtpVerified extends AuthState {}
 
 class AuthOtpSent extends AuthState {}
+
+class AuthLoggedOut extends AuthState {}

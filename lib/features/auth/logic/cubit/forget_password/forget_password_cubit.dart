@@ -30,7 +30,7 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
   }
 
   Future<void> verifyOtp({required String code}) async {
-    print("VERIFY OTP CALLED WITH: $code");
+   // print("VERIFY OTP CALLED WITH: $code");
     if (code.isEmpty) {
       emit(ForgetPasswordError('OTP is required'));
       return;

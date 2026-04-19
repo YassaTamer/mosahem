@@ -109,4 +109,66 @@ class AuthRepository {
       rethrow;
     }
   }
+
+  Future<void> validateVolunteerBasicInfo({
+    required String fullName,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required String confirmPassword,
+    required String dateOfBirth,
+    required int gender,
+    required String nationalId,
+  }) async {
+    try {
+      await _authApiService.validateVolunteerBasicInfo(
+        fullName: fullName,
+        email: email,
+        phoneNumber: phoneNumber,
+        password: password,
+        confirmPassword: confirmPassword,
+        dateOfBirth: dateOfBirth,
+        gender: gender,
+        nationalId: nationalId,
+      );
+    } catch (e) {
+      rethrow; // علشان نحافظ على ExceptionWithFields
+    }
+  }
+
+  Future<void> registerVolunteer({
+    required String fullName,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required String dateOfBirth,
+    required int gender,
+    required String nationalId,
+    required String governorateId,
+    required String cityId,
+    required String details,
+    required List<String> fieldIds,
+    required List<String> skillIds,
+    String? cvUrl,
+  }) async {
+    try {
+      await _authApiService.registerVolunteer(
+        fullName: fullName,
+        email: email,
+        phoneNumber: phoneNumber,
+        password: password,
+        dateOfBirth: dateOfBirth,
+        gender: gender,
+        nationalId: nationalId,
+        governorateId: governorateId,
+        cityId: cityId,
+        details: details,
+        fieldIds: fieldIds,
+        skillIds: skillIds,
+        cvUrl: cvUrl,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

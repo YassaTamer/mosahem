@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
-import 'package:mosahem/core/widgets/custom_text_field.dart';
 import 'package:mosahem/features/admin/home/presentation/views/filter_view.dart';
+import 'package:mosahem/features/organization/org_profile/presentation/widgets/post_card.dart';
 
 class AdminHomeView extends StatefulWidget {
   const AdminHomeView({super.key, this.adminUserName = "Mosahem"});
@@ -57,7 +57,7 @@ class _AdminHomeViewState extends State<AdminHomeView> {
         ),
       ),
 
-      body: ListView(
+      body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -150,6 +150,40 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                     ),
                     child: Image.asset(AppAssets.filterIcon),
                   ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 20),
+          Expanded(
+            child: ListView(
+              children: [
+                PostCard(
+                  orgName: "Zad Solutions",
+                  timeAgo: "31/1/2026",
+                  postImage: AppAssets.postImage,
+                  title: "Green Future",
+                  description:
+                      "A humanitarian opportunity focused on visiting needy families, offering support, care, and basic assistance to bring hope and kindness to those in need",
+                  location: "Cairo, Nasser City",
+                  date: "10/12/2025",
+                  time: "10:00 pm",
+                  comments: "2.5K",
+                  likes: "5K",
+                ),
+                SizedBox(height: 15),
+                PostCard(
+                  orgName: "Zad Solutions",
+                  timeAgo: "31/1/2026",
+                  postImage: AppAssets.postImage,
+                  title: "Green Future",
+                  description:
+                      "A humanitarian opportunity focused on visiting needy families, offering support, care, and basic assistance to bring hope and kindness to those in need",
+                  location: "Cairo, Nasser City",
+                  date: "10/12/2025",
+                  time: "10:00 pm",
+                  comments: "2.5K",
+                  likes: "5K",
                 ),
               ],
             ),
