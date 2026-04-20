@@ -13,7 +13,7 @@ import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/features/auth/data/models/track_model.dart';
 import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
 import 'package:mosahem/features/layout/presentation/views/main_layout_view.dart';
-import 'package:mosahem/features/organization/presentation/views/organization_home_view.dart';
+import 'package:mosahem/features/organization/org_profile/presentation/views/org_profile_screen.dart';
 
 class SelectTracksView extends StatefulWidget {
   final UserRole role;
@@ -158,7 +158,7 @@ class _SelectTracksViewState extends State<SelectTracksView> {
           } else {
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (_) => const OrganizationHomeView()),
+              MaterialPageRoute(builder: (_) => const OrgProfileScreen()),
               (route) => false,
             );
           }
@@ -264,7 +264,7 @@ class _SelectTracksViewState extends State<SelectTracksView> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => OrganizationHomeView()),
+                      MaterialPageRoute(builder: (_) => OrgProfileScreen()),
                     );
                   },
                   child: const CustomText(

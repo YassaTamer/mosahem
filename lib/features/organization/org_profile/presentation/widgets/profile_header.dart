@@ -8,13 +8,15 @@ import 'package:mosahem/features/organization/org_profile/presentation/views/set
 class ProfileHeader extends StatelessWidget {
   final String nameOrg;
   final String bio;
-  final String location;
+  final String location; 
+  // final OrgProfileModel data;
+
 
   const ProfileHeader({
     super.key,
     required this.nameOrg,
     required this.bio,
-    required this.location,
+    required this.location, //required this.data,
   });
 
   @override

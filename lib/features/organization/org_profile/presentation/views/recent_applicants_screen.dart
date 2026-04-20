@@ -54,7 +54,7 @@ class RecentApplicantsScreen extends StatelessWidget {
           return ApplicantCard(
             applicantName: "Wade Warren",
             onReject: () {
-              print("Rejected user $index");
+           //   print("Rejected user $index");
             },
             onAccept: () {
               print("Accepted user $index");

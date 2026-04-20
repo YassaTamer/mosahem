@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/features/organization/org_profile/data/models/org_profile_model.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/views/followers_screen.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/views/opportunities_screen.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/views/rating_screen.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/views/recent_applicants_screen.dart';
-import 'package:mosahem/features/organization/org_profile/presentation/widgets/opportunities_header.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/post_card.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/profile_header.dart';
-import 'package:mosahem/features/organization/org_profile/presentation/widgets/profile_org_header.dart';
 
 class PrivateOrgProfileScreen extends StatelessWidget {
   final int? opportunities = 0;
   final int? followers = 0;
   final int? volunteer = 0;
 
-  const PrivateOrgProfileScreen({super.key});
+  final OrgProfileModel data;
+
+  const PrivateOrgProfileScreen({super.key, required this.data});
   Widget statItem(String number, String title) {
     return Column(
       children: [
@@ -50,8 +51,13 @@ class PrivateOrgProfileScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ProfileHeader(nameOrg: 'dsf', bio: 'fgdss', location: 'sohag'),
-
+                ProfileHeader(
+                  nameOrg: data.organizationName,
+                  bio: data.organizationDescription,
+                  location: data.locations.isNotEmpty
+                      ? data.locations.first.cityName
+                      : 'No Location',
+                ),
                 IntrinsicHeight(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,

@@ -40,13 +40,13 @@ class ProfileStatst extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 40),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           IntrinsicHeight(
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              // mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 statItem(opportunities.toString(), "Opportunities"),
                 VerticalDivider(
@@ -70,27 +70,31 @@ class ProfileStatst extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  fixedSize: Size(150, 40),
-                  backgroundColor: AppColors.greyLight,
-                  foregroundColor: Colors.black,
-                ),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: Size(160, 40),
+                    backgroundColor: AppColors.greyLight,
+                    foregroundColor: Colors.black,
+                  ),
 
-                child: Text(text1ProfileOrg, style: TextStyle(fontSize: 12)),
+                  child: Text(text1ProfileOrg, style: TextStyle(fontSize: 12)),
+                ),
               ),
-              SizedBox(width: 25),
+              SizedBox(width: 12),
 
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  fixedSize: Size(150, 40),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: Size(160, 40),
 
-                  backgroundColor: AppColors.greyLight,
-                  foregroundColor: Colors.black,
+                    backgroundColor: AppColors.greyLight,
+                    foregroundColor: Colors.black,
+                  ),
+                  child: Text(text2ProfileOrg, style: TextStyle(fontSize: 12)),
                 ),
-                child: Text(text2ProfileOrg, style: TextStyle(fontSize: 12)),
               ),
               SizedBox(height: 16),
               Divider(color: AppColors.greyLight, thickness: 1, height: 50),

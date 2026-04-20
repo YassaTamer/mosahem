@@ -6,6 +6,7 @@ class AboutDescriptionSection extends StatelessWidget {
   final String vision;
 
   const AboutDescriptionSection({
+    super.key,
     required this.description,
     required this.vision,
   });

@@ -4,6 +4,8 @@ import 'package:mosahem/core/constants/user_role.dart';
 import 'package:mosahem/features/admin/profile/presentation/views/profile_view.dart';
 import 'package:mosahem/features/layout/logic/cubit/layout_cubit.dart';
 import 'package:mosahem/features/organization/createOpp/presentation/views/create_opp_view.dart';
+import 'package:mosahem/features/organization/org_profile/presentation/views/home_screen.dart';
+import 'package:mosahem/features/organization/org_profile/presentation/views/org_profile_screen.dart';
 
 class MainLayoutView extends StatelessWidget {
   final UserRole role;
@@ -29,8 +31,7 @@ class MainLayoutView extends StatelessWidget {
   }
 
   Widget _buildCustomBottomBar(BuildContext context, int currentIndex) {
-    final items = _getNavItems();
-
+    // final items = _getNavItems();
     return Container(
       height: 75,
       decoration: const BoxDecoration(
@@ -40,12 +41,11 @@ class MainLayoutView extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          for (int i = 0; i < items.length; i++) ...[
-            if (role == UserRole.organization && i == 2)
-              _buildAddButton(context),
+          _buildNavItem(context, 0, currentIndex),
 
-            _buildNavItem(context, i, currentIndex),
-          ],
+          if (role == UserRole.organization) _buildAddButton(context),
+
+          _buildNavItem(context, 1, currentIndex),
         ],
       ),
     );
@@ -108,11 +108,12 @@ class MainLayoutView extends StatelessWidget {
       ];
     } else if (role == UserRole.organization) {
       return const [
-        Center(child: Text("Organization Home")),
-        Center(child: Text("Organization Chat")),
-
-        Center(child: Text("Organization Notifications")),
-        Center(child: Text("Organization Profile")),
+        HomeScreen(),
+        OrgProfileScreen(),
+        //  PrivateOrgProfileScreen(data: '',),
+        //  Center(child: Text("Organization Chat")),
+        // Center(child: Text("Organization Notifications")),
+        // Center(child: Text("Organization Profile")),
       ];
     } else {
       return const [
@@ -134,19 +135,20 @@ class MainLayoutView extends StatelessWidget {
       ];
     } else if (role == UserRole.organization) {
       return const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.chat_bubble_outline),
-          label: "Chat",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.notifications_none),
-          label: "Notifications",
-        ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person_outline),
           label: "Profile",
         ),
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+
+        // BottomNavigationBarItem(
+        //   icon: Icon(Icons.chat_bubble_outline),
+        //   label: "Chat",
+        // ),
+        // BottomNavigationBarItem(
+        //   icon: Icon(Icons.notifications_none),
+        //   label: "Notifications",
+        // ),
       ];
     } else {
       return const [
