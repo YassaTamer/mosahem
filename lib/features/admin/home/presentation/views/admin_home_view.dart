@@ -21,6 +21,7 @@ class _AdminHomeViewState extends State<AdminHomeView> {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         toolbarHeight: 100,
         centerTitle: true,
         backgroundColor: Colors.transparent,
@@ -148,7 +149,7 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                       color: AppColors.primaryLightBlue,
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Image.asset(AppAssets.filterIcon),
+                    child: Image.asset(AppAssets.filterIconDark),
                   ),
                 ),
               ],
