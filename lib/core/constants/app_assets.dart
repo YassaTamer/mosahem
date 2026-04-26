@@ -12,6 +12,8 @@ class AppAssets {
   static const organizationIcon2 = 'assets/logos/organization_icon.png';
   static const opportunityIcon = "assets/logos/opportunity_icon.png";
   static const profilePhotoIcon = "assets/logos/profile_picture_icon.png";
+  static const girlProfilePhoto =
+      "assets/images/girl_volunteer_profile_photo.jpg";
 
   static const locationIcon = 'assets/logos/location.svg';
   static const locationIcon2 = 'assets/logos/location.png';

@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
-import 'package:mosahem/features/admin/home/presentation/views/filter_view_admin.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/post_card.dart';
+import 'package:mosahem/features/volunteer/home/presentation/views/filter_view_volunteer.dart';
 
-class AdminHomeView extends StatefulWidget {
-  const AdminHomeView({super.key, this.adminUserName = "Betty"});
+class VolunteerHomeView extends StatefulWidget {
+  const VolunteerHomeView({super.key, this.adminUserName = "Betty"});
   final String adminUserName;
 
   @override
-  State<AdminHomeView> createState() => _AdminHomeViewState();
+  State<VolunteerHomeView> createState() => _VolunteerHomeViewState();
 }
 
-class _AdminHomeViewState extends State<AdminHomeView> {
+class _VolunteerHomeViewState extends State<VolunteerHomeView> {
   bool isSearching = false;
   TextEditingController searchController = TextEditingController();
   @override
@@ -38,9 +38,10 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                 radius: 38,
                 child: ClipOval(
                   child: Image.asset(
-                    "assets/images/splash_logo.png",
+                    AppAssets.girlProfilePhoto,
                     width: 100,
                     height: 100,
+                    fit: BoxFit.fill,
                   ),
                 ),
               ),
@@ -140,7 +141,7 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => FilterViewAdmin(),
+                        builder: (context) => FilterViewVolunteer(),
                       ),
                     );
                   },
@@ -165,7 +166,6 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                   orgName: "Zad Solutions",
                   wantOrgPhoto: true,
                   orgPhoto: AppAssets.orgLogo,
-                  applyButton: false,
                   timeAgo: "2h",
                   postImage: AppAssets.postImage,
                   title: "Green Future",
@@ -182,7 +182,6 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                   orgName: "Masr EL-kheir Foundation",
                   wantOrgPhoto: true,
                   orgPhoto: AppAssets.misrElKheirLogo,
-                  applyButton: false,
                   timeAgo: "3h",
                   postImage: AppAssets.misrElKheirPostImage,
                   title: "Helping Hands",
@@ -199,7 +198,6 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                   orgName: "Icpc Sohag",
                   wantOrgPhoto: true,
                   orgPhoto: AppAssets.icpcLogo,
-                  applyButton: false,
                   timeAgo: "1h",
                   postImage: AppAssets.icpcPostImage,
                   title: "Organizational Volunteering",
@@ -216,7 +214,6 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                   orgName: "Atfal Misr Foundation",
                   wantOrgPhoto: true,
                   orgPhoto: AppAssets.atfalMisrLogo,
-                  applyButton: false,
                   timeAgo: "10h",
                   postImage: AppAssets.atfalMisrPostImage,
                   title: "Organizing Games",

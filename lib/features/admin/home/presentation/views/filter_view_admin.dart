@@ -4,16 +4,16 @@ import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/core/widgets/custom_text_field.dart';
 import 'package:mosahem/features/admin/home/presentation/views/admin_home_view.dart';
-import 'package:mosahem/features/admin/home/presentation/widgets/filter_category.dart';
+import 'package:mosahem/core/widgets/filter_category.dart';
 
-class FilterView extends StatefulWidget {
-  const FilterView({super.key});
+class FilterViewAdmin extends StatefulWidget {
+  const FilterViewAdmin({super.key});
 
   @override
-  State<FilterView> createState() => _FilterViewState();
+  State<FilterViewAdmin> createState() => _FilterViewAdminState();
 }
 
-class _FilterViewState extends State<FilterView> {
+class _FilterViewAdminState extends State<FilterViewAdmin> {
   bool isSearching = false;
   TextEditingController searchController = TextEditingController();
   List<String> selectedWorkType = [];
