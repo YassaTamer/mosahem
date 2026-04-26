@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/user_role.dart';
+import 'package:mosahem/features/admin/home/presentation/views/admin_home_view.dart';
 import 'package:mosahem/features/admin/profile/presentation/views/profile_view.dart';
 import 'package:mosahem/features/layout/logic/cubit/layout_cubit.dart';
 import 'package:mosahem/features/organization/createOpp/presentation/views/create_opp_view.dart';
@@ -101,11 +102,7 @@ class MainLayoutView extends StatelessWidget {
 
   List<Widget> _getScreens() {
     if (role == UserRole.admin) {
-      return const [
-        AdminProfileView(),
-        Center(child: Text("Admin Profile")),
-        Center(child: Text("Admin Home")),
-      ];
+      return const [AdminProfileView(), AdminHomeView()];
     } else if (role == UserRole.organization) {
       return const [
         HomeScreen(),
@@ -126,11 +123,11 @@ class MainLayoutView extends StatelessWidget {
   List<BottomNavigationBarItem> _getNavItems() {
     if (role == UserRole.admin) {
       return const [
-        BottomNavigationBarItem(icon: Icon(Icons.people), label: "Profile"),
         BottomNavigationBarItem(
-          icon: Icon(Icons.dashboard),
-          label: "Dashboard",
+          icon: Icon(Icons.account_circle),
+          label: "Profile",
         ),
+        BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: "Home"),
         BottomNavigationBarItem(icon: Icon(Icons.people), label: "Users"),
       ];
     } else if (role == UserRole.organization) {
@@ -140,8 +137,6 @@ class MainLayoutView extends StatelessWidget {
           label: "Profile",
         ),
         BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-
-      
       ];
     } else {
       return const [

@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
@@ -33,30 +34,45 @@ class CustomContainerRecentOrg extends StatelessWidget {
                   backgroundColor: AppColors.white,
                   radius: 34,
                   child: ClipOval(
-                    child: Image.asset(orgLogo, width: 100, height: 100),
+                    child: Image.asset(
+                      orgLogo,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-                SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomText(
-                      orgName,
-                      fontSize: 20,
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    CustomText(date, fontSize: 12),
-                  ],
+
+                const SizedBox(width: 10),
+
+                Expanded(
+                  // 🔥 مهم جدًا
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AutoSizeText(
+                        orgName,
+                        maxLines: 1,
+                        minFontSize: 12,
+                        maxFontSize: 18,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                        ),
+                      ),
+
+                      CustomText(date, fontSize: 12),
+                    ],
+                  ),
                 ),
-                Spacer(),
+
                 IconButton(
                   onPressed: () {},
                   icon: Image.asset(AppAssets.documentationIcon),
                 ),
               ],
             ),
-
             SizedBox(height: 12),
             Row(
               children: [

@@ -37,7 +37,24 @@ class CustomContainerRecentOpp extends StatelessWidget {
                   backgroundColor: AppColors.white,
                   radius: 34,
                   child: ClipOval(
-                    child: Image.asset(orgLogo, width: 100, height: 100),
+                    child: orgLogo.startsWith('http')
+                        ? Image.network(
+                            orgLogo,
+                            width: 60,
+                            height: 60,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Image.asset(
+                              AppAssets.orgLogo,
+                              width: 60,
+                              height: 60,
+                            ),
+                          )
+                        : Image.asset(
+                            orgLogo,
+                            width: 60,
+                            height: 60,
+                            fit: BoxFit.cover,
+                          ),
                   ),
                 ),
                 SizedBox(width: 10),
@@ -46,9 +63,8 @@ class CustomContainerRecentOpp extends StatelessWidget {
                   children: [
                     CustomText(
                       orgName,
-                      fontSize: 20,
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     CustomText(oppName, fontWeight: FontWeight.bold),
                     SizedBox(height: 5),

@@ -80,7 +80,7 @@ class _FilterViewAdminState extends State<FilterViewAdmin> {
                           ),
                         )
                       : Container(
-                          width: 300,
+                          width: 280,
                           height: 50,
                           decoration: BoxDecoration(
                             color: AppColors.primaryLightBlue,
@@ -98,7 +98,7 @@ class _FilterViewAdminState extends State<FilterViewAdmin> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 190),
+                              SizedBox(width: 170),
                               Image.asset(AppAssets.searchIcon),
                             ],
                           ),
@@ -106,21 +106,25 @@ class _FilterViewAdminState extends State<FilterViewAdmin> {
                 ),
 
                 SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => AdminHomeView()),
-                    );
-                  },
-                  child: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(16),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AdminHomeView(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Image.asset(AppAssets.filterIconWhite),
                     ),
-                    child: Image.asset(AppAssets.filterIconWhite),
                   ),
                 ),
               ],
