@@ -6,6 +6,7 @@ class OpportunityModel {
   final String endDate;
   final String? logoUrl;
   final String? status;
+  final String? opportunityPhotoUrl;
 
   OpportunityModel({
     required this.id,
@@ -15,6 +16,7 @@ class OpportunityModel {
     required this.endDate,
     this.logoUrl,
     this.status,
+    this.opportunityPhotoUrl,
   });
 
   factory OpportunityModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,7 @@ class OpportunityModel {
       endDate: json['EndDate'] ?? '',
       logoUrl: json['OrganizationLogoUrl'],
       status: json['VerificationStatus'],
+      opportunityPhotoUrl: json['OpportunityPhotoUrl'],
     );
   }
 }

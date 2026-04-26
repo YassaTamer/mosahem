@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
-import 'package:mosahem/features/organization/org_profile/presentation/views/about_Screen.dart';
+import 'package:mosahem/features/organization/org_profile/presentation/views/about_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
+ // final OrgProfileModel data;
+
   const SettingsScreen({super.key});
 
   @override

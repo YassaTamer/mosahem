@@ -62,7 +62,7 @@ class FollowersScreen extends StatelessWidget {
             imageUrl:
                 "https://images.pexels.com/photos/36444645/pexels-photo-36444645.jpeg",
             onDelete: () {
-              print("Delete follower $index");
+           //   print("Delete follower $index");
             },
           );
         },

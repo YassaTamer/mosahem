@@ -9,12 +9,15 @@ class ProfileHeader extends StatelessWidget {
   final String nameOrg;
   final String bio;
   final String location;
+  final String? logoUrl;
+  // final OrgProfileModel data;
 
   const ProfileHeader({
     super.key,
     required this.nameOrg,
     required this.bio,
     required this.location,
+    this.logoUrl,
   });
 
   @override
@@ -27,11 +30,17 @@ class ProfileHeader extends StatelessWidget {
           CircleAvatar(
             backgroundColor: Colors.white,
             radius: 38,
-            backgroundImage: NetworkImage(
-              'https://images.pexels.com/photos/13013204/pexels-photo-13013204.jpeg',
-            ),
+            child: logoUrl != null && logoUrl!.isNotEmpty
+                ? ClipOval(
+                    child: Image.network(
+                      logoUrl!,
+                      width: 76,
+                      height: 76,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                : SvgPicture.asset(AppAssets.splashLogo, width: 50),
           ),
-
           SizedBox(width: 12),
 
           Expanded(
