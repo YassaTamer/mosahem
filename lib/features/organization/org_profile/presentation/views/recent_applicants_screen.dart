@@ -57,7 +57,7 @@ class RecentApplicantsScreen extends StatelessWidget {
            //   print("Rejected user $index");
             },
             onAccept: () {
-              print("Accepted user $index");
+            //  print("Accepted user $index");
             },
           );
         },

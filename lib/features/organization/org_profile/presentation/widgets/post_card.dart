@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/core/helpers/date_helper.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/likes_bottom_sheet.dart';
 import 'share_bottom_sheet.dart';
 import 'comments_bottom_sheet.dart';
@@ -21,6 +22,7 @@ class PostCard extends StatelessWidget {
   final String workType;
   final String timeType;
   final String status;
+  final String? orgLogo;
 
   const PostCard({
     super.key,
@@ -37,6 +39,7 @@ class PostCard extends StatelessWidget {
     this.workType = "On-Site",
     this.timeType = "Part Time",
     this.status = "Open",
+    this.orgLogo,
   });
 
   @override
@@ -53,7 +56,14 @@ class PostCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const CircleAvatar(radius: 16, backgroundColor: Colors.grey),
+              CircleAvatar(
+                radius: 16,
+                backgroundColor: Colors.grey.shade200,
+                backgroundImage:
+                    (orgLogo != null && orgLogo!.startsWith('http'))
+                    ? NetworkImage(orgLogo!)
+                    : const AssetImage(AppAssets.postImage) as ImageProvider,
+              ),
               const SizedBox(width: 8),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,7 +79,7 @@ class PostCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        timeAgo,
+                        DateHelper.format(timeAgo),
                         style: const TextStyle(
                           fontSize: 11,
                           color: Colors.blueGrey,
@@ -107,12 +117,27 @@ class PostCard extends StatelessWidget {
 
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.asset(
-              postImage,
-              height: 170,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
+            // child: Image.asset(
+            //   postImage,
+            //   height: 170,
+            //   width: double.infinity,
+            //   fit: BoxFit.cover,
+            // ),
+            child: postImage.startsWith('http')
+                ? Image.network(
+                    postImage,
+                    height: 170,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) =>
+                        Image.asset(AppAssets.postImage),
+                  )
+                : Image.asset(
+                    postImage,
+                    height: 170,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
           ),
 
           const SizedBox(height: 12),
@@ -145,7 +170,7 @@ class PostCard extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          "Time: $time",
+                          "Time: ${DateHelper.format(time)}",
                           style: const TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
@@ -167,7 +192,12 @@ class PostCard extends StatelessWidget {
               const SizedBox(width: 8),
 
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.only(
+                  right: 32,
+                  left: 32,
+                  top: 8,
+                  bottom: 8,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF4F7F8),
                   borderRadius: BorderRadius.circular(12),
@@ -183,11 +213,15 @@ class PostCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     _buildSmallInfo(
                       Icons.calendar_today_rounded,
-                      date,
+                      DateHelper.format(date),
                       Colors.green,
                     ),
                     const SizedBox(height: 6),
-                    _buildSmallInfo(Icons.access_time, time, Colors.redAccent),
+                    _buildSmallInfo(
+                      Icons.access_time,
+                      DateHelper.format(time),
+                      Colors.redAccent,
+                    ),
                     const SizedBox(height: 10),
 
                     SizedBox(

@@ -23,13 +23,16 @@ class PrivateOrgProfileScreen extends StatefulWidget {
   const PrivateOrgProfileScreen({super.key, required this.data});
 
   @override
-  State<PrivateOrgProfileScreen> createState() => _PrivateOrgProfileScreenState();
+  State<PrivateOrgProfileScreen> createState() =>
+      _PrivateOrgProfileScreenState();
 }
 
 class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
   @override
   void initState() {
     super.initState();
+    // print(widget.data.organizationId);
+    // print(context.read<OrgProfileCubit>().opportunities);
     context.read<OrgProfileCubit>().getOpportunities(
       organizationId: widget.data.organizationId,
     );
@@ -88,7 +91,8 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
     }
 
     if (items.isEmpty) {
-      return const SizedBox.shrink();
+      // return const SizedBox.shrink();
+      return const Center(child: Text("No Opportunities Yet"));
     }
 
     final locationText = widget.data.locations.isNotEmpty
@@ -97,13 +101,19 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
 
     return Column(
       children: items.map((OpportunityModel opportunity) {
+        // print(opportunity.logoUrl);
+        // print(opportunity.opportunityPhotoUrl);
         return PostCard(
+          orgLogo: widget.data.organizationLogo,
           orgName: _safeValue(
             opportunity.organizationName,
             widget.data.organizationName,
           ),
           timeAgo: _safeValue(opportunity.startDate, '-'),
-          postImage: AppAssets.postImage,
+          postImage: _safeValue(
+            opportunity.opportunityPhotoUrl,
+            AppAssets.postImage,
+          ),
           title: _safeValue(opportunity.name, 'Opportunity'),
           description: _safeValue(widget.data.organizationDescription, '-'),
           location: locationText,

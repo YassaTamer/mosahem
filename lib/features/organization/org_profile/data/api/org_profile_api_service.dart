@@ -11,7 +11,7 @@ class OrgProfileApiService {
     required String organizationId,
     required String status,
     int page = 1,
-    int pageSize = 4,
+    int pageSize = 6,
   }) async {
     final response = await DioHelper.instance.client.get(
       '/api/v1/organizations/$organizationId/opportunities/by-status',
