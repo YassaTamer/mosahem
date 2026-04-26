@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/views/edit_location_screen.dart';
-import 'package:mosahem/features/volunteer/volunteer_profile/presentation/views/edit_location_screen_vol.dart';
 
 class ProfileEditScreen extends StatefulWidget {
   const ProfileEditScreen({super.key});

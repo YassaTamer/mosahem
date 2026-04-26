@@ -5,8 +5,10 @@ import 'package:mosahem/features/admin/home/presentation/views/admin_home_view.d
 import 'package:mosahem/features/admin/profile/presentation/views/profile_view.dart';
 import 'package:mosahem/features/layout/logic/cubit/layout_cubit.dart';
 import 'package:mosahem/features/organization/createOpp/presentation/views/create_opp_view.dart';
+import 'package:mosahem/features/organization/home/presentation/views/org_home_view.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/views/home_screen.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/views/org_profile_screen.dart';
+import 'package:mosahem/features/volunteer/home/presentation/views/volunteer_home_view.dart';
 
 class MainLayoutView extends StatelessWidget {
   final UserRole role;
@@ -106,7 +108,8 @@ class MainLayoutView extends StatelessWidget {
     } else if (role == UserRole.organization) {
       return const [
         HomeScreen(),
-        OrgProfileScreen(),
+        OrgHomeView(),
+        //  OrgProfileScreen(), => puplic
         //  PrivateOrgProfileScreen(data: '',),
         //  Center(child: Text("Organization Chat")),
         // Center(child: Text("Organization Notifications")),
@@ -114,7 +117,8 @@ class MainLayoutView extends StatelessWidget {
       ];
     } else {
       return const [
-        Center(child: Text("Volunteer Home")),
+        VolunteerHomeView(),
+        //Center(child: Text("Volunteer Home")),
         Center(child: Text("Volunteer Activities")),
       ];
     }
