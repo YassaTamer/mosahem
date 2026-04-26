@@ -24,6 +24,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<OrgProfileCubit, OrgProfileState>(
+      buildWhen: (previous, current) {
+        return current is OrgProfileInitial ||
+            current is OrgProfileLoading ||
+            current is OrgProfileApproved ||
+            current is OrgProfilePending ||
+            current is OrgProfileRejected ||
+            current is OrgProfileError;
+      },
       builder: (context, state) {
         final data = state is OrgProfileApproved ? state.data : null;
 
@@ -63,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   if (data != null)
                     ProfileHeader(
-                   //   data: data,
+                      //   data: data,
                       nameOrg: data.organizationName,
                       bio: data.organizationDescription,
                       location: data.locations.isNotEmpty
@@ -93,3 +101,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+// الاسكرين اللي هتظهر لو ريجيكتد

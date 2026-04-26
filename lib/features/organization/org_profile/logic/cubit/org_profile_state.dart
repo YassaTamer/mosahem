@@ -7,7 +7,7 @@ class OrgProfileInitial extends OrgProfileState {}
 class OrgProfileLoading extends OrgProfileState {}
 
 class OrgProfileApproved extends OrgProfileState {
-final OrgProfileModel data;
+  final OrgProfileModel data;
   OrgProfileApproved(this.data);
 }
 
@@ -23,4 +23,14 @@ class OrgProfileError extends OrgProfileState {
   final String message;
 
   OrgProfileError(this.message);
+}
+
+class OrgOpportunitiesLoading extends OrgProfileState {}
+
+class OrgOpportunitiesSuccess extends OrgProfileState {}
+
+class OrgOpportunitiesError extends OrgProfileState {
+  final String message;
+
+  OrgOpportunitiesError(this.message);
 }

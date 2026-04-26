@@ -141,14 +141,7 @@ class MainLayoutView extends StatelessWidget {
         ),
         BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
 
-        // BottomNavigationBarItem(
-        //   icon: Icon(Icons.chat_bubble_outline),
-        //   label: "Chat",
-        // ),
-        // BottomNavigationBarItem(
-        //   icon: Icon(Icons.notifications_none),
-        //   label: "Notifications",
-        // ),
+      
       ];
     } else {
       return const [

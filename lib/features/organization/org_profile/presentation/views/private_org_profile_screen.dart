@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/features/admin/profile/data/models/opportunity_model.dart';
 import 'package:mosahem/features/organization/org_profile/data/models/org_profile_model.dart';
+import 'package:mosahem/features/organization/org_profile/logic/cubit/org_profile_cubit.dart';
+import 'package:mosahem/features/organization/org_profile/logic/cubit/org_profile_state.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/views/followers_screen.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/views/opportunities_screen.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/views/rating_screen.dart';
@@ -9,7 +13,7 @@ import 'package:mosahem/features/organization/org_profile/presentation/views/rec
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/post_card.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/profile_header.dart';
 
-class PrivateOrgProfileScreen extends StatelessWidget {
+class PrivateOrgProfileScreen extends StatefulWidget {
   final int? opportunities = 0;
   final int? followers = 0;
   final int? volunteer = 0;
@@ -17,6 +21,20 @@ class PrivateOrgProfileScreen extends StatelessWidget {
   final OrgProfileModel data;
 
   const PrivateOrgProfileScreen({super.key, required this.data});
+
+  @override
+  State<PrivateOrgProfileScreen> createState() => _PrivateOrgProfileScreenState();
+}
+
+class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<OrgProfileCubit>().getOpportunities(
+      organizationId: widget.data.organizationId,
+    );
+  }
+
   Widget statItem(String number, String title) {
     return Column(
       children: [
@@ -40,6 +58,65 @@ class PrivateOrgProfileScreen extends StatelessWidget {
     );
   }
 
+  String _safeValue(String? value, String fallback) {
+    if (value == null || value.trim().isEmpty) {
+      return fallback;
+    }
+    return value;
+  }
+
+  String _statusValue(String? status) {
+    final normalized = (status ?? '').trim().toLowerCase();
+    if (normalized == 'active') {
+      return 'Open';
+    }
+    if (normalized.isEmpty) {
+      return 'Open';
+    }
+    return status!.trim();
+  }
+
+  Widget _buildOpportunitiesSection(OrgProfileState state) {
+    final cubit = context.read<OrgProfileCubit>();
+    final items = cubit.opportunities;
+
+    if (state is OrgOpportunitiesLoading && items.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 24),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (items.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final locationText = widget.data.locations.isNotEmpty
+        ? _safeValue(widget.data.locations.first.cityName, 'No Location')
+        : 'No Location';
+
+    return Column(
+      children: items.map((OpportunityModel opportunity) {
+        return PostCard(
+          orgName: _safeValue(
+            opportunity.organizationName,
+            widget.data.organizationName,
+          ),
+          timeAgo: _safeValue(opportunity.startDate, '-'),
+          postImage: AppAssets.postImage,
+          title: _safeValue(opportunity.name, 'Opportunity'),
+          description: _safeValue(widget.data.organizationDescription, '-'),
+          location: locationText,
+          date: _safeValue(opportunity.startDate, '-'),
+          time: _safeValue(opportunity.endDate, '-'),
+          comments: '0',
+          likes: '0',
+          status: _statusValue(opportunity.status),
+        );
+      }).toList(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,143 +124,151 @@ class PrivateOrgProfileScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ProfileHeader(
-                  nameOrg: data.organizationName,
-                  bio: data.organizationDescription,
-                  location: data.locations.isNotEmpty
-                      ? data.locations.first.cityName
-                      : 'No Location',
-                ),
-                IntrinsicHeight(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => OpportunitiesScreen(),
-                            ),
-                          );
-                        },
-                        child: statItem(
-                          opportunities.toString(),
-                          "Opportunities",
-                        ),
-                      ),
-                      VerticalDivider(
-                        color: AppColors.greyLight,
-                        thickness: 1,
-                        width: 40,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FollowersScreen(),
-                            ),
-                          );
-                        },
-                        child: statItem(followers.toString(), "Followers"),
-                      ),
+          child: BlocBuilder<OrgProfileCubit, OrgProfileState>(
+            builder: (context, state) {
+              final opportunitiesCount = context
+                  .read<OrgProfileCubit>()
+                  .opportunities
+                  .length
+                  .toString();
 
-                      VerticalDivider(
-                        color: AppColors.greyLight,
-                        thickness: 1,
-                        width: 40,
-                      ),
-                      statItem(volunteer.toString(), "Volunteer"),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => RatingScreen(),
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            fixedSize: const Size(150, 40),
-                            backgroundColor: AppColors.greyLight,
-                            foregroundColor: Colors.black,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
+                    ProfileHeader(
+                      logoUrl: widget.data.organizationLogo,
+                      nameOrg: widget.data.organizationName,
+                      bio: widget.data.organizationDescription,
+                      location: widget.data.locations.isNotEmpty
+                          ? widget.data.locations.first.cityName
+                          : 'No Location',
+                    ),
+                    IntrinsicHeight(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => OpportunitiesScreen(),
+                                ),
+                              );
+                            },
+                            child: statItem(
+                              opportunitiesCount,
+                              "Opportunities",
                             ),
                           ),
-                          child: Text(
-                            'Rating Voulanteer',
-                            style: const TextStyle(fontSize: 12),
+                          VerticalDivider(
+                            color: AppColors.greyLight,
+                            thickness: 1,
+                            width: 40,
                           ),
-                        ),
-                        _buildBadge("750"),
-                      ],
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FollowersScreen(),
+                                ),
+                              );
+                            },
+                            child: statItem(
+                              widget.followers.toString(),
+                              "Followers",
+                            ),
+                          ),
+
+                          VerticalDivider(
+                            color: AppColors.greyLight,
+                            thickness: 1,
+                            width: 40,
+                          ),
+                          statItem(widget.volunteer.toString(), "Volunteer"),
+                        ],
+                      ),
                     ),
 
-                    const SizedBox(width: 25),
-                    Stack(
-                      clipBehavior: Clip.none,
+                    const SizedBox(height: 16),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => RecentApplicantsScreen(),
+                        Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => RatingScreen(),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                fixedSize: const Size(150, 40),
+                                backgroundColor: AppColors.greyLight,
+                                foregroundColor: Colors.black,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
                               ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            fixedSize: const Size(150, 40),
-                            backgroundColor: AppColors.greyLight,
-                            foregroundColor: Colors.black,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
+                              child: Text(
+                                'Rating Voulanteer',
+                                style: const TextStyle(fontSize: 12),
+                              ),
                             ),
-                          ),
-                          child: Text(
-                            'Recent Applicdent',
-                            style: const TextStyle(fontSize: 12),
-                          ),
+                            _buildBadge("750"),
+                          ],
                         ),
-                        _buildBadge("12"),
+
+                        const SizedBox(width: 25),
+                        Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        RecentApplicantsScreen(),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                fixedSize: const Size(150, 40),
+                                backgroundColor: AppColors.greyLight,
+                                foregroundColor: Colors.black,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                              child: Text(
+                                'Recent Applicdent',
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                            _buildBadge("12"),
+                          ],
+                        ),
                       ],
                     ),
+                    Divider(
+                      color: AppColors.greyLight,
+                      thickness: 1,
+                      height: 50,
+                    ),
+
+                    _buildOpportunitiesSection(state),
                   ],
                 ),
-                Divider(color: AppColors.greyLight, thickness: 1, height: 50),
-
-                PostCard(
-                  orgName: 'mario',
-                  timeAgo: '10/10/1000',
-                  postImage: AppAssets.postImage,
-                  title: 'kajhfkajhfasf',
-                  description: 'asfdasfasf',
-                  location: 'sohag',
-                  date: '10',
-                  time: '10',
-                  comments: '3',
-                  likes: '0',
-                ),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
