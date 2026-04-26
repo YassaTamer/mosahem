@@ -37,12 +37,18 @@ class _VolunteerHomeViewState extends State<VolunteerHomeView> {
                 backgroundColor: AppColors.white,
                 radius: 38,
                 child: ClipOval(
-                  child: Image.asset(
-                    AppAssets.girlProfilePhoto,
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.fill,
+                  child: CircleAvatar(
+                    radius: 38,
+                    backgroundImage: NetworkImage(
+                      'https://images.pexels.com/photos/29885765/pexels-photo-29885765.jpeg',
+                    ),
                   ),
+                  // child: Image.asset(
+                  //   AppAssets.girlProfilePhoto,
+                  //   width: 100,
+                  //   height: 100,
+                  //   fit: BoxFit.fill,
+                  // ),
                 ),
               ),
             ),
@@ -50,7 +56,7 @@ class _VolunteerHomeViewState extends State<VolunteerHomeView> {
             SizedBox(width: 10),
 
             CustomText(
-              "Hi, ${widget.adminUserName}...",
+              "Hi,Mario Nabil ...",
               color: AppColors.primary,
               fontWeight: FontWeight.bold,
               fontSize: 25,
@@ -74,7 +80,7 @@ class _VolunteerHomeViewState extends State<VolunteerHomeView> {
                   },
                   child: isSearching
                       ? Container(
-                          width: 300,
+                          width: 280,
                           height: 50,
                           decoration: BoxDecoration(
                             color: AppColors.primaryLightBlue,
@@ -110,7 +116,7 @@ class _VolunteerHomeViewState extends State<VolunteerHomeView> {
                           ),
                         )
                       : Container(
-                          width: 300,
+                          width: 280,
                           height: 50,
                           decoration: BoxDecoration(
                             color: AppColors.primaryLightBlue,
@@ -128,7 +134,7 @@ class _VolunteerHomeViewState extends State<VolunteerHomeView> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 190),
+                              SizedBox(width: 170),
                               Image.asset(AppAssets.searchIcon),
                             ],
                           ),

@@ -44,7 +44,7 @@ class _FilterViewVolunteerState extends State<FilterViewVolunteer> {
                   },
                   child: isSearching
                       ? Container(
-                          width: 300,
+                          width: 280,
                           height: 50,
                           decoration: BoxDecoration(
                             color: AppColors.primaryLightBlue,
@@ -80,7 +80,7 @@ class _FilterViewVolunteerState extends State<FilterViewVolunteer> {
                           ),
                         )
                       : Container(
-                          width: 300,
+                          width: 280,
                           height: 50,
                           decoration: BoxDecoration(
                             color: AppColors.primaryLightBlue,
@@ -98,7 +98,7 @@ class _FilterViewVolunteerState extends State<FilterViewVolunteer> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 190),
+                              SizedBox(width: 170),
                               Image.asset(AppAssets.searchIcon),
                             ],
                           ),
