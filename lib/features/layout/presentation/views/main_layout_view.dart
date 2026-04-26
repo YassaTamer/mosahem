@@ -9,6 +9,7 @@ import 'package:mosahem/features/organization/home/presentation/views/org_home_v
 import 'package:mosahem/features/organization/org_profile/presentation/views/home_screen.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/views/org_profile_screen.dart';
 import 'package:mosahem/features/volunteer/home/presentation/views/volunteer_home_view.dart';
+import 'package:mosahem/features/volunteer/volunteer_profile/presentation/views/profile_screen.dart';
 
 class MainLayoutView extends StatelessWidget {
   final UserRole role;
@@ -117,9 +118,10 @@ class MainLayoutView extends StatelessWidget {
       ];
     } else {
       return const [
+        ProfileScreen(),
         VolunteerHomeView(),
         //Center(child: Text("Volunteer Home")),
-        Center(child: Text("Volunteer Activities")),
+        // Center(child: Text("Volunteer Activities")),
       ];
     }
   }
@@ -132,7 +134,7 @@ class MainLayoutView extends StatelessWidget {
           label: "Profile",
         ),
         BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: "Home"),
-        BottomNavigationBarItem(icon: Icon(Icons.people), label: "Users"),
+        //  BottomNavigationBarItem(icon: Icon(Icons.people), label: "Users"),
       ];
     } else if (role == UserRole.organization) {
       return const [
@@ -144,11 +146,11 @@ class MainLayoutView extends StatelessWidget {
       ];
     } else {
       return const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
         BottomNavigationBarItem(
-          icon: Icon(Icons.volunteer_activism),
-          label: "Activities",
+          icon: Icon(Icons.account_circle),
+          label: "Profile",
         ),
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
       ];
     }
   }
