@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
-<<<<<<< HEAD
-
-=======
->>>>>>> e889af1e5769ccba52d2e08b739b9cb5b9a3d5e6
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/about_description.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/location_section_about.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/post_card.dart';

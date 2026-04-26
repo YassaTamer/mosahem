@@ -103,7 +103,10 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
       children: items.map((OpportunityModel opportunity) {
         // print(opportunity.logoUrl);
         // print(opportunity.opportunityPhotoUrl);
+        // print(widget.data.organizationLogo);
         return PostCard(
+          wantOrgPhoto: true, // 🔥 أهم سطر
+
           orgLogo: widget.data.organizationLogo,
           orgName: _safeValue(
             opportunity.organizationName,

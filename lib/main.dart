@@ -95,7 +95,7 @@ class MyApp extends StatelessWidget {
           },
           child: const MaterialApp(
             debugShowCheckedModeBanner: false,
-            home: ProfileScreen(),
+            home: SplashView(),
           ),
         ),
       ),
