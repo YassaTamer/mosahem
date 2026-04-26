@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
-import 'package:mosahem/features/organization/org_profile/presentation/views/about_Screen.dart';
-import 'package:mosahem/features/organization/org_profile/presentation/views/edit_profile_screen.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/about_description.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/location_section_about.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/post_card.dart';

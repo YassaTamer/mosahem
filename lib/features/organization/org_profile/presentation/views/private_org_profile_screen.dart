@@ -5,10 +5,8 @@ import 'package:mosahem/features/organization/org_profile/presentation/views/fol
 import 'package:mosahem/features/organization/org_profile/presentation/views/opportunities_screen.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/views/rating_screen.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/views/recent_applicants_screen.dart';
-import 'package:mosahem/features/organization/org_profile/presentation/widgets/opportunities_header.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/post_card.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/profile_header.dart';
-import 'package:mosahem/features/organization/org_profile/presentation/widgets/profile_org_header.dart';
 
 class PrivateOrgProfileScreen extends StatelessWidget {
   final int? opportunities = 0;

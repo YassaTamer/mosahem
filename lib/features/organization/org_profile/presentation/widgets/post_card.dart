@@ -8,6 +8,7 @@ import 'comments_bottom_sheet.dart';
 
 class PostCard extends StatelessWidget {
   final String orgName;
+  final String orgPhoto;
   final String timeAgo;
   final String postImage;
   final String title;
@@ -18,6 +19,9 @@ class PostCard extends StatelessWidget {
   final String comments;
   final String likes;
 
+  final bool wantOrgPhoto;
+  final bool applyButton;
+
   final String workType;
   final String timeType;
   final String status;
@@ -25,6 +29,10 @@ class PostCard extends StatelessWidget {
   const PostCard({
     super.key,
     required this.orgName,
+
+    this.wantOrgPhoto = false,
+    this.applyButton = true,
+
     required this.timeAgo,
     required this.postImage,
     required this.title,
@@ -34,6 +42,7 @@ class PostCard extends StatelessWidget {
     required this.time,
     required this.comments,
     required this.likes,
+    this.orgPhoto = "",
     this.workType = "On-Site",
     this.timeType = "Part Time",
     this.status = "Open",
@@ -53,7 +62,25 @@ class PostCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const CircleAvatar(radius: 16, backgroundColor: Colors.grey),
+              wantOrgPhoto && orgPhoto.isNotEmpty
+                  ? Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppColors.mustardYellow,
+                          width: 2,
+                        ),
+                      ),
+                      child: CircleAvatar(
+                        radius: 16,
+                        backgroundColor: Colors.transparent,
+                        backgroundImage: AssetImage(orgPhoto),
+                      ),
+                    )
+                  : const CircleAvatar(
+                      radius: 16,
+                      backgroundColor: Colors.grey,
+                    ),
               const SizedBox(width: 8),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,35 +217,39 @@ class PostCard extends StatelessWidget {
                     _buildSmallInfo(Icons.access_time, time, Colors.redAccent),
                     const SizedBox(height: 10),
 
-                    SizedBox(
-                      height: 30,
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1B5E78),
-                          shape: const StadiumBorder(),
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          elevation: 0,
-                        ),
-                        child: const Row(
-                          children: [
-                            Text(
-                              "Apply",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
+                    applyButton
+                        ? SizedBox(
+                            height: 30,
+                            child: ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF1B5E78),
+                                shape: const StadiumBorder(),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                elevation: 0,
+                              ),
+                              child: const Row(
+                                children: [
+                                  Text(
+                                    "Apply",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                  SizedBox(width: 4),
+                                  Icon(
+                                    Icons.arrow_outward,
+                                    size: 12,
+                                    color: Colors.yellow,
+                                  ),
+                                ],
                               ),
                             ),
-                            SizedBox(width: 4),
-                            Icon(
-                              Icons.arrow_outward,
-                              size: 12,
-                              color: Colors.yellow,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                          )
+                        : const SizedBox(),
                   ],
                 ),
               ),
