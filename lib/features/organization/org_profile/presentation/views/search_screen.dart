@@ -44,11 +44,11 @@ class SearchScreen extends StatelessWidget {
               child: ListView.builder(
                 itemCount: 5,
                 itemBuilder: (context, index) {
-                  return SearchTile(
+                  return SearchTile(   
                     name: "Wade Warren",
                     imageUrl: "https://via.placeholder.com/150",
                     onDelete: () {
-                      print("Remove from search history");
+                  //    print("Remove from search history");
                     },
                   );
                 },

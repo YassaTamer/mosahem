@@ -15,12 +15,12 @@ class _OpportunitiesScreenState extends State<OpportunitiesScreen>
   late TabController _tabController;
 
   // الألوان اللي طلبتها بالظبط من الفيجما
-  final List<Color> _tabColors = [
-    const Color(0xFF4CAF50), // Active
-    const Color(0xFF1B5E78), // History
-    const Color(0xFFFFA000), // Pending
-    const Color(0xFFF44336), // Rejected
-  ];
+  // final List<Color> _tabColors = [
+  //   const Color(0xFF4CAF50), // Active
+  //   const Color(0xFF1B5E78), // History
+  //   const Color(0xFFFFA000), // Pending
+  //   const Color(0xFFF44336), // Rejected
+  // ];
 
   @override
   void initState() {
@@ -77,13 +77,13 @@ class _OpportunitiesScreenState extends State<OpportunitiesScreen>
     );
   }
 
-  Widget _buildList(String status) {
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      itemCount: 5,
-      itemBuilder: (context, index) {
-        return Center(child: Text("List for $status Content"));
-      },
-    );
-  }
+  // Widget _buildList(String status) {
+  //   return ListView.builder(
+  //     padding: const EdgeInsets.symmetric(vertical: 10),
+  //     itemCount: 5,
+  //     itemBuilder: (context, index) {
+  //       return Center(child: Text("List for $status Content"));
+  //     },
+  //   );
+  // }
 }

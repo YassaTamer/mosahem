@@ -464,7 +464,7 @@ class _AddBranchLocationViewState extends State<AddNewLocationScreen> {
         padding: EdgeInsets.all(20),
         child: SaveButton(
           onTap: () {
-            print("Sending data to API...");
+          //  print("Sending data to API...");
           },
           bottomText: 'Continue',
         ),

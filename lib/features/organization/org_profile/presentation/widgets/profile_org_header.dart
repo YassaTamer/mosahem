@@ -106,22 +106,22 @@ class ProfileOrgHeader extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              Expanded(
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppColors.primary),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 5),
-                  ),
-                  onPressed: () {},
-                  child: const Text(
-                    "Message",
-                    style: TextStyle(color: AppColors.primary),
-                  ),
-                ),
-              ),
+              // Expanded(
+              //   child: OutlinedButton(
+              //     style: OutlinedButton.styleFrom(
+              //       side: const BorderSide(color: AppColors.primary),
+              //       shape: RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(10),
+              //       ),
+              //       padding: const EdgeInsets.symmetric(vertical: 5),
+              //     ),
+              //     onPressed: () {},
+              //     child: const Text(
+              //       "Message",
+              //       style: TextStyle(color: AppColors.primary),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
 

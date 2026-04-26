@@ -19,6 +19,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/features/auth/data/api/auth_api_service.dart';
 import 'package:mosahem/features/auth/data/repository/auth_repository.dart';
 import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
+import 'package:mosahem/features/organization/home/presentation/views/org_home_view.dart';
+import 'package:mosahem/features/organization/org_profile/data/api/org_profile_api_service.dart';
+import 'package:mosahem/features/organization/org_profile/data/repository/org_profile_repository.dart';
+import 'package:mosahem/features/organization/org_profile/logic/cubit/org_profile_cubit.dart';
 import 'package:mosahem/features/splash/presentation/views/splash_view.dart';
 import 'package:mosahem/features/volunteer/volunteer_profile/presentation/views/profile_screen.dart';
 
@@ -35,6 +39,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
+        RepositoryProvider(
+          create: (_) => OrgProfileRepository(OrgProfileApiService()),
+        ),
         RepositoryProvider(
           create: (_) => VolunteersRepository(VolunteersApiService(dio)),
         ),
@@ -57,6 +64,10 @@ class MyApp extends StatelessWidget {
       ],
       child: MultiBlocProvider(
         providers: [
+          BlocProvider(
+            create: (context) =>
+                OrgProfileCubit(context.read<OrgProfileRepository>()),
+          ),
           BlocProvider(
             create: (context) =>
                 VolunteerCubit(context.read<VolunteersRepository>()),

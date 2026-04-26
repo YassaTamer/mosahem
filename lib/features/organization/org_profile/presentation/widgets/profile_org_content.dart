@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
+<<<<<<< HEAD
 
+=======
+>>>>>>> e889af1e5769ccba52d2e08b739b9cb5b9a3d5e6
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/about_description.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/location_section_about.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/post_card.dart';
@@ -117,28 +120,28 @@ class ProfileOrgContent extends StatelessWidget {
                 /// ABOUT
                 const Center(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(8),
+                    padding:  EdgeInsets.all(8),
                     child: Column(
                       children: [
-                        const AboutDescriptionSection(
+                         AboutDescriptionSection(
                           description: "Mosahem is a volunteering platform...",
                           vision: "We believe that everyone has the ability...",
                         ),
-                        const Divider(height: 40),
+                         Divider(height: 40),
                         LocationsSection(
                           showAddIcon: false,
                           showDeleteIcon: false,
                           showEditIcon: false,
                         ),
 
-                        const Divider(height: 40),
+                         Divider(height: 40),
 
-                        const TracksSection(
+                         TracksSection(
                           showAddIcon: false,
                           showRemoveIcon: false,
                         ),
 
-                        const SizedBox(height: 40),
+                         SizedBox(height: 40),
                       ],
                     ),
                   ),
