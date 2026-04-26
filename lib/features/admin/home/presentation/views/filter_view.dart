@@ -267,7 +267,6 @@ class _FilterViewState extends State<FilterView> {
                     "Luxor",
                     "North Sinai",
                     "Aswan",
-                    "Ismailia",
                     "Port Said",
                     "Damietta",
                     "Sharqia",

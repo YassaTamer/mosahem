@@ -6,7 +6,7 @@ import 'package:mosahem/features/admin/home/presentation/views/filter_view.dart'
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/post_card.dart';
 
 class AdminHomeView extends StatefulWidget {
-  const AdminHomeView({super.key, this.adminUserName = "Mosahem"});
+  const AdminHomeView({super.key, this.adminUserName = "Betty"});
   final String adminUserName;
 
   @override
@@ -161,7 +161,10 @@ class _AdminHomeViewState extends State<AdminHomeView> {
               children: [
                 PostCard(
                   orgName: "Zad Solutions",
-                  timeAgo: "31/1/2026",
+                  wantOrgPhoto: true,
+                  orgPhoto: AppAssets.orgLogo,
+                  applyButton: false,
+                  timeAgo: "2h",
                   postImage: AppAssets.postImage,
                   title: "Green Future",
                   description:
@@ -174,17 +177,54 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                 ),
                 SizedBox(height: 15),
                 PostCard(
-                  orgName: "Zad Solutions",
-                  timeAgo: "31/1/2026",
-                  postImage: AppAssets.postImage,
-                  title: "Green Future",
+                  orgName: "Masr EL-kheir Foundation",
+                  wantOrgPhoto: true,
+                  orgPhoto: AppAssets.misrElKheirLogo,
+                  applyButton: false,
+                  timeAgo: "3h",
+                  postImage: AppAssets.misrElKheirPostImage,
+                  title: "Helping Hands",
                   description:
-                      "A humanitarian opportunity focused on visiting needy families, offering support, care, and basic assistance to bring hope and kindness to those in need",
-                  location: "Cairo, Nasser City",
-                  date: "10/12/2025",
-                  time: "10:00 pm",
-                  comments: "2.5K",
+                      "A short opportunity about sustainable agriculture.",
+                  location: "Al-Mansora",
+                  date: "20/3/2026",
+                  time: "4:00 pm",
+                  comments: "1.2K",
+                  likes: "3K",
+                ),
+                SizedBox(height: 15),
+                PostCard(
+                  orgName: "Icpc Sohag",
+                  wantOrgPhoto: true,
+                  orgPhoto: AppAssets.icpcLogo,
+                  applyButton: false,
+                  timeAgo: "1h",
+                  postImage: AppAssets.icpcPostImage,
+                  title: "Organizational Volunteering",
+                  description:
+                      "Short-term volunteer opportunity to help organize an event for the ICPC",
+                  location: "Sohag, Creativa buliding",
+                  date: "15/4/2026",
+                  time: "8:00 am",
+                  comments: "5.5K",
                   likes: "5K",
+                ),
+                SizedBox(height: 15),
+                PostCard(
+                  orgName: "Atfal Misr Foundation",
+                  wantOrgPhoto: true,
+                  orgPhoto: AppAssets.atfalMisrLogo,
+                  applyButton: false,
+                  timeAgo: "10h",
+                  postImage: AppAssets.atfalMisrPostImage,
+                  title: "Organizing Games",
+                  description:
+                      "Short-term volunteer opportunity to organize children's games",
+                  location: "Cairo, Helioples",
+                  date: "2/2/2026",
+                  time: "12:00 pm",
+                  comments: "4.2K",
+                  likes: "2K",
                 ),
               ],
             ),
