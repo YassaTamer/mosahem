@@ -45,7 +45,24 @@ class _AcceptedOppViewState extends State<AcceptedOppView> {
                   backgroundColor: AppColors.white,
                   radius: 34,
                   child: ClipOval(
-                    child: Image.asset(widget.orgLogo, width: 100, height: 100),
+                    child: widget.orgLogo.startsWith('http')
+                        ? Image.network(
+                            widget.orgLogo,
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Image.asset(
+                              AppAssets.orgLogo,
+                              width: 100,
+                              height: 100,
+                            ),
+                          )
+                        : Image.asset(
+                            widget.orgLogo,
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
                   ),
                 ),
                 SizedBox(width: 10),

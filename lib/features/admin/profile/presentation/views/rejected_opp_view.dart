@@ -39,7 +39,24 @@ class RejectedOppView extends StatelessWidget {
                 backgroundColor: AppColors.white,
                 radius: 34,
                 child: ClipOval(
-                  child: Image.asset(orgLogo, width: 100, height: 100),
+                  child: orgLogo.startsWith('http')
+                      ? Image.network(
+                          orgLogo,
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Image.asset(
+                            AppAssets.orgLogo,
+                            width: 100,
+                            height: 100,
+                          ),
+                        )
+                      : Image.asset(
+                          orgLogo,
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
               SizedBox(width: 10),

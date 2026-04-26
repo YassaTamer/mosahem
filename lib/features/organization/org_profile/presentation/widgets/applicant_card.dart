@@ -67,23 +67,22 @@ class ApplicantCard extends StatelessWidget {
   }
 
   Widget _buildActionBtn(String text, Color color, VoidCallback onTap) {
-    return Expanded(
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          height: 30,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Text(
-            text,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 13,
-            ),
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        height: 30,
+        width: 135,
+        padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 4),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Text(
+          text,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 13,
           ),
         ),
       ),

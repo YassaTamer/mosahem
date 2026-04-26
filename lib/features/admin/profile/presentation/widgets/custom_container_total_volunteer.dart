@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_button.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
@@ -30,7 +31,24 @@ class CustomContainerTotalVolunteer extends StatelessWidget {
               backgroundColor: AppColors.white,
               radius: 34,
               child: ClipOval(
-                child: Image.asset(profilePhoto, width: 100, height: 100),
+                child: profilePhoto.startsWith('http')
+                    ? Image.network(
+                        profilePhoto,
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Image.asset(
+                          AppAssets.profilePhotoIcon,
+                          width: 60,
+                          height: 60,
+                        ),
+                      )
+                    : Image.asset(
+                        profilePhoto,
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
             SizedBox(width: 10),

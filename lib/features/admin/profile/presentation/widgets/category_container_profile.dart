@@ -111,6 +111,7 @@ class CategoryContainerProfile extends StatelessWidget {
             ),
 
             //*** image ***
+            Spacer(),
             Padding(
               padding: EdgeInsets.only(bottom: 30, left: leftPaddingImage),
               child: SizedBox(

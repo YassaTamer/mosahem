@@ -26,7 +26,7 @@ class _AdminProfileViewState extends State<AdminProfileView> {
   @override
   void initState() {
     super.initState();
-   // OpportunitiesApiService(DioHelper.instance.client).getOpportunities();
+    // OpportunitiesApiService(DioHelper.instance.client).getOpportunities();
 
     context.read<ProfileCubit>().getMyProfile();
   }
@@ -176,7 +176,7 @@ class _AdminProfileViewState extends State<AdminProfileView> {
                 //*** Organizations container ***
                 CategoryContainerProfile(
                   containerName: "Organizations",
-                  containerNumber: 800,
+                  containerNumber: 6,
                   totalButtonName: "total organizations",
                   recentButtonName: "recent organizations",
                   containerImage: AppAssets.organizationIcon2,
@@ -190,7 +190,7 @@ class _AdminProfileViewState extends State<AdminProfileView> {
                 //*** Opportunity container ***
                 CategoryContainerProfile(
                   containerName: "Opportunities",
-                  containerNumber: 105,
+                  containerNumber: 5,
                   totalButtonName: "total opportunities",
                   recentButtonName: "recent opportunities",
                   containerImage: AppAssets.opportunityIcon,
@@ -203,7 +203,7 @@ class _AdminProfileViewState extends State<AdminProfileView> {
                 //*** Volunteer container ***
                 CategoryContainerProfile(
                   containerName: "Volunteers",
-                  containerNumber: 1000,
+                  containerNumber: 8,
                   totalButtonName: "total volunteers",
                   recentButton: false,
                   containerImage: AppAssets.volunteerIcon2,

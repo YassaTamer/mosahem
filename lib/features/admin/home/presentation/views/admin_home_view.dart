@@ -1,4 +1,6 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
@@ -47,13 +49,23 @@ class _AdminHomeViewState extends State<AdminHomeView> {
             ),
 
             SizedBox(width: 10),
-
-            CustomText(
-              "Hi, ${widget.adminUserName}...",
-              color: AppColors.primary,
-              fontWeight: FontWeight.bold,
-              fontSize: 25,
+            AutoSizeText(
+              "Hi, Moshem Admin",
+              maxLines: 1,
+              minFontSize: 12,
+              maxFontSize: 25,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+              ),
             ),
+            // CustomText(
+            //   "Hi, Moshem Admin.",
+            //   color: AppColors.primary,
+            //   fontWeight: FontWeight.bold,
+            //   fontSize: 25,
+            // ),
           ],
         ),
       ),
@@ -109,7 +121,7 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                           ),
                         )
                       : Container(
-                          width: 300,
+                          width: 280,
                           height: 50,
                           decoration: BoxDecoration(
                             color: AppColors.primaryLightBlue,
@@ -127,8 +139,10 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 190),
+                              Spacer(),
+                              //SizedBox(width: 190),
                               Image.asset(AppAssets.searchIcon),
+                              Gap(10),
                             ],
                           ),
                         ),
