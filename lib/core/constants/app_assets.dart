@@ -14,6 +14,7 @@ class AppAssets {
   static const profilePhotoIcon = "assets/logos/profile_picture_icon.png";
   static const girlProfilePhoto =
       "assets/images/girl_volunteer_profile_photo.jpg";
+  static const resalaProfilePhoto = "assets/images/resala_profile_photo.png";
 
   static const locationIcon = 'assets/logos/location.svg';
   static const locationIcon2 = 'assets/logos/location.png';
