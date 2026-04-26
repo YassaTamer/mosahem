@@ -20,6 +20,7 @@ import 'package:mosahem/features/auth/data/api/auth_api_service.dart';
 import 'package:mosahem/features/auth/data/repository/auth_repository.dart';
 import 'package:mosahem/features/auth/logic/cubit/auth/auth_cubit.dart';
 import 'package:mosahem/features/splash/presentation/views/splash_view.dart';
+import 'package:mosahem/features/volunteer/volunteer_profile/presentation/views/profile_screen.dart';
 
 void main() {
   runApp(MyApp(dio: DioHelper.instance.client));
@@ -83,7 +84,7 @@ class MyApp extends StatelessWidget {
           },
           child: const MaterialApp(
             debugShowCheckedModeBanner: false,
-            home: SplashView(),
+            home: ProfileScreen(),
           ),
         ),
       ),

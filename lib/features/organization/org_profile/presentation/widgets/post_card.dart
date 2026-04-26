@@ -53,7 +53,7 @@ class PostCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const CircleAvatar(radius: 16, backgroundColor: Colors.grey),
+              CircleAvatar(radius: 16, backgroundColor: Colors.grey),
               const SizedBox(width: 8),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
