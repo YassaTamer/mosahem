@@ -37,7 +37,7 @@ class CustomContainerTotalVolunteer extends StatelessWidget {
                         width: 60,
                         height: 60,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Image.asset(
+                        errorBuilder: (_, _, _) => Image.asset(
                           AppAssets.profilePhotoIcon,
                           width: 60,
                           height: 60,

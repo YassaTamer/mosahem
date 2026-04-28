@@ -19,9 +19,9 @@ class OrgProfileCubit extends Cubit<OrgProfileState> {
       if (status == "Approved") {
         emit(OrgProfileApproved(data));
       } else if (status == "Pending") {
-        emit(OrgProfilePending());
+        emit(OrgProfilePending(data));
       } else if (status == "Rejected") {
-        emit(OrgProfileRejected(data.verificationComment));
+        emit(OrgProfileRejected(data, data.verificationComment));
       } else {
         emit(OrgProfileError("Unknown status"));
       }

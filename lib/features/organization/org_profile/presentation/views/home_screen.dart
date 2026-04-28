@@ -4,6 +4,7 @@ import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/features/organization/org_profile/logic/cubit/org_profile_cubit.dart';
 import 'package:mosahem/features/organization/org_profile/logic/cubit/org_profile_state.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/views/private_org_profile_screen.dart';
+import 'package:mosahem/features/organization/org_profile/presentation/widgets/pending_card.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/profile_header.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/rejection_card.dart';
 
@@ -33,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
             current is OrgProfileError;
       },
       builder: (context, state) {
-        final data = state is OrgProfileApproved ? state.data : null;
+        final data = state is OrgProfileDataState ? state.data : null;
 
         /// ?? Loading
         if (state is OrgProfileLoading) {
@@ -55,6 +56,17 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  if (data != null)
+                    ProfileHeader(
+                      logoUrl: data.organizationLogo,
+                      nameOrg: data.organizationName,
+                      bio: data.organizationDescription,
+                      location: data.locations.isNotEmpty
+                          ? data.locations.first.cityName
+                          : 'No Location',
+                    ),
+                  Divider(color: AppColors.greyLight, thickness: 1, height: 30),
+
                   /// ? ?? Rejected ? ???? ?????
                   if (state is OrgProfileRejected)
                     RejectionCard(
@@ -63,28 +75,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
 
                   /// ? ?? Pending ? ?????
-                  if (state is OrgProfilePending)
-                    const Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Text("Your organization is under review"),
-                    ),
-
-                  if (data != null)
-                    ProfileHeader(
-                      //   data: data,
-                      nameOrg: data.organizationName,
-                      bio: data.organizationDescription,
-                      location: data.locations.isNotEmpty
-                          ? data.locations.first.cityName
-                          : 'No Location',
-                    ),
-                  const SizedBox(height: 20),
+                  if (state is OrgProfilePending) const PendingCard(),
+                  //    const SizedBox(height: 20),
                   // ProfileStatst(
                   //   text1ProfileOrg: 'Rating Voulanteer',
                   //   text2ProfileOrg: 'Recent applicdent',
                   // ),
-                  Divider(color: AppColors.greyLight, thickness: 1, height: 30),
-
+                  //   Divider(color: AppColors.greyLight, thickness: 1, height: 30),
                   const SizedBox(height: 20),
                   // RejectionCard(
                   //   statusMessage: 'Reason for rejection',
@@ -101,4 +98,5 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
 // الاسكرين اللي هتظهر لو ريجيكتد

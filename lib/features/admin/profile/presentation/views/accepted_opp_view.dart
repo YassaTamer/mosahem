@@ -51,7 +51,7 @@ class _AcceptedOppViewState extends State<AcceptedOppView> {
                             width: 100,
                             height: 100,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Image.asset(
+                            errorBuilder: (_, _, _) => Image.asset(
                               AppAssets.orgLogo,
                               width: 100,
                               height: 100,

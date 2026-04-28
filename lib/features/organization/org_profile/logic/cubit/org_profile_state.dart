@@ -2,21 +2,30 @@ import 'package:mosahem/features/organization/org_profile/data/models/org_profil
 
 sealed class OrgProfileState {}
 
+abstract class OrgProfileDataState extends OrgProfileState {
+  OrgProfileModel get data;
+}
+
 class OrgProfileInitial extends OrgProfileState {}
 
 class OrgProfileLoading extends OrgProfileState {}
 
-class OrgProfileApproved extends OrgProfileState {
+class OrgProfileApproved extends OrgProfileDataState {
   final OrgProfileModel data;
   OrgProfileApproved(this.data);
 }
 
-class OrgProfilePending extends OrgProfileState {}
+class OrgProfilePending extends OrgProfileDataState {
+  final OrgProfileModel data;
 
-class OrgProfileRejected extends OrgProfileState {
+  OrgProfilePending(this.data);
+}
+
+class OrgProfileRejected extends OrgProfileDataState {
+  final OrgProfileModel data;
   final String? reason;
 
-  OrgProfileRejected(this.reason);
+  OrgProfileRejected(this.data, this.reason);
 }
 
 class OrgProfileError extends OrgProfileState {
