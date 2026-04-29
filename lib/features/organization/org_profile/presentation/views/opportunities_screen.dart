@@ -32,7 +32,6 @@ class _OpportunitiesScreenState extends State<OpportunitiesScreen>
 
     final cubit = context.read<OrgProfileCubit>();
 
-    // أول تحميل → Active
     cubit.getOpportunities(
       organizationId: widget.organizationId,
       status: "Active",
@@ -41,7 +40,7 @@ class _OpportunitiesScreenState extends State<OpportunitiesScreen>
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
         _onTabChanged(_tabController.index);
-        setState(() {}); // 👈 مهم
+        setState(() {});
       }
     });
   }
@@ -49,23 +48,34 @@ class _OpportunitiesScreenState extends State<OpportunitiesScreen>
   void _onTabChanged(int index) {
     final cubit = context.read<OrgProfileCubit>();
 
-    String status;
-
     switch (index) {
       case 0:
-        status = "Active";
+        cubit.getOpportunities(
+          organizationId: widget.organizationId,
+          status: "Active",
+        );
         break;
       case 1:
-        status = "Ended";
+        cubit.getOpportunities(
+          organizationId: widget.organizationId,
+          status: "Ended",
+        );
+        break;
+      case 2:
+        cubit.getOpportunitiesByVerificationStatus(
+          organizationId: widget.organizationId,
+          status: "Pending",
+        );
+        break;
+      case 3:
+        cubit.getOpportunitiesByVerificationStatus(
+          organizationId: widget.organizationId,
+          status: "Rejected",
+        );
         break;
       default:
-        return; // باقي التابات مش شغالة
+        return;
     }
-
-    cubit.getOpportunities(
-      organizationId: widget.organizationId,
-      status: status,
-    );
   }
 
   @override
@@ -78,7 +88,13 @@ class _OpportunitiesScreenState extends State<OpportunitiesScreen>
   Widget build(BuildContext context) {
     final cubit = context.watch<OrgProfileCubit>();
 
-    String currentStatus = _tabController.index == 0 ? "Active" : "Ended";
+    final currentStatus = switch (_tabController.index) {
+      0 => "Active",
+      1 => "Ended",
+      2 => "Pending",
+      3 => "Rejected",
+      _ => "Active",
+    };
 
     final count = cubit.opportunitiesFor(currentStatus).length;
     return Scaffold(
@@ -99,8 +115,8 @@ class _OpportunitiesScreenState extends State<OpportunitiesScreen>
             children: [
               _buildOpportunityTab("Active"),
               _buildOpportunityTab("Ended"),
-              const Center(child: Text("Pending Page")),
-              const Center(child: Text("Rejected Page")),
+              _buildOpportunityTab("Pending"),
+              _buildOpportunityTab("Rejected"),
             ],
           );
         },
@@ -139,8 +155,7 @@ class _OpportunitiesScreenState extends State<OpportunitiesScreen>
 
         return PostCard(
           wantOrgPhoto: true,
-          orgLogo:
-              widget.organizationLogo, //  orgLogo: opportunity.logoUrl ?? '',
+          orgLogo: widget.organizationLogo,
           orgName: opportunity.organizationName,
           timeAgo: opportunity.startDate,
           postImage: opportunity.opportunityPhotoUrl ?? AppAssets.postImage,

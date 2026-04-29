@@ -57,12 +57,12 @@ class OpportunitiesHeader extends StatelessWidget {
 
           TabBar(
             controller: controller,
-            isScrollable: false,
+            indicatorSize:
+                TabBarIndicatorSize.label, 
             labelColor: Color(0xFF4CAF50),
             unselectedLabelColor: Colors.grey,
             indicatorColor: Color(0xFF4CAF50),
-            indicatorSize: TabBarIndicatorSize.label,
-            labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
             tabs: [
               Tab(text: "Active"),
               Tab(text: "History"),

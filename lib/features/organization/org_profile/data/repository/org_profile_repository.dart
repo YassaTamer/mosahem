@@ -12,7 +12,6 @@ class OrgProfileRepository {
     return OrgProfileModel.fromJson(response.data);
   }
 
-  // 👇 الجديد
   Future<List<OpportunityModel>> getOpportunitiesByStatus({
     required String organizationId,
     required String status,
@@ -20,6 +19,16 @@ class OrgProfileRepository {
     return await apiService.getOrgOpportunitiesByStatus(
       organizationId: organizationId,
       status: status,
+    );
+  }
+
+  Future<List<OpportunityModel>> getOpportunitiesByVerificationStatus({
+    required String organizationId,
+    required String verificationStatus,
+  }) async {
+    return await apiService.getOpportunitiesByVerificationStatus(
+      organizationId: organizationId,
+      verificationStatus: verificationStatus,
     );
   }
 }

@@ -22,6 +22,12 @@ class OrgProfileCubit extends Cubit<OrgProfileState> {
     if (normalized == 'ended') {
       return 'Ended';
     }
+    if (normalized == 'pending') {
+      return 'Pending';
+    }
+    if (normalized == 'rejected') {
+      return 'Rejected';
+    }
 
     return status.trim();
   }
@@ -71,8 +77,8 @@ class OrgProfileCubit extends Cubit<OrgProfileState> {
   }) async {
     final normalizedStatus = normalizeOpportunityStatus(status);
 
-    if (opportunitiesMap.containsKey(normalizedStatus) ||
-        _loadingStatuses.contains(normalizedStatus)) {
+    if (hasLoadedOpportunities(normalizedStatus) ||
+        isLoadingOpportunities(normalizedStatus)) {
       return;
     }
 
@@ -84,6 +90,38 @@ class OrgProfileCubit extends Cubit<OrgProfileState> {
       final result = await repository.getOpportunitiesByStatus(
         organizationId: organizationId,
         status: normalizedStatus,
+      );
+
+      opportunitiesMap[normalizedStatus] = result;
+      _loadingStatuses.remove(normalizedStatus);
+
+      emit(OrgOpportunitiesSuccess(normalizedStatus));
+    } catch (e) {
+      _loadingStatuses.remove(normalizedStatus);
+      _errorsByStatus[normalizedStatus] = e.toString();
+      emit(OrgOpportunitiesError(normalizedStatus, e.toString()));
+    }
+  }
+
+  Future<void> getOpportunitiesByVerificationStatus({
+    required String organizationId,
+    required String status,
+  }) async {
+    final normalizedStatus = normalizeOpportunityStatus(status);
+
+    if (hasLoadedOpportunities(normalizedStatus) ||
+        isLoadingOpportunities(normalizedStatus)) {
+      return;
+    }
+
+    _loadingStatuses.add(normalizedStatus);
+    _errorsByStatus.remove(normalizedStatus);
+    emit(OrgOpportunitiesLoading(normalizedStatus));
+
+    try {
+      final result = await repository.getOpportunitiesByVerificationStatus(
+        organizationId: organizationId,
+        verificationStatus: normalizedStatus.toLowerCase(),
       );
 
       opportunitiesMap[normalizedStatus] = result;

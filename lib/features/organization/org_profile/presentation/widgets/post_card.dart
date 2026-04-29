@@ -143,8 +143,7 @@ class PostCard extends StatelessWidget {
                     height: 170,
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) =>
-                        Image.asset(AppAssets.postImage),
+                    errorBuilder: (_, _, _) => Image.asset(AppAssets.postImage),
                   )
                 : Image.asset(
                     postImage,

@@ -28,4 +28,26 @@ class OrgProfileApiService {
         .map<OpportunityModel>((e) => OpportunityModel.fromJson(e))
         .toList();
   }
+
+  Future<List<OpportunityModel>> getOpportunitiesByVerificationStatus({
+    required String organizationId,
+    required String verificationStatus,
+    int page = 1,
+    int pageSize = 10,
+  }) async {
+    final response = await DioHelper.instance.client.get(
+      '/api/v1/organizations/$organizationId/opportunities/by-verification-status',
+      queryParameters: {
+        "OpportunityVerificationStatus": verificationStatus,
+        "Page": page,
+        "PageSize": pageSize,
+      },
+    );
+
+    final items = response.data['Data']['Items'];
+
+    return items
+        .map<OpportunityModel>((e) => OpportunityModel.fromJson(e))
+        .toList();
+  }
 }
