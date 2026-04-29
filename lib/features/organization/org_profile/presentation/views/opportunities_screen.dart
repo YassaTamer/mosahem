@@ -10,6 +10,7 @@ import 'package:mosahem/features/organization/org_profile/presentation/widgets/p
 class OpportunitiesScreen extends StatefulWidget {
   final String organizationId;
   final String organizationLogo;
+
   const OpportunitiesScreen({
     super.key,
     required this.organizationId,
@@ -125,6 +126,11 @@ class _OpportunitiesScreenState extends State<OpportunitiesScreen>
   }
 
   Widget _buildList(List<OpportunityModel> items) {
+    final org = context.read<OrgProfileCubit>().orgData;
+    final organizationLocation = (org?.locations.isNotEmpty ?? false)
+        ? org!.locations.first.cityName
+        : '';
+
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 10),
       itemCount: items.length,
@@ -135,14 +141,14 @@ class _OpportunitiesScreenState extends State<OpportunitiesScreen>
           wantOrgPhoto: true,
           orgLogo:
               widget.organizationLogo, //  orgLogo: opportunity.logoUrl ?? '',
-          orgName: opportunity.organizationName ?? '',
-          timeAgo: opportunity.startDate ?? '',
+          orgName: opportunity.organizationName,
+          timeAgo: opportunity.startDate,
           postImage: opportunity.opportunityPhotoUrl ?? AppAssets.postImage,
-          title: opportunity.name ?? '',
-          description: '',
-          location: '',
-          date: opportunity.startDate ?? '',
-          time: opportunity.endDate ?? '',
+          title: opportunity.name,
+          description: org?.organizationDescription ?? '',
+          location: organizationLocation,
+          date: opportunity.startDate,
+          time: opportunity.endDate,
           comments: '0',
           likes: '0',
         );

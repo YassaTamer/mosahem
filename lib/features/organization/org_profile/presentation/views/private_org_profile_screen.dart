@@ -80,6 +80,18 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
     return status!.trim();
   }
 
+  String _organizationDescriptionText() {
+    return _safeValue(widget.data.organizationDescription, '-');
+  }
+
+  String _organizationLocationText() {
+    if (widget.data.locations.isEmpty) {
+      return 'No Location';
+    }
+
+    return _safeValue(widget.data.locations.first.cityName, 'No Location');
+  }
+
   Widget _buildOpportunitiesSection() {
     final cubit = context.read<OrgProfileCubit>();
     final items = cubit.opportunitiesFor("Active");
@@ -95,9 +107,7 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
       return const Center(child: Text("No Opportunities Yet"));
     }
 
-    final locationText = widget.data.locations.isNotEmpty
-        ? _safeValue(widget.data.locations.first.cityName, 'No Location')
-        : 'No Location';
+    final locationText = _organizationLocationText();
 
     return Column(
       children: items.map((OpportunityModel opportunity) {
@@ -118,7 +128,7 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
             AppAssets.postImage,
           ),
           title: _safeValue(opportunity.name, 'Opportunity'),
-          description: _safeValue(widget.data.organizationDescription, '-'),
+          description: _organizationDescriptionText(),
           location: locationText,
           date: _safeValue(opportunity.startDate, '-'),
           time: _safeValue(opportunity.endDate, '-'),

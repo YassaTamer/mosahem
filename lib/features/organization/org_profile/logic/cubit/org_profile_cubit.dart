@@ -1,10 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/features/admin/profile/data/models/opportunity_model.dart';
+import 'package:mosahem/features/organization/org_profile/data/models/org_profile_model.dart';
 import 'org_profile_state.dart';
 import '../../data/repository/org_profile_repository.dart';
 
 class OrgProfileCubit extends Cubit<OrgProfileState> {
   final OrgProfileRepository repository;
+  OrgProfileModel? orgData;
   final Map<String, List<OpportunityModel>> opportunitiesMap = {};
   final Set<String> _loadingStatuses = {};
   final Map<String, String> _errorsByStatus = {};
@@ -45,6 +47,7 @@ class OrgProfileCubit extends Cubit<OrgProfileState> {
 
     try {
       final data = await repository.getMyOrganization();
+      orgData = data;
 
       final status = data.verificationStatus;
 
