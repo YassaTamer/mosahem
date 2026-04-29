@@ -5,8 +5,40 @@ import '../../data/repository/org_profile_repository.dart';
 
 class OrgProfileCubit extends Cubit<OrgProfileState> {
   final OrgProfileRepository repository;
-  List<OpportunityModel> opportunities = [];
+  final Map<String, List<OpportunityModel>> opportunitiesMap = {};
+  final Set<String> _loadingStatuses = {};
+  final Map<String, String> _errorsByStatus = {};
+
   OrgProfileCubit(this.repository) : super(OrgProfileInitial());
+
+  String normalizeOpportunityStatus(String status) {
+    final normalized = status.trim().toLowerCase();
+
+    if (normalized == 'active') {
+      return 'Active';
+    }
+    if (normalized == 'ended') {
+      return 'Ended';
+    }
+
+    return status.trim();
+  }
+
+  List<OpportunityModel> opportunitiesFor(String status) {
+    return opportunitiesMap[normalizeOpportunityStatus(status)] ?? const [];
+  }
+
+  bool hasLoadedOpportunities(String status) {
+    return opportunitiesMap.containsKey(normalizeOpportunityStatus(status));
+  }
+
+  bool isLoadingOpportunities(String status) {
+    return _loadingStatuses.contains(normalizeOpportunityStatus(status));
+  }
+
+  String? opportunitiesErrorFor(String status) {
+    return _errorsByStatus[normalizeOpportunityStatus(status)];
+  }
 
   Future<void> getMyOrganization() async {
     emit(OrgProfileLoading());
@@ -30,21 +62,35 @@ class OrgProfileCubit extends Cubit<OrgProfileState> {
     }
   }
 
-  Future<void> getOpportunities({required String organizationId}) async {
-    emit(OrgOpportunitiesLoading());
+  Future<void> getOpportunities({
+    required String organizationId,
+    required String status,
+  }) async {
+    final normalizedStatus = normalizeOpportunityStatus(status);
+
+    if (opportunitiesMap.containsKey(normalizedStatus) ||
+        _loadingStatuses.contains(normalizedStatus)) {
+      return;
+    }
+
+    _loadingStatuses.add(normalizedStatus);
+    _errorsByStatus.remove(normalizedStatus);
+    emit(OrgOpportunitiesLoading(normalizedStatus));
 
     try {
       final result = await repository.getOpportunitiesByStatus(
         organizationId: organizationId,
-        status: "Active",
+        status: normalizedStatus,
       );
 
-      opportunities = result;
+      opportunitiesMap[normalizedStatus] = result;
+      _loadingStatuses.remove(normalizedStatus);
 
-      emit(OrgOpportunitiesSuccess());
+      emit(OrgOpportunitiesSuccess(normalizedStatus));
     } catch (e) {
-      //    print("🔥🔥 Error Fetching Data: $e");
-      emit(OrgOpportunitiesError(e.toString()));
+      _loadingStatuses.remove(normalizedStatus);
+      _errorsByStatus[normalizedStatus] = e.toString();
+      emit(OrgOpportunitiesError(normalizedStatus, e.toString()));
     }
   }
 }

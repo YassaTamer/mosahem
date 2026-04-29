@@ -35,6 +35,7 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
     // print(context.read<OrgProfileCubit>().opportunities);
     context.read<OrgProfileCubit>().getOpportunities(
       organizationId: widget.data.organizationId,
+      status: 'Active',
     );
   }
 
@@ -79,11 +80,10 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
     return status!.trim();
   }
 
-  Widget _buildOpportunitiesSection(OrgProfileState state) {
+  Widget _buildOpportunitiesSection() {
     final cubit = context.read<OrgProfileCubit>();
-    final items = cubit.opportunities;
-
-    if (state is OrgOpportunitiesLoading && items.isEmpty) {
+    final items = cubit.opportunitiesFor("Active");
+    if (cubit.isLoadingOpportunities("Active") && items.isEmpty) {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 24),
         child: Center(child: CircularProgressIndicator()),
@@ -138,10 +138,12 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
         padding: const EdgeInsets.all(10.0),
         child: SafeArea(
           child: BlocBuilder<OrgProfileCubit, OrgProfileState>(
-            builder: (context, state) {
+            buildWhen: (previous, current) =>
+                current is OrgOpportunitiesState && current.status == "Active",
+            builder: (context, _) {
               final opportunitiesCount = context
                   .read<OrgProfileCubit>()
-                  .opportunities
+                  .opportunitiesFor("Active")
                   .length
                   .toString();
 
@@ -166,7 +168,11 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => OpportunitiesScreen(),
+                                  builder: (context) => OpportunitiesScreen(
+                                    organizationLogo:
+                                        widget.data.organizationLogo ?? "",
+                                    organizationId: widget.data.organizationId,
+                                  ),
                                 ),
                               );
                             },
@@ -277,7 +283,7 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
                       height: 50,
                     ),
 
-                    _buildOpportunitiesSection(state),
+                    _buildOpportunitiesSection(),
                   ],
                 ),
               );

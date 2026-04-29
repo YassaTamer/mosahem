@@ -34,12 +34,22 @@ class OrgProfileError extends OrgProfileState {
   OrgProfileError(this.message);
 }
 
-class OrgOpportunitiesLoading extends OrgProfileState {}
+abstract class OrgOpportunitiesState extends OrgProfileState {
+  final String status;
 
-class OrgOpportunitiesSuccess extends OrgProfileState {}
+  OrgOpportunitiesState(this.status);
+}
 
-class OrgOpportunitiesError extends OrgProfileState {
+class OrgOpportunitiesLoading extends OrgOpportunitiesState {
+  OrgOpportunitiesLoading(super.status);
+}
+
+class OrgOpportunitiesSuccess extends OrgOpportunitiesState {
+  OrgOpportunitiesSuccess(super.status);
+}
+
+class OrgOpportunitiesError extends OrgOpportunitiesState {
   final String message;
 
-  OrgOpportunitiesError(this.message);
+  OrgOpportunitiesError(super.status, this.message);
 }

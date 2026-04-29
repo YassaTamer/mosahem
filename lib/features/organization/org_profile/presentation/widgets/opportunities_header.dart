@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 
 class OpportunitiesHeader extends StatelessWidget {
   final int opportunitiesCount;
-  final Function(int) onTabChanged;
-
+  final TabController controller;
   const OpportunitiesHeader({
     super.key,
-    this.opportunitiesCount = 800,
-    required this.onTabChanged,
+    this.opportunitiesCount = 6,
+    required this.controller,
   });
 
   @override
@@ -56,7 +55,8 @@ class OpportunitiesHeader extends StatelessWidget {
             ),
           ),
 
-          const TabBar(
+          TabBar(
+            controller: controller,
             isScrollable: false,
             labelColor: Color(0xFF4CAF50),
             unselectedLabelColor: Colors.grey,
