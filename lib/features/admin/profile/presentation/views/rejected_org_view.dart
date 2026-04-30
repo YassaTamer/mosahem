@@ -34,20 +34,43 @@ class RejectedOrgView extends StatelessWidget {
                     backgroundColor: AppColors.white,
                     radius: 34,
                     child: ClipOval(
-                      child: Image.asset(orgLogo, width: 100, height: 100),
+                      child: orgLogo.startsWith('http')
+                          ? Image.network(
+                              orgLogo,
+                              width: 80,
+                              height: 80,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Image.asset(
+                                  'assets/images/org_logo.png', // fallback
+                                  width: 80,
+                                  height: 80,
+                                );
+                              },
+                            )
+                          : Image.asset(
+                              orgLogo,
+                              width: 80,
+                              height: 80,
+                              fit: BoxFit.cover,
+                            ),
                     ),
                   ),
                   SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomText(
-                        orgName,
-                        fontSize: 20,
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ],
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomText(
+                          orgName,
+                          fontSize: 18,
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

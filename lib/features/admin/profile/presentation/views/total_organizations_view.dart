@@ -159,15 +159,16 @@ class _TotalOrganizationsViewState extends State<TotalOrganizationsView>
                   itemBuilder: (context, index) {
                     final org = accepted[index];
                     return AcceptedOrgView(
-                      // orgLogo: orgLogos[index],
-                      // orgName: orgNames[index],
+                      orgLogo: (org.logo != null && org.logo!.isNotEmpty)
+                          ? org.logo!
+                          : AppAssets.orgLogo,
                       // onDelete: () {
                       //   setState(() {
                       //     orgLogos.removeAt(index);
                       //     orgNames.removeAt(index);
                       //   });
                       // },
-                      orgLogo: AppAssets.orgLogo,
+                      //  orgLogo: AppAssets.orgLogo,
                       orgName: org.name,
                       onDelete: () {},
                     );
@@ -179,7 +180,9 @@ class _TotalOrganizationsViewState extends State<TotalOrganizationsView>
                     final org = rejected[index];
 
                     return RejectedOrgView(
-                      orgLogo: AppAssets.orgLogo,
+                      orgLogo: (org.logo != null && org.logo!.isNotEmpty)
+                          ? org.logo!
+                          : AppAssets.orgLogo,
                       orgName: org.name,
                     );
                   },
