@@ -39,7 +39,8 @@ class _RecentOrganizationsViewState extends State<RecentOrganizationsView> {
     "12/4/2026",
     "15/4/2026",
   ];
-
+  List pendingOrgs = [];
+  bool isInitialized = false;
   bool isSearching = false;
   TextEditingController searchController = TextEditingController();
   @override
@@ -105,6 +106,14 @@ class _RecentOrganizationsViewState extends State<RecentOrganizationsView> {
           }
 
           if (state is OrganizationSuccess) {
+            if (!isInitialized) {
+              pendingOrgs = state.organizations
+                  .where((e) => (e.status ?? '').toLowerCase() == 'pending')
+                  .toList();
+
+              isInitialized = true;
+            }
+  
             final orgs = state.organizations;
 
             /// 🔥 فلترة pending بس
@@ -112,14 +121,25 @@ class _RecentOrganizationsViewState extends State<RecentOrganizationsView> {
                 .where((e) => (e.status ?? '').toLowerCase() == 'pending')
                 .toList();
             return ListView.builder(
-              itemCount: pending.length,
+              itemCount: pendingOrgs.length,
               itemBuilder: (context, index) {
-                final org = pending[index];
-
+                final org = pendingOrgs[index];
                 return CustomContainerRecentOrg(
-                  orgLogo: AppAssets.orgLogo,
+                  orgLogo: (org.logo != null && org.logo!.isNotEmpty)
+                      ? org.logo!
+                      : AppAssets.orgLogo,
                   orgName: org.name,
-                  date: org.description, // مؤقت
+                  date: org.description,
+                  onAccept: () {
+                    setState(() {
+                      pendingOrgs.removeAt(index);
+                    });
+                  },
+                  onReject: () {
+                    setState(() {
+                      pendingOrgs.removeAt(index);
+                    });
+                  },
                 );
               },
             );
