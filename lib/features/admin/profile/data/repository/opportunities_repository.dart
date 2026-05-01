@@ -9,4 +9,8 @@ class OpportunitiesRepository {
   Future<List<OpportunityModel>> getOpportunities(String status) async {
     return await apiService.getOpportunities(status);
   }
+
+  Future<List<OpportunityModel>> getAllOpportunities() async {
+    return await apiService.getAllOpportunities();
+  }
 }

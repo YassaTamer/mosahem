@@ -77,6 +77,9 @@ class _EditProfileViewState extends State<EditProfileView> {
 
           //*** Save edit button ***
           CustomEnabledDisabledButton(
+            onTap: () {
+              Navigator.pop(context);
+            },
             isEnabled: isButtonEnabled,
             buttonName: "Save Edit",
             enabledColor: AppColors.lightGreen,

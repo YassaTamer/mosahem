@@ -18,4 +18,15 @@ class OpportunityCubit extends Cubit<OpportunityState> {
       emit(OpportunityError(e.toString()));
     }
   }
+
+  Future<void> getAllOpportunities() async {
+    emit(OpportunityLoading());
+
+    try {
+      final opportunities = await repository.getAllOpportunities();
+      emit(OpportunitySuccess(opportunities));
+    } catch (e) {
+      emit(OpportunityError(e.toString()));
+    }
+  }
 }

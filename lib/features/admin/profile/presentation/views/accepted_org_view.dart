@@ -29,7 +29,26 @@ class AcceptedOrgView extends StatelessWidget {
               backgroundColor: AppColors.white,
               radius: 34,
               child: ClipOval(
-                child: Image.asset(orgLogo, width: 80, height: 80),
+                child: orgLogo.startsWith('http')
+                    ? Image.network(
+                        orgLogo,
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/images/org_logo.png', // fallback
+                            width: 80,
+                            height: 80,
+                          );
+                        },
+                      )
+                    : Image.asset(
+                        orgLogo,
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
             SizedBox(width: 10),
@@ -53,7 +72,7 @@ class AcceptedOrgView extends StatelessWidget {
                   AutoSizeText(
                     orgName,
                     maxLines: 1,
-                    minFontSize: 12,
+                    minFontSize: 16,
                     maxFontSize: 20,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(

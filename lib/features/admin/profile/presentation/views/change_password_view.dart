@@ -198,6 +198,9 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                 disabledColor: AppColors.lightGreen.withAlpha(
                   (255 * 0.5).toInt(),
                 ),
+                onTap: () {
+                  Navigator.pop(context);
+                },
               ),
             ],
           ),

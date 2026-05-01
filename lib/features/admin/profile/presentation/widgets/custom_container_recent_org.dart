@@ -12,10 +12,14 @@ class CustomContainerRecentOrg extends StatelessWidget {
     required this.orgLogo,
     required this.orgName,
     required this.date,
+    required this.onAccept,
+    required this.onReject,
   });
   final String orgLogo;
   final String orgName;
   final String date;
+  final VoidCallback onAccept;
+  final VoidCallback onReject;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -34,12 +38,27 @@ class CustomContainerRecentOrg extends StatelessWidget {
                   backgroundColor: AppColors.white,
                   radius: 34,
                   child: ClipOval(
-                    child: Image.asset(
-                      orgLogo,
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                    ),
+                    child: orgLogo.startsWith('http')
+                        ? Image.network(
+                            orgLogo,
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                AppAssets.orgLogo,
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          )
+                        : Image.asset(
+                            orgLogo,
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
                   ),
                 ),
 
@@ -82,6 +101,7 @@ class CustomContainerRecentOrg extends StatelessWidget {
                   width: 150,
                   height: 40,
                   onTap: () {
+                    onReject();
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -96,7 +116,7 @@ class CustomContainerRecentOrg extends StatelessWidget {
                   color: AppColors.lightGreen,
                   width: 150,
                   height: 40,
-                  onTap: () {},
+                  onTap: onAccept,
                 ),
               ],
             ),

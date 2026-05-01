@@ -20,7 +20,7 @@ class OpportunitiesApiService {
       },
       options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
-  //  print(response.data);
+    //  print(response.data);
     final items = response.data['Data']['Items'];
 
     // if (items.isEmpty) {
@@ -36,6 +36,21 @@ class OpportunitiesApiService {
     //     ),
     //   ];
     // }
+
+    return items
+        .map<OpportunityModel>((e) => OpportunityModel.fromJson(e))
+        .toList();
+  }
+
+  Future<List<OpportunityModel>> getAllOpportunities() async {
+    final token = await CacheHelper.getToken();
+
+    final response = await dio.get(
+      '/api/v1/opportunities/all',
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
+
+    final items = response.data['Data']['Items'];
 
     return items
         .map<OpportunityModel>((e) => OpportunityModel.fromJson(e))

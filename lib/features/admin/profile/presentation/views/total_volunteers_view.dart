@@ -39,6 +39,8 @@ class _TotalVolunteersViewState extends State<TotalVolunteersView> {
     AppAssets.profilePhotoIcon,
     AppAssets.profilePhotoIcon,
   ];
+  List volunteersList = [];
+  bool isInitialized = false;
   @override
   void initState() {
     super.initState();
@@ -104,12 +106,15 @@ class _TotalVolunteersViewState extends State<TotalVolunteersView> {
           if (state is VolunteerLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is VolunteerSuccess) {
+            if (!isInitialized) {
+              volunteersList = state.volunteers;
+              isInitialized = true;
+            }
             final volunteers = state.volunteers;
             return ListView.builder(
-              itemCount: volunteers.length,
+              itemCount: volunteersList.length,
               itemBuilder: (context, index) {
-                final volunteer = volunteers[index];
-
+                final volunteer = volunteersList[index];
                 return CustomContainerTotalVolunteer(
                   volunteerName: volunteer.fullName,
                   bio: volunteer.bio ?? "No bio",
@@ -118,7 +123,11 @@ class _TotalVolunteersViewState extends State<TotalVolunteersView> {
                           volunteer.profileImage!.isNotEmpty)
                       ? volunteer.profileImage!
                       : AppAssets.profilePhotoIcon,
-                  onDelete: () {},
+                  onDelete: () {
+                    setState(() {
+                      volunteersList.removeAt(index);
+                    });
+                  },
                 );
               },
             );

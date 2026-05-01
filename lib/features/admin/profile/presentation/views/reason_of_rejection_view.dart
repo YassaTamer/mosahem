@@ -70,6 +70,9 @@ class _ReasonOfRejectionViewState extends State<ReasonOfRejectionView> {
                   vertical: 0,
                 ),
                 child: CustomEnabledDisabledButton(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
                   isEnabled: isButtonEnabled,
                   buttonName: "Send",
                   width: 350,

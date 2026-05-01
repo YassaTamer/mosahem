@@ -273,6 +273,9 @@ class _AddNewAdminViewState extends State<AddNewAdminView> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 20),
                 child: CustomEnabledDisabledButton(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
                   isEnabled: isButtonEnabled,
                   buttonName: "Save",
                   enabledColor: AppColors.lightGreen,

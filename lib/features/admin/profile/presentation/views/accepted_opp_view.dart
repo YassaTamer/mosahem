@@ -66,37 +66,39 @@ class _AcceptedOppViewState extends State<AcceptedOppView> {
                   ),
                 ),
                 SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomText(
-                      widget.orgName,
-                      fontSize: 20,
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    CustomText(widget.oppName, fontWeight: FontWeight.bold),
-                    SizedBox(height: 5),
-                    Row(
-                      children: [
-                        Image.asset(AppAssets.startDateIcon),
-                        SizedBox(width: 5),
-                        CustomText(
-                          DateHelper.format(widget.startDate),
-                          fontSize: 10,
-                        ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomText(
+                        widget.orgName,
+                        fontSize: 20,
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      CustomText(widget.oppName, fontWeight: FontWeight.bold),
+                      SizedBox(height: 5),
+                      Row(
+                        children: [
+                          Image.asset(AppAssets.startDateIcon),
+                          SizedBox(width: 5),
+                          CustomText(
+                            DateHelper.format(widget.startDate),
+                            fontSize: 10,
+                          ),
 
-                        SizedBox(width: 10),
+                          SizedBox(width: 10),
 
-                        Image.asset(AppAssets.endDateIcon),
-                        SizedBox(width: 5),
-                        CustomText(
-                          DateHelper.format(widget.endDate),
-                          fontSize: 10,
-                        ),
-                      ],
-                    ),
-                  ],
+                          Image.asset(AppAssets.endDateIcon),
+                          SizedBox(width: 5),
+                          CustomText(
+                            DateHelper.format(widget.endDate),
+                            fontSize: 10,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

@@ -53,7 +53,8 @@ class _TotalOrganizationsViewState extends State<TotalOrganizationsView>
     "Wazaf",
     "Microsoft",
   ];
-
+  List<dynamic> acceptedOrgs = [];
+  bool isInitialized = false;
   Color indicatorColor = Colors.green;
   bool isSearching = false;
   TextEditingController searchController = TextEditingController();
@@ -147,6 +148,12 @@ class _TotalOrganizationsViewState extends State<TotalOrganizationsView>
           }
 
           if (state is OrganizationSuccess) {
+            if (!isInitialized) {
+              acceptedOrgs = state.organizations
+                  .where((e) => e.status == 'Approved')
+                  .toList();
+              isInitialized = true;
+            }
             final orgs = state.organizations;
             final accepted = orgs.where((e) => e.status == 'Approved').toList();
 
@@ -155,21 +162,26 @@ class _TotalOrganizationsViewState extends State<TotalOrganizationsView>
               controller: _tabController,
               children: [
                 ListView.builder(
-                  itemCount: accepted.length,
+                  itemCount: acceptedOrgs.length,
                   itemBuilder: (context, index) {
-                    final org = accepted[index];
+                    final org = acceptedOrgs[index];
                     return AcceptedOrgView(
-                      // orgLogo: orgLogos[index],
-                      // orgName: orgNames[index],
+                      orgLogo: (org.logo != null && org.logo!.isNotEmpty)
+                          ? org.logo!
+                          : AppAssets.orgLogo,
                       // onDelete: () {
                       //   setState(() {
                       //     orgLogos.removeAt(index);
                       //     orgNames.removeAt(index);
                       //   });
                       // },
-                      orgLogo: AppAssets.orgLogo,
+                      //  orgLogo: AppAssets.orgLogo,
                       orgName: org.name,
-                      onDelete: () {},
+                      onDelete: () {
+                        setState(() {
+                          acceptedOrgs.removeAt(index);
+                        });
+                      },
                     );
                   },
                 ),
@@ -179,7 +191,9 @@ class _TotalOrganizationsViewState extends State<TotalOrganizationsView>
                     final org = rejected[index];
 
                     return RejectedOrgView(
-                      orgLogo: AppAssets.orgLogo,
+                      orgLogo: (org.logo != null && org.logo!.isNotEmpty)
+                          ? org.logo!
+                          : AppAssets.orgLogo,
                       orgName: org.name,
                     );
                   },

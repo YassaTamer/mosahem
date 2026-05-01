@@ -8,20 +8,26 @@ class CategoryContainerSettings extends StatelessWidget {
     required this.text,
     required this.icon,
     required this.page,
+    this.onTap,
   });
   final String text;
   final String icon;
   final Widget page;
+  final VoidCallback? onTap;
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
       child: GestureDetector(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => page),
-          );
+          if (onTap != null) {
+            onTap!(); 
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => page),
+            );
+          }
         },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),

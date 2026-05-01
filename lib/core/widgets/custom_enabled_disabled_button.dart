@@ -11,7 +11,9 @@ class CustomEnabledDisabledButton extends StatefulWidget {
     required this.disabledColor,
     this.width = 300,
     this.height = 50,
+    this.onTap,
   });
+  final VoidCallback? onTap;
   final bool isEnabled;
   final String buttonName;
   final Color enabledColor;
@@ -30,7 +32,7 @@ class _CustomEnabledDisabledButtonState
   Widget build(BuildContext context) {
     return Center(
       child: ElevatedButton(
-        onPressed: widget.isEnabled ? () {} : null,
+        onPressed: widget.isEnabled ? widget.onTap : null,
         style:
             ElevatedButton.styleFrom(
               fixedSize: Size(widget.width, widget.height),
