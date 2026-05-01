@@ -1,18 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/core/helpers/date_helper.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_cubit.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_state.dart';
 import 'package:mosahem/features/organization/opportunity_details/presentation/views/application_questions_screen.dart';
 
-class OpportunityDetailsScreen extends StatelessWidget {
-  const OpportunityDetailsScreen({super.key, this.isOrganization = false});
+class OpportunityDetailsScreen extends StatefulWidget {
+  const OpportunityDetailsScreen({
+    super.key,
+    required this.opportunityId,
+    this.isOrganization = false,
+  });
 
+  final String opportunityId;
   final bool isOrganization;
+
+  @override
+  State<OpportunityDetailsScreen> createState() =>
+      _OpportunityDetailsScreenState();
+}
+
+class _OpportunityDetailsScreenState extends State<OpportunityDetailsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<OpportunityCubit>().getOpportunityDetails(
+      widget.opportunityId,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
 
-      bottomNavigationBar: isOrganization
+      bottomNavigationBar: widget.isOrganization
           ? null
           : SafeArea(
               child: Padding(
@@ -50,41 +73,57 @@ class OpportunityDetailsScreen extends StatelessWidget {
               ),
             ),
 
-      body: CustomScrollView(
-        slivers: [
-          _buildSliverAppBar(context),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildTitleSection(),
-                  const SizedBox(height: 8),
-                  _buildOrgRow(),
-                  const SizedBox(height: 16),
-                  _buildVolunteerStatsCard(),
-                  const SizedBox(height: 16),
-                  _buildVolunteerFieldCard(),
-                  const SizedBox(height: 20),
-                  _buildAboutSection(),
-                  const SizedBox(height: 20),
-                  _buildKeyDetailsSection(),
-                  const SizedBox(height: 20),
-                  _buildSkillsMustHaveSection(),
-                  const SizedBox(height: 20),
-                  _buildSkillsWillAcquireSection(),
-                  const SizedBox(height: 30),
-                ],
+      body: BlocBuilder<OpportunityCubit, OpportunityState>(
+        builder: (context, state) {
+          if (state is OpportunityLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state is OpportunityError) {
+            return Center(child: Text(state.message));
+          }
+          final cubit = context.read<OpportunityCubit>();
+          final opp = cubit.selectedOpportunity;
+
+          if (opp == null) {
+            return const SizedBox();
+          }
+          return CustomScrollView(
+            slivers: [
+              _buildSliverAppBar(context, opp.opportunityPhotoUrl),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildTitleSection(opp.name),
+                      const SizedBox(height: 8),
+                      _buildOrgRow(opp.organizationName, opp.logoUrl),
+                      const SizedBox(height: 16),
+                      _buildVolunteerStatsCard(opp),
+                      const SizedBox(height: 16),
+                      _buildVolunteerFieldCard(),
+                      const SizedBox(height: 20),
+                      _buildAboutSection(opp.description ?? ""),
+                      const SizedBox(height: 20),
+                      _buildKeyDetailsSection(opp),
+                      const SizedBox(height: 20),
+                      _buildSkillsMustHaveSection(opp.requiredSkills),
+                      const SizedBox(height: 20),
+                      _buildSkillsWillAcquireSection(opp.providedSkills),
+                      const SizedBox(height: 30),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildSliverAppBar(BuildContext context) {
+  Widget _buildSliverAppBar(BuildContext context, String? imageUrl) {
     return SliverAppBar(
       expandedHeight: 220,
       pinned: true,
@@ -105,7 +144,7 @@ class OpportunityDetailsScreen extends StatelessWidget {
         ),
       ),
 
-      actions: isOrganization
+      actions: !widget.isOrganization
           ? [
               Container(
                 margin: const EdgeInsets.all(8),
@@ -123,7 +162,7 @@ class OpportunityDetailsScreen extends StatelessWidget {
                 ),
               ),
             ]
-          : [], // volunteers see no action icon
+          : null, // volunteers see no action icon
 
       title: const Text(
         'Opportunity Details',
@@ -139,15 +178,11 @@ class OpportunityDetailsScreen extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             Image.network(
-              'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=800',
+              imageUrl ?? "",
               fit: BoxFit.cover,
               errorBuilder: (_, _, _) => Container(
                 color: AppColors.primaryLightBlue,
-                child: const Icon(
-                  Icons.image,
-                  size: 60,
-                  color: AppColors.greyLight,
-                ),
+                child: const Icon(Icons.image),
               ),
             ),
             Container(
@@ -166,59 +201,49 @@ class OpportunityDetailsScreen extends StatelessWidget {
   }
 
   // ── Content sections ──────────────────────────────────────────────────────
-
-  Widget _buildTitleSection() {
+  Widget _buildTitleSection(String title) {
     return Row(
       children: [
-        const Text(
-          'Green Future ',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textBlueDark,
+        Expanded(
+          child: Text(
+            title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
         ),
-        const Text('🌱', style: TextStyle(fontSize: 22)),
-        const Spacer(),
+        const SizedBox(width: 6),
+        const Text('🌱', style: TextStyle(fontSize: 24)),
       ],
     );
   }
 
-  Widget _buildOrgRow() {
+  Widget _buildOrgRow(String name, String? logo) {
     return Row(
       children: [
-        Container(
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: AppColors.greyLight),
-          ),
-          child: ClipOval(
-            child: Image.network(
-              'https://via.placeholder.com/32',
-              errorBuilder: (_, __, ___) => const Icon(
-                Icons.business,
-                size: 18,
-                color: AppColors.primary,
-              ),
-            ),
-          ),
+        CircleAvatar(
+          radius: 16,
+          backgroundImage: (logo != null && logo.isNotEmpty)
+              ? NetworkImage(logo)
+              : null,
+          child: (logo == null || logo.isEmpty)
+              ? const Icon(Icons.business)
+              : null,
         ),
         const SizedBox(width: 8),
-        const Text(
-          'Zad Solutions',
-          style: TextStyle(
-            fontSize: 14,
-            color: AppColors.textGrey,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+        Text(name),
       ],
     );
   }
 
-  Widget _buildVolunteerStatsCard() {
+  Widget _buildVolunteerStatsCard(opp) {
+    final total = opp.numberOfVolunteers ?? 0;
+    final joined = opp.applicantsCount ?? 0;
+
+    final recent = opp.pendingApplicantsCount ?? 0;
+    final accepted = opp.acceptedApplicantsCount ?? 0;
+    final rejected = opp.rejectedApplicantsCount ?? 0;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -237,30 +262,35 @@ class OpportunityDetailsScreen extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               RichText(
-                text: const TextSpan(
+                text: TextSpan(
                   children: [
                     TextSpan(
-                      text: '8',
-                      style: TextStyle(
+                      text: '$joined',
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                         color: AppColors.textBlueDark,
                       ),
                     ),
                     TextSpan(
-                      text: '/15 volunteers joined',
-                      style: TextStyle(fontSize: 14, color: AppColors.textGrey),
+                      text: '/$total volunteers joined',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: AppColors.textGrey,
+                      ),
                     ),
                   ],
                 ),
               ),
             ],
           ),
+
           const SizedBox(height: 10),
+
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: LinearProgressIndicator(
-              value: 8 / 15,
+              value: total == 0 ? 0 : joined / total,
               minHeight: 8,
               backgroundColor: AppColors.greyLight,
               valueColor: const AlwaysStoppedAnimation<Color>(
@@ -268,17 +298,19 @@ class OpportunityDetailsScreen extends StatelessWidget {
               ),
             ),
           ),
+
           const SizedBox(height: 14),
-          const Divider(color: AppColors.greyLight, height: 1),
+          const Divider(height: 1),
           const SizedBox(height: 12),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildStatItem('Recent', '10', AppColors.mustardYellow),
+              _buildStatItem('Recent', '$recent', AppColors.mustardYellow),
               Container(width: 1, height: 36, color: AppColors.greyLight),
-              _buildStatItem('Accepted', '8', AppColors.lightGreen),
+              _buildStatItem('Accepted', '$accepted', AppColors.lightGreen),
               Container(width: 1, height: 36, color: AppColors.greyLight),
-              _buildStatItem('Rejected', '3', AppColors.red),
+              _buildStatItem('Rejected', '$rejected', AppColors.red),
             ],
           ),
         ],
@@ -372,45 +404,45 @@ class OpportunityDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAboutSection() {
+  Widget _buildAboutSection(String description) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle('About This Opportunity'),
         const SizedBox(height: 12),
-        const Text(
-          'Join us in a meaningful environmental initiative focused on planting trees and promoting sustainability. This opportunity aims to raise environmental awareness, reduce pollution, and create greener, healthier communities. No prior experience is required—just passion, teamwork, and a desire to make a positive impact 🌎',
-          style: TextStyle(
-            fontSize: 14,
-            color: AppColors.textGrey,
-            height: 1.6,
-          ),
-        ),
+        Text(description),
       ],
     );
   }
 
-  Widget _buildKeyDetailsSection() {
+  Widget _buildKeyDetailsSection(opp) {
+    final location = opp.location ?? "Unknown";
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle('Key Details'),
         const SizedBox(height: 12),
+
         _buildDetailCard(
           icon: Icons.location_on_outlined,
           iconColor: AppColors.mustardYellow,
           title: 'Location',
-          content:
-              "Nasr City\nAbbas El Akkad Street\nNear the Boys' Preparatory School",
+          content: location,
         ),
+
         const SizedBox(height: 10),
+
         _buildDetailCard(
           icon: Icons.calendar_today_outlined,
           iconColor: AppColors.primary,
           title: 'Duration',
-          content: '10 / 12 / 2025 - 11 / 12 / 2025',
+          content:
+              "${DateHelper.formatNumeric(opp.startDate)} → ${DateHelper.formatNumeric(opp.endDate)}",
         ),
+
         const SizedBox(height: 10),
+
         Row(
           children: [
             Expanded(
@@ -418,7 +450,7 @@ class OpportunityDetailsScreen extends StatelessWidget {
                 icon: Icons.work_outline,
                 iconColor: AppColors.mustardYellow,
                 title: 'Work Type',
-                content: 'Part-Time',
+                content: opp.workType ?? "Unknown",
               ),
             ),
             const SizedBox(width: 10),
@@ -427,7 +459,7 @@ class OpportunityDetailsScreen extends StatelessWidget {
                 icon: Icons.location_city_outlined,
                 iconColor: AppColors.primary,
                 title: 'Work Location',
-                content: 'on-site',
+                content: opp.timeType ?? "Unknown",
               ),
             ),
           ],
@@ -461,6 +493,7 @@ class OpportunityDetailsScreen extends StatelessWidget {
             child: Icon(icon, color: iconColor, size: 20),
           ),
           const SizedBox(width: 12),
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -476,6 +509,8 @@ class OpportunityDetailsScreen extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   content,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontSize: 13,
                     color: AppColors.textGrey,
@@ -490,31 +525,17 @@ class OpportunityDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSkillsMustHaveSection() {
-    final skills = ['Education', 'Community Service', 'Healthcare'];
+  Widget _buildSkillsMustHaveSection(List? skills) {
+    if (skills == null || skills.isEmpty) return const SizedBox();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: const [
-            Text('🏆', style: TextStyle(fontSize: 18)),
-            SizedBox(width: 8),
-            Text(
-              'Skills You Must Have',
-              style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textBlueDark,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
+        const Text('🏆 Skills You Must Have'),
+        const SizedBox(height: 10),
         Wrap(
           spacing: 10,
-          runSpacing: 8,
-          children: skills.map(_buildCheckChip).toList(),
+          children: skills.map((s) => _buildCheckChip(s.name)).toList(),
         ),
       ],
     );
@@ -550,40 +571,17 @@ class OpportunityDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSkillsWillAcquireSection() {
-    final skills = ['Education', 'Youth Development', 'Technology'];
+  Widget _buildSkillsWillAcquireSection(List? skills) {
+    if (skills == null || skills.isEmpty) return const SizedBox();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: const [
-            Text('🎯', style: TextStyle(fontSize: 18)),
-            SizedBox(width: 8),
-            Text(
-              'Skills You Will Acquire',
-              style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textBlueDark,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: const Color(0xffF0FAF3),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.lightGreen.withOpacity(0.3)),
-          ),
-          child: Wrap(
-            spacing: 10,
-            runSpacing: 8,
-            children: skills.map(_buildAcquireChip).toList(),
-          ),
+        const Text('🎯 Skills You Will Acquire'),
+        const SizedBox(height: 10),
+        Wrap(
+          spacing: 10,
+          children: skills.map((s) => _buildAcquireChip(s.name)).toList(),
         ),
       ],
     );

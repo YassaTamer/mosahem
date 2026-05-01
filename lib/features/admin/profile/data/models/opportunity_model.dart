@@ -1,3 +1,5 @@
+import 'package:mosahem/features/organization/createOpp/data/models/skill_model.dart';
+
 class OpportunityModel {
   final String id;
   final String name;
@@ -13,7 +15,13 @@ class OpportunityModel {
   final String? timeType;
   final int? likesCount;
   final int? commentsCount;
-
+  final List<SkillModel>? requiredSkills;
+  final List<SkillModel>? providedSkills;
+  final int? applicantsCount;
+  final int? numberOfVolunteers;
+  final int? acceptedApplicantsCount;
+  final int? rejectedApplicantsCount;
+  final int? pendingApplicantsCount;
   OpportunityModel({
     required this.id,
     required this.name,
@@ -29,6 +37,13 @@ class OpportunityModel {
     this.timeType,
     this.likesCount,
     this.commentsCount,
+    this.requiredSkills,
+    this.providedSkills,
+    this.applicantsCount,
+    this.numberOfVolunteers,
+    this.acceptedApplicantsCount,
+    this.rejectedApplicantsCount,
+    this.pendingApplicantsCount,
   });
 
   static String _stringValue(dynamic value) {
@@ -103,6 +118,28 @@ class OpportunityModel {
       timeType: _nullableStringValue(json['LocationType']),
       likesCount: _intValue(json['LikesCount']),
       commentsCount: _intValue(json['CommentsCount']),
+      requiredSkills: (json['RequiredSkills'] as List?)
+          ?.map((e) => SkillModel.fromJson(e))
+          .toList(),
+
+      providedSkills: (json['ProvidedSkills'] as List?)
+          ?.map((e) => SkillModel.fromJson(e))
+          .toList(),
+      applicantsCount: _intValue(json['ApplicantsCount']),
+      numberOfVolunteers: _intValue(json['NumberOfVolunteers']),
+      acceptedApplicantsCount: _intValue(json['AcceptedApplicantsCount']),
+      rejectedApplicantsCount: _intValue(json['RejectedApplicantsCount']),
+      pendingApplicantsCount: _intValue(json['PendingApplicantsCount']),
     );
+  }
+}
+
+class SkillModel {
+  final String name;
+
+  SkillModel({required this.name});
+
+  factory SkillModel.fromJson(Map<String, dynamic> json) {
+    return SkillModel(name: json['SkillName']);
   }
 }

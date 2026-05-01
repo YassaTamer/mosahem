@@ -13,4 +13,8 @@ class OpportunitiesRepository {
   Future<List<OpportunityModel>> getAllOpportunities() async {
     return await apiService.getAllOpportunities();
   }
+
+  Future<OpportunityModel> getOpportunityById(String id) {
+    return apiService.getOpportunityById(id);
+  }
 }
