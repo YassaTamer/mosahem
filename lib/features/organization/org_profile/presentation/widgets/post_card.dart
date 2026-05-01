@@ -137,16 +137,17 @@ class PostCard extends StatelessWidget {
             //   width: double.infinity,
             //   fit: BoxFit.cover,
             // ),
-            child: postImage.startsWith('http')
+            child: (postImage.isNotEmpty && postImage.startsWith('http'))
                 ? Image.network(
                     postImage,
                     height: 170,
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) => Image.asset(AppAssets.postImage),
+                    errorBuilder: (_, __, ___) =>
+                        Image.asset(AppAssets.postImage),
                   )
                 : Image.asset(
-                    postImage,
+                    AppAssets.postImage, // ✅ fallback
                     height: 170,
                     width: double.infinity,
                     fit: BoxFit.cover,
