@@ -65,20 +65,14 @@ class PostCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              wantOrgPhoto && orgPhoto.isNotEmpty
-                  ? Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.mustardYellow,
-                          width: 2,
-                        ),
-                      ),
-                      child: CircleAvatar(
-                        radius: 16,
-                        backgroundColor: Colors.transparent,
-                        backgroundImage: AssetImage(orgPhoto),
-                      ),
+              wantOrgPhoto
+                  ? CircleAvatar(
+                      radius: 16,
+                      backgroundColor: Colors.grey.shade200,
+                      backgroundImage: (orgLogo != null && orgLogo!.isNotEmpty)
+                          ? NetworkImage(orgLogo!)
+                          : const AssetImage(AppAssets.profilePhotoIcon)
+                                as ImageProvider,
                     )
                   : const CircleAvatar(
                       radius: 16,

@@ -141,7 +141,7 @@ class OpportunityDetailsScreen extends StatelessWidget {
             Image.network(
               'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=800',
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
+              errorBuilder: (_, _, _) => Container(
                 color: AppColors.primaryLightBlue,
                 child: const Icon(
                   Icons.image,
