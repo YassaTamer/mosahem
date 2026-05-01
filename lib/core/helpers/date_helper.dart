@@ -9,4 +9,13 @@ class DateHelper {
       return date; // fallback لو حصل error
     }
   }
+
+  static String formatNumeric(String date) {
+    try {
+      final parsedDate = DateTime.parse(date);
+      return DateFormat('dd/MM/yyyy').format(parsedDate);
+    } catch (e) {
+      return date;
+    }
+  }
 }

@@ -8,6 +8,7 @@ import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/features/admin/home/presentation/views/filter_view_admin.dart';
 import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_cubit.dart';
 import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_state.dart';
+import 'package:mosahem/features/organization/opportunity_details/presentation/views/opportunity_details_screen.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/post_card.dart';
 
 class AdminHomeView extends StatefulWidget {
@@ -206,29 +207,42 @@ class _AdminHomeViewState extends State<AdminHomeView> {
 
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 15),
-                        child: PostCard(
-                          orgLogo: opp.logoUrl,
-                          orgName: opp.organizationName,
-                          wantOrgPhoto: true,
-                          applyButton: false,
-                          timeAgo: opp.startDate,
-                          postImage: opp.opportunityPhotoUrl ?? "",
-                          title: opp.name,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => OpportunityDetailsScreen(
+                                  isOrganization: true,
+                                  opportunityId: opp.id,
+                                ),
+                              ),
+                            );
+                          },
+                          child: PostCard(
+                            orgLogo: opp.logoUrl,
+                            orgName: opp.organizationName,
+                            wantOrgPhoto: true,
+                            applyButton: false,
+                            timeAgo: opp.startDate,
+                            postImage: opp.opportunityPhotoUrl ?? "",
+                            title: opp.name,
 
-                          description: opp.description ?? "No description",
-                          location: opp.location ?? "Unknown",
-                          status: opp.status ?? "Unknown",
+                            description: opp.description ?? "No description",
+                            location: opp.location ?? "Unknown",
+                            status: opp.status ?? "Unknown",
 
-                          // ✅ ضيف دول
-                          workType: opp.workType ?? "Unknown",
-                          timeType: opp.timeType ?? "Unknown",
+                            // ✅ ضيف دول
+                            workType: opp.workType ?? "Unknown",
+                            timeType: opp.timeType ?? "Unknown",
 
-                          date: opp.startDate,
-                          time: opp.endDate,
+                            date: opp.startDate,
+                            time: opp.endDate,
 
-                          // ✅ بدل الثابت
-                          comments: (opp.commentsCount ?? 0).toString(),
-                          likes: (opp.likesCount ?? 0).toString(),
+                            // ✅ بدل الثابت
+                            comments: (opp.commentsCount ?? 0).toString(),
+                            likes: (opp.likesCount ?? 0).toString(),
+                          ),
                         ),
                       );
                     },

@@ -56,4 +56,17 @@ class OpportunitiesApiService {
         .map<OpportunityModel>((e) => OpportunityModel.fromJson(e))
         .toList();
   }
+
+  Future<OpportunityModel> getOpportunityById(String id) async {
+    final token = await CacheHelper.getToken();
+
+    final response = await dio.get(
+      '/api/v1/opportunities/$id',
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
+
+    final data = response.data['Data'];
+
+    return OpportunityModel.fromJson(data);
+  }
 }
