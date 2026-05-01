@@ -9,11 +9,14 @@ class OpportunityCubit extends Cubit<OpportunityState> {
 
   OpportunityCubit(this.repository) : super(OpportunityInitial());
   OpportunityModel? selectedOpportunity;
+  List<OpportunityModel> _currentOpportunities = const [];
+
   Future<void> getOpportunities(String status) async {
     emit(OpportunityLoading());
 
     try {
       final opportunities = await repository.getOpportunities(status);
+      _currentOpportunities = List.unmodifiable(opportunities);
       emit(OpportunitySuccess(opportunities));
     } catch (e) {
       emit(OpportunityError(e.toString()));
@@ -25,6 +28,7 @@ class OpportunityCubit extends Cubit<OpportunityState> {
 
     try {
       final opportunities = await repository.getAllOpportunities();
+      _currentOpportunities = List.unmodifiable(opportunities);
       emit(OpportunitySuccess(opportunities));
     } catch (e) {
       emit(OpportunityError(e.toString()));
@@ -39,7 +43,7 @@ class OpportunityCubit extends Cubit<OpportunityState> {
 
       selectedOpportunity = result;
 
-      emit(OpportunitySuccess([result])); // مؤقتًا
+      emit(OpportunityDetailsLoaded(result, _currentOpportunities));
     } catch (e) {
       emit(OpportunityError(e.toString()));
     }

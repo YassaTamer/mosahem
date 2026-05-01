@@ -11,6 +11,15 @@ class OpportunitySuccess extends OpportunityState {
   OpportunitySuccess(this.opportunities);
 }
 
+class OpportunityDetailsLoaded extends OpportunitySuccess {
+  final OpportunityModel opportunity;
+
+  OpportunityDetailsLoaded(
+    this.opportunity,
+    List<OpportunityModel> opportunities,
+  ) : super(opportunities);
+}
+
 class OpportunityError extends OpportunityState {
   final String message;
 
