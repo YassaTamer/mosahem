@@ -79,50 +79,54 @@ class PostCard extends StatelessWidget {
                       backgroundColor: Colors.grey,
                     ),
               const SizedBox(width: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        orgName,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            orgName,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        DateHelper.format(timeAgo),
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: Colors.blueGrey,
+                        const SizedBox(width: 8),
+                        Text(
+                          DateHelper.format(timeAgo),
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Colors.blueGrey,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
 
-                  Row(
-                    children: [
-                      _buildTag(workType, AppColors.primary),
+                    Row(
+                      children: [
+                        _buildTag(workType, AppColors.primary),
 
-                      const SizedBox(width: 4),
+                        const SizedBox(width: 4),
 
-                      _buildTag(timeType, AppColors.lightGreen),
+                        _buildTag(timeType, AppColors.lightGreen),
 
-                      const SizedBox(width: 4),
+                        const SizedBox(width: 4),
 
-                      _buildTag(
-                        status,
-                        AppColors.lightGreen,
-                        icon: status == "Open" ? Icons.lock_open : Icons.lock,
-                      ),
-                    ],
-                  ),
-                ],
+                        _buildTag(
+                          status,
+                          AppColors.lightGreen,
+                          icon: status == "Open" ? Icons.lock_open : Icons.lock,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              const Spacer(),
+              //   const Spacer(),
               SvgPicture.asset(AppAssets.sendIcon),
             ],
           ),
@@ -143,8 +147,7 @@ class PostCard extends StatelessWidget {
                     height: 170,
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) =>
-                        Image.asset(AppAssets.postImage),
+                    errorBuilder: (_, _, _) => Image.asset(AppAssets.postImage),
                   )
                 : Image.asset(
                     AppAssets.postImage, // ✅ fallback
@@ -374,6 +377,7 @@ class PostCard extends StatelessWidget {
         Icon(icon, size: 12, color: color),
         const SizedBox(width: 4),
         Text(
+          overflow: TextOverflow.ellipsis,
           text,
           style: const TextStyle(
             fontSize: 9,

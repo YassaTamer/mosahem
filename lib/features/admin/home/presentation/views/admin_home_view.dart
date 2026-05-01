@@ -210,17 +210,25 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                           orgLogo: opp.logoUrl,
                           orgName: opp.organizationName,
                           wantOrgPhoto: true,
-                          //   orgPhoto: opp.logoUrl,
                           applyButton: false,
-                          timeAgo: opp.startDate, // مؤقت
+                          timeAgo: opp.startDate,
                           postImage: opp.opportunityPhotoUrl ?? "",
                           title: opp.name,
-                          description: "No description",
-                          location: "Unknown",
+
+                          description: opp.description ?? "No description",
+                          location: opp.location ?? "Unknown",
+                          status: opp.status ?? "Unknown",
+
+                          // ✅ ضيف دول
+                          workType: opp.workType ?? "Unknown",
+                          timeType: opp.timeType ?? "Unknown",
+
                           date: opp.startDate,
                           time: opp.endDate,
-                          comments: "0",
-                          likes: "0",
+
+                          // ✅ بدل الثابت
+                          comments: (opp.commentsCount ?? 0).toString(),
+                          likes: (opp.likesCount ?? 0).toString(),
                         ),
                       );
                     },

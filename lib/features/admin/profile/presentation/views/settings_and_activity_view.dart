@@ -5,7 +5,6 @@ import 'package:mosahem/core/helpers/cache_helper.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/features/admin/profile/presentation/views/admin_view.dart';
 import 'package:mosahem/features/admin/profile/presentation/views/privacy_view.dart';
-import 'package:mosahem/features/admin/profile/presentation/views/setting_view.dart';
 import 'package:mosahem/features/admin/profile/presentation/widgets/category_container_settings.dart';
 import 'package:mosahem/features/auth/presentation/views/login_view.dart';
 
