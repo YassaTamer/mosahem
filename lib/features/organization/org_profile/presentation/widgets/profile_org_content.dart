@@ -116,28 +116,28 @@ class ProfileOrgContent extends StatelessWidget {
                 /// ABOUT
                 const Center(
                   child: SingleChildScrollView(
-                    padding:  EdgeInsets.all(8),
+                    padding: EdgeInsets.all(8),
                     child: Column(
                       children: [
-                         AboutDescriptionSection(
+                        AboutDescriptionSection(
                           description: "Mosahem is a volunteering platform...",
                           vision: "We believe that everyone has the ability...",
                         ),
-                         Divider(height: 40),
+                        Divider(height: 40),
                         LocationsSection(
                           showAddIcon: false,
                           showDeleteIcon: false,
                           showEditIcon: false,
                         ),
 
-                         Divider(height: 40),
+                        Divider(height: 40),
 
-                         TracksSection(
+                        TracksSection(
                           showAddIcon: false,
                           showRemoveIcon: false,
                         ),
 
-                         SizedBox(height: 40),
+                        SizedBox(height: 40),
                       ],
                     ),
                   ),
