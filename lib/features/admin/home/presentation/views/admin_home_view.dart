@@ -232,14 +232,12 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                             location: opp.location ?? "Unknown",
                             status: opp.status ?? "Unknown",
 
-                            // ✅ ضيف دول
                             workType: opp.workType ?? "Unknown",
                             timeType: opp.timeType ?? "Unknown",
 
                             date: opp.startDate,
                             time: opp.endDate,
 
-                            // ✅ بدل الثابت
                             comments: (opp.commentsCount ?? 0).toString(),
                             likes: (opp.likesCount ?? 0).toString(),
                           ),

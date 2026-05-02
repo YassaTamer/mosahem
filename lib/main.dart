@@ -23,6 +23,9 @@ import 'package:mosahem/features/organization/org_profile/data/api/org_profile_a
 import 'package:mosahem/features/organization/org_profile/data/repository/org_profile_repository.dart';
 import 'package:mosahem/features/organization/org_profile/logic/cubit/org_profile_cubit.dart';
 import 'package:mosahem/features/splash/presentation/views/splash_view.dart';
+import 'package:mosahem/features/volunteer/volunteer_profile/data/api/volunteers_profile_api_service.dart';
+import 'package:mosahem/features/volunteer/volunteer_profile/data/repository/volunteers_profile_repository.dart';
+import 'package:mosahem/features/volunteer/volunteer_profile/logic/volunteer_profile_cubit.dart';
 
 void main() {
   runApp(MyApp(dio: DioHelper.instance.client));
@@ -37,6 +40,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
+        RepositoryProvider(
+          create: (_) =>
+              VolunteerProfileRepository(VolunteerProfileApiService()),
+        ),
         RepositoryProvider(
           create: (_) => OrgProfileRepository(OrgProfileApiService()),
         ),
@@ -62,6 +69,11 @@ class MyApp extends StatelessWidget {
       ],
       child: MultiBlocProvider(
         providers: [
+          BlocProvider(
+            create: (context) => VolunteerProfileCubit(
+              context.read<VolunteerProfileRepository>(),
+            ),
+          ),
           BlocProvider(
             create: (context) =>
                 OrgProfileCubit(context.read<OrgProfileRepository>()),

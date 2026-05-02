@@ -22,6 +22,7 @@ class OpportunityModel {
   final int? acceptedApplicantsCount;
   final int? rejectedApplicantsCount;
   final int? pendingApplicantsCount;
+  final String? createdAt;
   OpportunityModel({
     required this.id,
     required this.name,
@@ -44,6 +45,7 @@ class OpportunityModel {
     this.acceptedApplicantsCount,
     this.rejectedApplicantsCount,
     this.pendingApplicantsCount,
+    this.createdAt,
   });
 
   static String _stringValue(dynamic value) {
@@ -130,6 +132,7 @@ class OpportunityModel {
       acceptedApplicantsCount: _intValue(json['AcceptedApplicantsCount']),
       rejectedApplicantsCount: _intValue(json['RejectedApplicantsCount']),
       pendingApplicantsCount: _intValue(json['PendingApplicantsCount']),
+      createdAt: _nullableStringValue(json['CreatedAt']),
     );
   }
 }
