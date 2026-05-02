@@ -1,4 +1,3 @@
-
 class OpportunityModel {
   final String id;
   final String name;
@@ -22,6 +21,7 @@ class OpportunityModel {
   final int? rejectedApplicantsCount;
   final int? pendingApplicantsCount;
   final String? createdAt;
+  final List<OpportunityQuestionModel>? questions;
   OpportunityModel({
     required this.id,
     required this.name,
@@ -45,6 +45,7 @@ class OpportunityModel {
     this.rejectedApplicantsCount,
     this.pendingApplicantsCount,
     this.createdAt,
+    this.questions,
   });
 
   static String _stringValue(dynamic value) {
@@ -132,6 +133,75 @@ class OpportunityModel {
       rejectedApplicantsCount: _intValue(json['RejectedApplicantsCount']),
       pendingApplicantsCount: _intValue(json['PendingApplicantsCount']),
       createdAt: _nullableStringValue(json['CreatedAt']),
+      questions: (json['Questions'] as List?)
+          ?.map((question) => OpportunityQuestionModel.fromJson(question))
+          .toList(),
+    );
+  }
+}
+
+class OpportunityQuestionModel {
+  final String id;
+  final int order;
+  final String description;
+  final String answerType;
+  final bool isRequired;
+  final List<String> options;
+
+  OpportunityQuestionModel({
+    required this.id,
+    required this.order,
+    required this.description,
+    required this.answerType,
+    required this.isRequired,
+    required this.options,
+  });
+
+  static String _stringValue(dynamic value) {
+    if (value == null) return '';
+    if (value is String) return value;
+    return value.toString();
+  }
+
+  static int _intValue(dynamic value) {
+    if (value == null) return 0;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    return int.tryParse(value.toString()) ?? 0;
+  }
+
+  static bool _boolValue(dynamic value) {
+    if (value is bool) return value;
+    if (value is num) return value != 0;
+    if (value is String) return value.toLowerCase() == 'true';
+    return false;
+  }
+
+  static List<String> _optionsValue(dynamic value) {
+    if (value is! List) return const [];
+    return value
+        .map(_stringValue)
+        .where((option) => option.trim().isNotEmpty)
+        .toList();
+  }
+
+  factory OpportunityQuestionModel.fromJson(dynamic json) {
+    final Map<String, dynamic> map;
+    if (json is Map<String, dynamic>) {
+      map = json;
+    } else if (json is Map) {
+      map = Map<String, dynamic>.from(json);
+    } else {
+      map = <String, dynamic>{};
+    }
+
+    return OpportunityQuestionModel(
+      id: _stringValue(map['QuestionId']),
+      order: _intValue(map['Order']),
+      description: _stringValue(map['Description']),
+      answerType: _stringValue(map['AnswerType']),
+      isRequired: _boolValue(map['IsRequired']),
+      options: _optionsValue(map['Options']),
     );
   }
 }

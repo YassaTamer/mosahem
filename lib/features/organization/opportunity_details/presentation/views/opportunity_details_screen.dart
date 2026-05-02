@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/core/helpers/app_snackbar_helper.dart';
 import 'package:mosahem/core/helpers/date_helper.dart';
+import 'package:mosahem/features/admin/profile/data/models/opportunity_model.dart';
 import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_cubit.dart';
 import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_state.dart';
 import 'package:mosahem/features/organization/opportunity_details/presentation/views/application_questions_screen.dart';
@@ -22,6 +24,33 @@ class OpportunityDetailsScreen extends StatefulWidget {
 }
 
 class _OpportunityDetailsScreenState extends State<OpportunityDetailsScreen> {
+  void _handleApplyPressed() {
+    final cubit = context.read<OpportunityCubit>();
+    final opp = cubit.selectedOpportunity;
+
+    if (opp == null) return;
+
+    final questions = opp.questions ?? [];
+    if (questions.isEmpty) {
+      _applyDirectly(opp.id);
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ApplicationQuestionsScreen(
+          questions: questions,
+          opportunityId: opp.id,
+        ),
+      ),
+    );
+  }
+
+  void _applyDirectly(String opportunityId) {
+    AppSnackBarHelper.success(context, 'Applied successfully');
+  }
+
   @override
   void initState() {
     super.initState();
@@ -37,42 +66,43 @@ class _OpportunityDetailsScreenState extends State<OpportunityDetailsScreen> {
 
       bottomNavigationBar: widget.isOrganization
           ? null
-          : SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ApplicationQuestionsScreen(),
+          : BlocBuilder<OpportunityCubit, OpportunityState>(
+              builder: (context, state) {
+                final cubit = context.read<OpportunityCubit>();
+                final opp = cubit.selectedOpportunity;
+
+                final hasQuestions = (opp?.questions?.isNotEmpty ?? false);
+
+                return SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: ElevatedButton(
+                        onPressed: _handleApplyPressed,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryDark,
+                          foregroundColor: AppColors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryDark,
-                      foregroundColor: AppColors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                    child: const Text(
-                      'Continue to Apply',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.3,
+                        child: Text(
+                          hasQuestions ? 'Continue to Apply' : 'Apply',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
-
       body: BlocBuilder<OpportunityCubit, OpportunityState>(
         builder: (context, state) {
           if (state is OpportunityLoading) {
@@ -236,7 +266,7 @@ class _OpportunityDetailsScreenState extends State<OpportunityDetailsScreen> {
     );
   }
 
-  Widget _buildVolunteerStatsCard(opp) {
+  Widget _buildVolunteerStatsCard(OpportunityModel opp) {
     final total = opp.numberOfVolunteers ?? 0;
     final joined = opp.applicantsCount ?? 0;
 
@@ -415,7 +445,7 @@ class _OpportunityDetailsScreenState extends State<OpportunityDetailsScreen> {
     );
   }
 
-  Widget _buildKeyDetailsSection(opp) {
+  Widget _buildKeyDetailsSection(OpportunityModel opp) {
     final location = opp.location ?? "Unknown";
 
     return Column(

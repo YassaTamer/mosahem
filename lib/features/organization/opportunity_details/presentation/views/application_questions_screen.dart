@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/features/admin/profile/data/models/opportunity_model.dart';
 
 enum QuestionType { text, multiChoice, singleChoice }
 
@@ -20,7 +21,14 @@ class AppQuestion {
 // ── Screen ────────────────────────────────────────────────────────────────────
 
 class ApplicationQuestionsScreen extends StatefulWidget {
-  const ApplicationQuestionsScreen({super.key});
+  final List<OpportunityQuestionModel> questions;
+  final String opportunityId;
+
+  const ApplicationQuestionsScreen({
+    super.key,
+    required this.questions,
+    required this.opportunityId,
+  });
 
   @override
   State<ApplicationQuestionsScreen> createState() =>
@@ -29,26 +37,18 @@ class ApplicationQuestionsScreen extends StatefulWidget {
 
 class _ApplicationQuestionsScreenState
     extends State<ApplicationQuestionsScreen> {
-  // Sample questions — replace / inject from your data layer
-  final List<AppQuestion> _questions = const [
-    AppQuestion(
-      number: 1,
-      text: 'What motivates you to volunteer for this opportunity?',
-      type: QuestionType.text,
-    ),
-    AppQuestion(
-      number: 2,
-      text: 'Which of these challenges are you prepared to handle?',
-      type: QuestionType.multiChoice,
-      options: ['Pricing', 'Inegration', 'Tecnical requirments', 'Timeline'],
-    ),
-    AppQuestion(
-      number: 3,
-      text: 'Have you volunteered before?',
-      type: QuestionType.singleChoice,
-      options: ['Yes', 'No'],
-    ),
-  ];
+  late final List<AppQuestion> _questions =
+      widget.questions
+          .map(
+            (question) => AppQuestion(
+              number: question.order,
+              text: question.description,
+              type: _mapQuestionType(question.answerType),
+              options: question.options,
+            ),
+          )
+          .toList()
+        ..sort((a, b) => a.number.compareTo(b.number));
 
   // Answers state
   final Map<int, String> _textAnswers = {}; // question index → text
@@ -77,7 +77,20 @@ class _ApplicationQuestionsScreenState
 
   bool get _allAnswered => _answeredCount == _totalQuestions;
 
-  double get _progress => _answeredCount / _totalQuestions;
+  double get _progress =>
+      _totalQuestions == 0 ? 0 : _answeredCount / _totalQuestions;
+
+  QuestionType _mapQuestionType(String answerType) {
+    switch (answerType.trim().toLowerCase()) {
+      case 'singlechoice':
+        return QuestionType.singleChoice;
+      case 'multiplechoice':
+        return QuestionType.multiChoice;
+      case 'text':
+      default:
+        return QuestionType.text;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

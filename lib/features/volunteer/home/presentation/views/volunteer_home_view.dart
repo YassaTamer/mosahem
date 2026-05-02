@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_cubit.dart';
 import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_state.dart';
 import 'package:mosahem/features/organization/opportunity_details/presentation/views/opportunity_details_screen.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/post_card.dart';
-import 'package:mosahem/features/volunteer/home/presentation/views/filter_view_volunteer.dart';
 
 class VolunteerHomeView extends StatefulWidget {
   const VolunteerHomeView({super.key, this.adminUserName = "Betty"});
@@ -77,104 +75,103 @@ class _VolunteerHomeViewState extends State<VolunteerHomeView> {
 
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      isSearching = true;
-                    });
-                  },
-                  child: isSearching
-                      ? Container(
-                          width: 280,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryLightBlue,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: TextField(
-                            controller: searchController,
-                            autofocus: true,
-                            onSubmitted: (_) {
-                              setState(() {
-                                isSearching = false;
-                              });
-                            },
-                            decoration: InputDecoration(
-                              hintText: "Search",
-                              hintStyle: TextStyle(
-                                color: AppColors.primary.withAlpha(
-                                  (255 * 0.5).toInt(),
-                                ),
-                              ),
-                              border: InputBorder.none,
-                              prefixIcon: Image.asset(AppAssets.searchIcon),
-                              suffixIcon: IconButton(
-                                icon: Icon(Icons.close),
-                                onPressed: () {
-                                  setState(() {
-                                    isSearching = false;
-                                    searchController.clear();
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
-                        )
-                      : Container(
-                          width: 280,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryLightBlue,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10),
-                                child: CustomText(
-                                  "Search",
-                                  fontSize: 20,
-                                  color: AppColors.primary.withAlpha(
-                                    (255 * 0.5).toInt(),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 170),
-                              Image.asset(AppAssets.searchIcon),
-                            ],
-                          ),
-                        ),
-                ),
-
-                SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FilterViewVolunteer(),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryLightBlue,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Image.asset(AppAssets.filterIconDark),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 20),
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: Row(
+          //     mainAxisSize: MainAxisSize.min,
+          //     children: [
+          //       GestureDetector(
+          //         onTap: () {
+          //           setState(() {
+          //             isSearching = true;
+          //           });
+          //         },
+          //         child: isSearching
+          //             ? Container(
+          //                 width: 280,
+          //                 height: 50,
+          //                 decoration: BoxDecoration(
+          //                   color: AppColors.primaryLightBlue,
+          //                   borderRadius: BorderRadius.circular(16),
+          //                 ),
+          //                 child: TextField(
+          //                   controller: searchController,
+          //                   autofocus: true,
+          //                   onSubmitted: (_) {
+          //                     setState(() {
+          //                       isSearching = false;
+          //                     });
+          //                   },
+          //                   decoration: InputDecoration(
+          //                     hintText: "Search",
+          //                     hintStyle: TextStyle(
+          //                       color: AppColors.primary.withAlpha(
+          //                         (255 * 0.5).toInt(),
+          //                       ),
+          //                     ),
+          //                     border: InputBorder.none,
+          //                     prefixIcon: Image.asset(AppAssets.searchIcon),
+          //                     suffixIcon: IconButton(
+          //                       icon: Icon(Icons.close),
+          //                       onPressed: () {
+          //                         setState(() {
+          //                           isSearching = false;
+          //                           searchController.clear();
+          //                         });
+          //                       },
+          //                     ),
+          //                   ),
+          //                 ),
+          //               )
+          //             : Container(
+          //                 width: 280,
+          //                 height: 50,
+          //                 decoration: BoxDecoration(
+          //                   color: AppColors.primaryLightBlue,
+          //                   borderRadius: BorderRadius.circular(16),
+          //                 ),
+          //                 child: Row(
+          //                   children: [
+          //                     Padding(
+          //                       padding: const EdgeInsets.only(left: 10),
+          //                       child: CustomText(
+          //                         "Search",
+          //                         fontSize: 20,
+          //                         color: AppColors.primary.withAlpha(
+          //                           (255 * 0.5).toInt(),
+          //                         ),
+          //                       ),
+          //                     ),
+          //                     SizedBox(width: 170),
+          //                     Image.asset(AppAssets.searchIcon),
+          //                   ],
+          //                 ),
+          //               ),
+          //       ),
+          //       SizedBox(width: 10),
+          //       GestureDetector(
+          //         onTap: () {
+          //           Navigator.push(
+          //             context,
+          //             MaterialPageRoute(
+          //               builder: (context) => FilterViewVolunteer(),
+          //             ),
+          //           );
+          //         },
+          //         child: Container(
+          //           height: 50,
+          //           width: 50,
+          //           decoration: BoxDecoration(
+          //             color: AppColors.primaryLightBlue,
+          //             borderRadius: BorderRadius.circular(16),
+          //           ),
+          //           child: Image.asset(AppAssets.filterIconDark),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          // SizedBox(height: 20),
           Expanded(
             child: BlocBuilder<OpportunityCubit, OpportunityState>(
               builder: (context, state) {
