@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/core/helpers/cache_helper.dart';
 import 'package:mosahem/core/helpers/date_helper.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/post_card.dart';
 import 'package:mosahem/features/volunteer/volunteer_profile/logic/volunteer_profile_cubit.dart';
@@ -21,11 +22,20 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   late VolunteerProfileCubit cubit;
   @override
+  @override
   void initState() {
     super.initState();
     cubit = context.read<VolunteerProfileCubit>();
 
-    cubit.getVolunteerProfile("f9120146-6801-408b-a222-d107ec4baa7c");
+    _loadProfile();
+  }
+
+  Future<void> _loadProfile() async {
+    final userId = await CacheHelper.getUserId();
+
+    if (userId != null) {
+      cubit.getVolunteerProfile(userId);
+    }
   }
 
   final colors = [

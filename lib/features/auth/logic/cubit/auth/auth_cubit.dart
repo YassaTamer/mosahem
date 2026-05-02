@@ -58,6 +58,7 @@ class AuthCubit extends Cubit<AuthState> {
         role: response.data.role,
         accessTokenExpiration: response.data.accessTokenExpiration,
         organizationId: response.data.id,
+        userId: response.data.id, // 👈 ضيف دي
       );
 
       final userRole = parseUserRole(response.data.role);
