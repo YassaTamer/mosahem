@@ -1,4 +1,3 @@
-import 'package:mosahem/features/organization/createOpp/data/models/skill_model.dart';
 
 class OpportunityModel {
   final String id;

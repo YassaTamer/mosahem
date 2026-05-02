@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_cubit.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_state.dart';
+import 'package:mosahem/features/organization/opportunity_details/presentation/views/opportunity_details_screen.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/post_card.dart';
 import 'package:mosahem/features/volunteer/home/presentation/views/filter_view_volunteer.dart';
 
@@ -14,6 +18,12 @@ class VolunteerHomeView extends StatefulWidget {
 }
 
 class _VolunteerHomeViewState extends State<VolunteerHomeView> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<OpportunityCubit>().getAllOpportunities();
+  }
+
   bool isSearching = false;
   TextEditingController searchController = TextEditingController();
   @override
@@ -166,72 +176,71 @@ class _VolunteerHomeViewState extends State<VolunteerHomeView> {
           ),
           SizedBox(height: 20),
           Expanded(
-            child: ListView(
-              children: [
-                PostCard(
-                  orgName: "Zad Solutions",
-                  wantOrgPhoto: true,
-                  orgPhoto: AppAssets.orgLogo,
-                  timeAgo: "2h",
-                  postImage: AppAssets.postImage,
-                  title: "Green Future",
-                  description:
-                      "A humanitarian opportunity focused on visiting needy families, offering support, care, and basic assistance to bring hope and kindness to those in need",
-                  location: "Cairo, Nasser City",
-                  date: "10/12/2025",
-                  time: "10:00 pm",
-                  comments: "2.5K",
-                  likes: "5K",
-                ),
-                SizedBox(height: 15),
-                PostCard(
-                  orgName: "Masr EL-kheir Foundation",
-                  wantOrgPhoto: true,
-                  orgPhoto: AppAssets.misrElKheirLogo,
-                  timeAgo: "3h",
-                  postImage: AppAssets.misrElKheirPostImage,
-                  title: "Helping Hands",
-                  description:
-                      "A short opportunity about sustainable agriculture.",
-                  location: "Al-Mansora",
-                  date: "20/3/2026",
-                  time: "4:00 pm",
-                  comments: "1.2K",
-                  likes: "3K",
-                ),
-                SizedBox(height: 15),
-                PostCard(
-                  orgName: "Icpc Sohag",
-                  wantOrgPhoto: true,
-                  orgPhoto: AppAssets.icpcLogo,
-                  timeAgo: "1h",
-                  postImage: AppAssets.icpcPostImage,
-                  title: "Organizational Volunteering",
-                  description:
-                      "Short-term volunteer opportunity to help organize an event for the ICPC",
-                  location: "Sohag, Creativa buliding",
-                  date: "15/4/2026",
-                  time: "8:00 am",
-                  comments: "5.5K",
-                  likes: "5K",
-                ),
-                SizedBox(height: 15),
-                PostCard(
-                  orgName: "Atfal Misr Foundation",
-                  wantOrgPhoto: true,
-                  orgPhoto: AppAssets.atfalMisrLogo,
-                  timeAgo: "10h",
-                  postImage: AppAssets.atfalMisrPostImage,
-                  title: "Organizing Games",
-                  description:
-                      "Short-term volunteer opportunity to organize children's games",
-                  location: "Cairo, Helioples",
-                  date: "2/2/2026",
-                  time: "12:00 pm",
-                  comments: "4.2K",
-                  likes: "2K",
-                ),
-              ],
+            child: BlocBuilder<OpportunityCubit, OpportunityState>(
+              builder: (context, state) {
+                if (state is OpportunityLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (state is OpportunityError) {
+                  return Center(child: Text(state.message));
+                }
+
+                if (state is OpportunitySuccess) {
+                  final opportunities = state.opportunities;
+
+                  if (opportunities.isEmpty) {
+                    return const Center(child: Text("No opportunities found"));
+                  }
+
+                  return ListView.builder(
+                    itemCount: opportunities.length,
+                    itemBuilder: (context, index) {
+                      final opp = opportunities[index];
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => OpportunityDetailsScreen(
+                                  isOrganization: false, // 👈 مهم جدًا
+                                  opportunityId: opp.id,
+                                ),
+                              ),
+                            );
+                          },
+                          child: PostCard(
+                            orgLogo: opp.logoUrl,
+                            orgName: opp.organizationName,
+                            wantOrgPhoto: true,
+                            applyButton: true,
+                            timeAgo: opp.startDate,
+                            postImage: opp.opportunityPhotoUrl ?? "",
+                            title: opp.name,
+                            description: opp.description ?? "No description",
+                            location: opp.location ?? "Unknown",
+
+                            status: opp.status ?? "Unknown",
+                            workType: opp.workType ?? "Unknown",
+                            timeType: opp.timeType ?? "Unknown",
+
+                            date: opp.startDate,
+                            time: opp.endDate,
+
+                            comments: (opp.commentsCount ?? 0).toString(),
+                            likes: (opp.likesCount ?? 0).toString(),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+
+                return const SizedBox();
+              },
             ),
           ),
         ],

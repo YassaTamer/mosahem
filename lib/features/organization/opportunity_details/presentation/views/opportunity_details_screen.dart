@@ -145,7 +145,8 @@ class _OpportunityDetailsScreenState extends State<OpportunityDetailsScreen> {
       ),
 
       actions: !widget.isOrganization
-          ? [
+          ? null
+          : [
               Container(
                 margin: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -161,8 +162,7 @@ class _OpportunityDetailsScreenState extends State<OpportunityDetailsScreen> {
                   onPressed: () {},
                 ),
               ),
-            ]
-          : null, // volunteers see no action icon
+            ], // volunteers see no action icon
 
       title: const Text(
         'Opportunity Details',
