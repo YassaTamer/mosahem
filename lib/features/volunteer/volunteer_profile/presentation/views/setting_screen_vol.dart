@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/helpers/cache_helper.dart';
 import 'package:mosahem/features/auth/presentation/views/login_view.dart';
+import 'package:mosahem/features/volunteer/volunteer_profile/presentation/views/profile_edit_screen.dart';
 
 class SettingScreenVol extends StatelessWidget {
   const SettingScreenVol({super.key});
@@ -42,14 +43,26 @@ class SettingScreenVol extends StatelessWidget {
             _buildSettingItem(
               icon: Icons.settings_outlined,
               title: 'Setting',
-              onTap: () {},
+              onTap: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfileEditScreen()),
+                  (route) => route.isFirst,
+                );
+              },
             ),
             const SizedBox(height: 16),
 
             _buildSettingItem(
               icon: Icons.lock_outline,
               title: 'Privacy',
-              onTap: () {},
+              onTap: () {
+                // Navigator.pushAndRemoveUntil(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => ProfileEditScreen()),
+                //   (route) => false,
+                // );
+              },
             ),
             const SizedBox(height: 16),
 
@@ -63,7 +76,7 @@ class SettingScreenVol extends StatelessWidget {
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => LoginView()),
-                  (route) => false,
+                  (route) => route.isFirst,
                 );
               },
             ),

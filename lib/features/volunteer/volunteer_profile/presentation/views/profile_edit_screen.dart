@@ -127,7 +127,9 @@ class _EditProfileScreenState extends State<ProfileEditScreen> {
                             borderRadius: BorderRadius.circular(15),
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
                         child: const Text(
                           "Save edit",
                           style: TextStyle(color: Colors.white, fontSize: 16),

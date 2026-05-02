@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CacheHelper {
+  static const String _userIdKey = 'user_id';
   static const String _tokenKey = 'access_token';
   static const String _roleKey = 'role';
   static const String _organizationIdKey = 'organization_id';
@@ -88,13 +89,19 @@ class CacheHelper {
     required String role,
     required String accessTokenExpiration,
     String? organizationId,
+    String? userId, // 👈 جديد
   }) async {
     await saveToken(token);
     await saveRefreshToken(refreshToken);
     await saveRole(role);
     await saveAccessTokenExpiration(accessTokenExpiration);
+
     if (organizationId != null && organizationId.isNotEmpty) {
       await saveOrganizationId(organizationId);
+    }
+
+    if (userId != null && userId.isNotEmpty) {
+      await saveUserId(userId); // 👈 مهم جدًا
     }
   }
 
@@ -129,5 +136,20 @@ class CacheHelper {
     await clearRole();
     await clearOrganizationId();
     await clearAccessTokenExpiration();
+  }
+
+  static Future<void> saveUserId(String id) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_userIdKey, id);
+  }
+
+  static Future<String?> getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_userIdKey);
+  }
+
+  static Future<void> clearUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_userIdKey);
   }
 }
