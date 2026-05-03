@@ -17,12 +17,39 @@ class FollowerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
         children: [
-          CircleAvatar(radius: 30, backgroundImage: NetworkImage(imageUrl)),
-          const SizedBox(width: 15),
+          // الصورة
+          CircleAvatar(
+            radius: 28,
+            backgroundColor: Colors.grey.shade200,
+            backgroundImage: imageUrl.isNotEmpty
+                ? NetworkImage(imageUrl)
+                : null,
+            onBackgroundImageError: imageUrl.isNotEmpty ? (_, __) {} : null,
+            child: imageUrl.isEmpty
+                ? const Icon(Icons.person, color: Colors.grey, size: 28)
+                : null,
+          ),
+
+          const SizedBox(width: 12),
+
+          // الاسم والبايو
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,15 +58,30 @@ class FollowerCard extends StatelessWidget {
                   name,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 15,
+                    color: AppColors.textBlueDark,
                   ),
                 ),
-                Text(bio, style: const TextStyle(fontSize: 14)),
+                const SizedBox(height: 4),
+                Text(
+                  bio,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade600,
+                    height: 1.4,
+                  ),
+                ),
               ],
             ),
           ),
+
+          const SizedBox(width: 8),
+
+          // زرار الحذف
           SizedBox(
-            height: 30,
+            height: 32,
             child: ElevatedButton(
               onPressed: onDelete,
               style: ElevatedButton.styleFrom(
@@ -47,7 +89,7 @@ class FollowerCard extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 elevation: 0,
               ),
               child: const Text(

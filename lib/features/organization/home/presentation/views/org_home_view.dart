@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:mosahem/core/constants/app_assets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
-import 'package:mosahem/features/organization/home/presentation/views/filter_view_org.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_cubit.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_state.dart';
+import 'package:mosahem/features/organization/opportunity_details/presentation/views/opportunity_details_screen.dart';
+import 'package:mosahem/features/organization/org_profile/logic/cubit/org_profile_cubit.dart';
+import 'package:mosahem/features/organization/org_profile/logic/cubit/org_profile_state.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/post_card.dart';
 
 class OrgHomeView extends StatefulWidget {
@@ -14,8 +18,17 @@ class OrgHomeView extends StatefulWidget {
 }
 
 class _OrgHomeViewState extends State<OrgHomeView> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<OpportunityCubit>().getAllOpportunities();
+    context.read<OrgProfileCubit>().getMyOrganization();
+  }
+
   bool isSearching = false;
   TextEditingController searchController = TextEditingController();
+  List _cachedOpportunities = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,213 +38,217 @@ class _OrgHomeViewState extends State<OrgHomeView> {
         toolbarHeight: 100,
         centerTitle: true,
         backgroundColor: Colors.transparent,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: AppColors.mustardYellow, width: 3),
-              ),
-              child: CircleAvatar(
-                backgroundColor: AppColors.white,
-                radius: 38,
-                child: ClipOval(
-                  child: Image.asset(
-                    AppAssets.resalaProfilePhoto,
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.fill,
-                  ),
-                ),
-              ),
-            ),
+        title: BlocBuilder<OrgProfileCubit, OrgProfileState>(
+          builder: (context, state) {
+            final org = state is OrgProfileDataState ? state.data : null;
 
-            SizedBox(width: 10),
-
-            CustomText(
-              "Hi, ${widget.adminUserName}...",
-              color: AppColors.primary,
-              fontWeight: FontWeight.bold,
-              fontSize: 25,
-            ),
-          ],
-        ),
-      ),
-
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
+            return Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      isSearching = true;
-                    });
-                  },
-                  child: isSearching
-                      ? Container(
-                          width: 280,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryLightBlue,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: TextField(
-                            controller: searchController,
-                            autofocus: true,
-                            onSubmitted: (_) {
-                              setState(() {
-                                isSearching = false;
-                              });
-                            },
-                            decoration: InputDecoration(
-                              hintText: "Search",
-                              hintStyle: TextStyle(
-                                color: AppColors.primary.withAlpha(
-                                  (255 * 0.5).toInt(),
-                                ),
-                              ),
-                              border: InputBorder.none,
-                              prefixIcon: Image.asset(AppAssets.searchIcon),
-                              suffixIcon: IconButton(
-                                icon: Icon(Icons.close),
-                                onPressed: () {
-                                  setState(() {
-                                    isSearching = false;
-                                    searchController.clear();
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
-                        )
-                      : Container(
-                          width: 280,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryLightBlue,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10),
-                                child: CustomText(
-                                  "Search",
-                                  fontSize: 20,
-                                  color: AppColors.primary.withAlpha(
-                                    (255 * 0.5).toInt(),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 170),
-                              Image.asset(AppAssets.searchIcon),
-                            ],
-                          ),
-                        ),
-                ),
-
-                SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => FilterViewOrg()),
-                    );
-                  },
-                  child: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryLightBlue,
-                      borderRadius: BorderRadius.circular(16),
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: AppColors.mustardYellow,
+                      width: 3,
                     ),
-                    child: Image.asset(AppAssets.filterIconDark),
+                  ),
+                  child: CircleAvatar(
+                    backgroundColor: AppColors.white,
+                    radius: 38,
+                    child: ClipOval(
+                      child: org?.organizationLogo != null
+                          ? Image.network(
+                              org!.organizationLogo!,
+                              width: 76,
+                              height: 76,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) =>
+                                  const Icon(Icons.business, size: 38),
+                            )
+                          : const Icon(Icons.business, size: 38),
+                    ),
                   ),
                 ),
+                const SizedBox(width: 10),
+                CustomText(
+                  org != null
+                      ? "Hi, ${org.organizationName.split(' ').first}..."
+                      : "Hi...",
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
+                ),
               ],
-            ),
-          ),
-          SizedBox(height: 20),
+            );
+          },
+        ),
+      ), // ← AppBar بتقفل هنا
+      body: Column(
+        children: [
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: Row(
+          //     mainAxisSize: MainAxisSize.min,
+          //     children: [
+          //       GestureDetector(
+          //         onTap: () {
+          //           setState(() {
+          //             isSearching = true;
+          //           });
+          //         },
+          //         child: isSearching
+          //             ? Container(
+          //                 width: 280,
+          //                 height: 50,
+          //                 decoration: BoxDecoration(
+          //                   color: AppColors.primaryLightBlue,
+          //                   borderRadius: BorderRadius.circular(16),
+          //                 ),
+          //                 child: TextField(
+          //                   controller: searchController,
+          //                   autofocus: true,
+          //                   onSubmitted: (_) {
+          //                     setState(() {
+          //                       isSearching = false;
+          //                     });
+          //                   },
+          //                   decoration: InputDecoration(
+          //                     hintText: "Search",
+          //                     hintStyle: TextStyle(
+          //                       color: AppColors.primary.withAlpha(
+          //                         (255 * 0.5).toInt(),
+          //                       ),
+          //                     ),
+          //                     border: InputBorder.none,
+          //                     prefixIcon: Image.asset(AppAssets.searchIcon),
+          //                     suffixIcon: IconButton(
+          //                       icon: Icon(Icons.close),
+          //                       onPressed: () {
+          //                         setState(() {
+          //                           isSearching = false;
+          //                           searchController.clear();
+          //                         });
+          //                       },
+          //                     ),
+          //                   ),
+          //                 ),
+          //               )
+          //             : Container(
+          //                 width: 280,
+          //                 height: 50,
+          //                 decoration: BoxDecoration(
+          //                   color: AppColors.primaryLightBlue,
+          //                   borderRadius: BorderRadius.circular(16),
+          //                 ),
+          //                 child: Row(
+          //                   children: [
+          //                     Padding(
+          //                       padding: const EdgeInsets.only(left: 10),
+          //                       child: CustomText(
+          //                         "Search",
+          //                         fontSize: 20,
+          //                         color: AppColors.primary.withAlpha(
+          //                           (255 * 0.5).toInt(),
+          //                         ),
+          //                       ),
+          //                     ),
+          //                     SizedBox(width: 170),
+          //                     Image.asset(AppAssets.searchIcon),
+          //                   ],
+          //                 ),
+          //               ),
+          //       ),
+
+          //       SizedBox(width: 10),
+          //       GestureDetector(
+          //         onTap: () {
+          //           Navigator.push(
+          //             context,
+          //             MaterialPageRoute(builder: (context) => FilterViewOrg()),
+          //           );
+          //         },
+          //         child: Container(
+          //           height: 50,
+          //           width: 50,
+          //           decoration: BoxDecoration(
+          //             color: AppColors.primaryLightBlue,
+          //             borderRadius: BorderRadius.circular(16),
+          //           ),
+          //           child: Image.asset(AppAssets.filterIconDark),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          const SizedBox(height: 20),
           Expanded(
-            child: ListView(
-              children: [
-                PostCard(
-                  orgName: "Zad Solutions",
-                  wantOrgPhoto: true,
-                  orgPhoto: AppAssets.orgLogo,
-                  applyButton: false,
-                  timeAgo: "2h",
-                  postImage: AppAssets.postImage,
-                  title: "Green Future",
-                  description:
-                      "A humanitarian opportunity focused on visiting needy families, offering support, care, and basic assistance to bring hope and kindness to those in need",
-                  location: "Cairo, Nasser City",
-                  date: "10/12/2025",
-                  time: "10:00 pm",
-                  comments: "2.5K",
-                  likes: "5K",
-                ),
-                SizedBox(height: 15),
-                PostCard(
-                  orgName: "Masr EL-kheir Foundation",
-                  wantOrgPhoto: true,
-                  orgPhoto: AppAssets.misrElKheirLogo,
-                  applyButton: false,
-                  timeAgo: "3h",
-                  postImage: AppAssets.misrElKheirPostImage,
-                  title: "Helping Hands",
-                  description:
-                      "A short opportunity about sustainable agriculture.",
-                  location: "Al-Mansora",
-                  date: "20/3/2026",
-                  time: "4:00 pm",
-                  comments: "1.2K",
-                  likes: "3K",
-                ),
-                SizedBox(height: 15),
-                PostCard(
-                  orgName: "Icpc Sohag",
-                  wantOrgPhoto: true,
-                  orgPhoto: AppAssets.icpcLogo,
-                  applyButton: false,
-                  timeAgo: "1h",
-                  postImage: AppAssets.icpcPostImage,
-                  title: "Organizational Volunteering",
-                  description:
-                      "Short-term volunteer opportunity to help organize an event for the ICPC",
-                  location: "Sohag, Creativa buliding",
-                  date: "15/4/2026",
-                  time: "8:00 am",
-                  comments: "5.5K",
-                  likes: "5K",
-                ),
-                SizedBox(height: 15),
-                PostCard(
-                  orgName: "Atfal Misr Foundation",
-                  wantOrgPhoto: true,
-                  orgPhoto: AppAssets.atfalMisrLogo,
-                  applyButton: false,
-                  timeAgo: "10h",
-                  postImage: AppAssets.atfalMisrPostImage,
-                  title: "Organizing Games",
-                  description:
-                      "Short-term volunteer opportunity to organize children's games",
-                  location: "Cairo, Helioples",
-                  date: "2/2/2026",
-                  time: "12:00 pm",
-                  comments: "4.2K",
-                  likes: "2K",
-                ),
-              ],
+            child: BlocBuilder<OpportunityCubit, OpportunityState>(
+              builder: (context, state) {
+                if (state is OpportunityLoading) {
+                  if (_cachedOpportunities.isNotEmpty) {
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                }
+
+                if (state is OpportunityError && _cachedOpportunities.isEmpty) {
+                  return Center(child: Text(state.message));
+                }
+
+                if (state is OpportunitySuccess) {
+                  _cachedOpportunities = state.opportunities;
+                }
+
+                if (_cachedOpportunities.isEmpty) {
+                  return const Center(child: Text("No opportunities found"));
+                }
+
+                return ListView.builder(
+                  itemCount: _cachedOpportunities.length,
+                  itemBuilder: (context, index) {
+                    final opp = _cachedOpportunities[index];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => OpportunityDetailsScreen(
+                              isOrganization: true,
+                              opportunityId: opp.id,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: PostCard(
+                          orgLogo: opp.logoUrl,
+                          orgName: opp.organizationName,
+                          wantOrgPhoto: true,
+                          applyButton: false,
+                          timeAgo: opp.startDate,
+                          postImage: opp.opportunityPhotoUrl ?? "",
+                          title: opp.name,
+                          description: opp.description ?? "",
+                          location: opp.location ?? "",
+                          status: opp.status ?? "",
+                          workType: opp.workType ?? "",
+                          timeType: opp.timeType ?? "",
+                          date: opp.startDate,
+                          time: opp.endDate,
+                          comments: (opp.commentsCount ?? 0).toString(),
+                          likes: (opp.likesCount ?? 0).toString(),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
             ),
           ),
         ],
-      ),
-    );
+      ), // ← body بتقفل هنا
+    ); // ← Scaffold بتقفل هنا
   }
 }

@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:mosahem/core/network/dio_helper.dart';
 import 'package:mosahem/features/admin/profile/data/models/opportunity_model.dart';
+import 'package:mosahem/features/admin/profile/data/models/unrated_volunteer_model.dart';
+import 'package:mosahem/features/admin/profile/data/models/volunteer_model.dart';
 
 class OrgProfileApiService {
   Future<Response> getMyOrganization() async {
@@ -49,5 +51,37 @@ class OrgProfileApiService {
     return items
         .map<OpportunityModel>((e) => OpportunityModel.fromJson(e))
         .toList();
+  }
+
+  Future<List<VolunteerModel>> getVolunteersByStatus({
+    required String status,
+    int page = 1,
+    int pageSize = 50,
+  }) async {
+    final response = await DioHelper.instance.client.get(
+      '/api/v1/organizations/me/volunteers/by-verification-status',
+      queryParameters: {
+        'verificationStatus': status,
+        'page': page,
+        'pageSize': pageSize,
+      },
+    );
+
+    final items = response.data['Data']['Items'] as List;
+
+    return items.map((e) => VolunteerModel.fromJson(e)).toList();
+  }
+
+  Future<List<UnratedVolunteerModel>> getUnratedVolunteers({
+    int page = 1,
+    int pageSize = 50,
+  }) async {
+    final response = await DioHelper.instance.client.get(
+      '/api/v1/organizations/volunteers/unrated',
+      queryParameters: {'Page': page, 'PageSize': pageSize},
+    );
+
+    final items = response.data['Data']['Items'] as List;
+    return items.map((e) => UnratedVolunteerModel.fromJson(e)).toList();
   }
 }

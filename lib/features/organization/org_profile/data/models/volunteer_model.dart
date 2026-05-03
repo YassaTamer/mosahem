@@ -17,12 +17,12 @@ class VolunteerModel {
 
   factory VolunteerModel.fromJson(Map<String, dynamic> json) {
     return VolunteerModel(
-      id: json['VolunteerId']?.toString() ?? '',
-      name: json['Name']?.toString() ?? '',
-      image: json['ProfileImgUrl']?.toString(),
+      id: json['VolunteerId'] ?? '',
+      name: json['Name'] ?? '',
+      image: json['ProfileImgUrl'],
       age: json['Age'] ?? 0,
       totalHours: json['TotalHours'] ?? 0,
-      bio: json['Bio']?.toString(),
+      bio: json['Bio'],
     );
   }
 }

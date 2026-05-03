@@ -37,6 +37,9 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
       organizationId: widget.data.organizationId,
       status: 'Active',
     );
+    context.read<OrgProfileCubit>().getVolunteers("accepted");
+    context.read<OrgProfileCubit>().getVolunteers("pending"); // ← أضف ده
+    context.read<OrgProfileCubit>().getUnratedVolunteers();
   }
 
   Widget statItem(String number, String title) {
@@ -116,7 +119,7 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
         // print(widget.data.organizationLogo);
         return PostCard(
           wantOrgPhoto: true, // 🔥 أهم سطر
-
+          applyButton: false,
           orgLogo: widget.data.organizationLogo,
           orgName: _safeValue(
             opportunity.organizationName,
@@ -149,7 +152,11 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
         child: SafeArea(
           child: BlocBuilder<OrgProfileCubit, OrgProfileState>(
             buildWhen: (previous, current) =>
-                current is OrgOpportunitiesState && current.status == "Active",
+                (current is OrgOpportunitiesState &&
+                    current.status == "Active") ||
+                current is OrgVolunteersSuccess ||
+                current is OrgVolunteersLoading ||
+                current is OrgUnratedVolunteersSuccess, // ← أضف ده// ← وده
             builder: (context, _) {
               final opportunitiesCount = context
                   .read<OrgProfileCubit>()
@@ -191,32 +198,39 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
                               "Opportunities",
                             ),
                           ),
-                          VerticalDivider(
-                            color: AppColors.greyLight,
-                            thickness: 1,
-                            width: 40,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => FollowersScreen(),
-                                ),
-                              );
-                            },
-                            child: statItem(
-                              widget.followers.toString(),
-                              "Followers",
-                            ),
-                          ),
 
                           VerticalDivider(
                             color: AppColors.greyLight,
                             thickness: 1,
                             width: 40,
                           ),
-                          statItem(widget.volunteer.toString(), "Volunteer"),
+                          GestureDetector(
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FollowersScreen(),
+                                ),
+                              );
+                              if (mounted) {
+                                setState(() {}); // ← ده بس
+                              }
+                            },
+                            child: statItem(
+                              context
+                                  .read<OrgProfileCubit>()
+                                  .volunteersFor("accepted")
+                                  .length
+                                  .toString(),
+                              "Volunteer",
+                            ),
+                          ),
+                          // VerticalDivider(
+                          //   color: AppColors.greyLight,
+                          //   thickness: 1,
+                          //   width: 40,
+                          // ),
+                          // statItem(widget.volunteer.toString(), "Volunteer"),
                         ],
                       ),
                     ),
@@ -226,6 +240,47 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        RecentApplicantsScreen(),
+                                  ),
+                                );
+                                if (mounted) {
+                                  setState(() {}); // ← ده بس
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                fixedSize: const Size(150, 40),
+                                backgroundColor: AppColors.greyLight,
+                                foregroundColor: Colors.black,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                              child: Text(
+                                'Recent Applicant',
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                            // ← بدل _buildBadge("12")
+                            _buildBadge(
+                              context
+                                  .read<OrgProfileCubit>()
+                                  .volunteersFor("pending")
+                                  .length
+                                  .toString(),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(width: 25),
                         Stack(
                           clipBehavior: Clip.none,
                           children: [
@@ -247,42 +302,17 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
                                 ),
                               ),
                               child: Text(
-                                'Rating Voulanteer',
+                                'Rating Volunteer ',
                                 style: const TextStyle(fontSize: 12),
                               ),
                             ),
-                            _buildBadge("750"),
-                          ],
-                        ),
-
-                        const SizedBox(width: 25),
-                        Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        RecentApplicantsScreen(),
-                                  ),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                fixedSize: const Size(150, 40),
-                                backgroundColor: AppColors.greyLight,
-                                foregroundColor: Colors.black,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                              ),
-                              child: Text(
-                                'Recent Applicdent',
-                                style: const TextStyle(fontSize: 12),
-                              ),
+                            _buildBadge(
+                              context
+                                  .read<OrgProfileCubit>()
+                                  .unratedVolunteers
+                                  .length
+                                  .toString(),
                             ),
-                            _buildBadge("12"),
                           ],
                         ),
                       ],

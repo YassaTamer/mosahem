@@ -1,4 +1,6 @@
 import 'package:mosahem/features/admin/profile/data/models/opportunity_model.dart';
+import 'package:mosahem/features/admin/profile/data/models/unrated_volunteer_model.dart';
+import 'package:mosahem/features/admin/profile/data/models/volunteer_model.dart';
 import 'package:mosahem/features/organization/org_profile/data/api/org_profile_api_service.dart';
 import 'package:mosahem/features/organization/org_profile/data/models/org_profile_model.dart';
 
@@ -30,5 +32,21 @@ class OrgProfileRepository {
       organizationId: organizationId,
       verificationStatus: verificationStatus,
     );
+  }
+
+  Future<List<VolunteerModel>> getVolunteersByStatus({
+    required String status,
+    int page = 1,
+    int pageSize = 50,
+  }) async {
+    return await apiService.getVolunteersByStatus(
+      status: status,
+      page: page,
+      pageSize: pageSize,
+    );
+  }
+
+  Future<List<UnratedVolunteerModel>> getUnratedVolunteers() async {
+    return await apiService.getUnratedVolunteers();
   }
 }

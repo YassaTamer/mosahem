@@ -53,3 +53,21 @@ class OrgOpportunitiesError extends OrgOpportunitiesState {
 
   OrgOpportunitiesError(super.status, this.message);
 }
+
+class OrgVolunteersLoading extends OrgProfileState {}
+
+class OrgVolunteersSuccess extends OrgProfileState {}
+
+class OrgVolunteersError extends OrgProfileState {
+  final String message;
+  OrgVolunteersError(this.message);
+}
+
+class OrgUnratedVolunteersLoading extends OrgProfileState {}
+
+class OrgUnratedVolunteersSuccess extends OrgProfileState {}
+
+class OrgUnratedVolunteersError extends OrgProfileState {
+  final String message;
+  OrgUnratedVolunteersError(this.message);
+}
