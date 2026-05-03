@@ -222,30 +222,30 @@ class _OrganizationSignupViewState extends State<OrganizationSignupView> {
                       countryCode: '+20',
                     ),
                     Gap(24),
-                    Center(
-                      child: GestureDetector(
-                        onTap: () {
-                          // to login with google
-                          //
-                        },
-                        child: Container(
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: Color(0xffB6CDDD),
-                            borderRadius: BorderRadius.circular(32),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SvgPicture.asset('assets/logos/google_logo.svg'),
-                              Gap(16),
-                              CustomText('Continue With Gmail', fontSize: 16),
-                              Gap(16),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Center(
+                    //   child: GestureDetector(
+                    //     onTap: () {
+                    //       // to login with google
+                    //       //
+                    //     },
+                    //     child: Container(
+                    //       height: 48,
+                    //       decoration: BoxDecoration(
+                    //         color: Color(0xffB6CDDD),
+                    //         borderRadius: BorderRadius.circular(32),
+                    //       ),
+                    //       child: Row(
+                    //         mainAxisSize: MainAxisSize.min,
+                    //         children: [
+                    //           SvgPicture.asset('assets/logos/google_logo.svg'),
+                    //           Gap(16),
+                    //           CustomText('Continue With Gmail', fontSize: 16),
+                    //           Gap(16),
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     Gap(8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
