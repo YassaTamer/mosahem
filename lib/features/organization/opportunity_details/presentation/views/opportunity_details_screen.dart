@@ -213,26 +213,25 @@ class _OpportunityDetailsScreenState extends State<OpportunityDetailsScreen> {
         ),
       ),
 
-      actions: !widget.isOrganization
-          ? null
-          : [
-              Container(
-                margin: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppColors.white.withOpacity(0.9),
-                  shape: BoxShape.circle,
-                ),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.edit_outlined,
-                    color: AppColors.primary,
-                    size: 20,
-                  ),
-                  onPressed: () {},
-                ),
-              ),
-            ], // volunteers see no action icon
-
+      // actions: !widget.isOrganization
+      //     ? null
+      //     : [
+      //         Container(
+      //           margin: const EdgeInsets.all(8),
+      //           decoration: BoxDecoration(
+      //             color: AppColors.white.withOpacity(0.9),
+      //             shape: BoxShape.circle,
+      //           ),
+      //           child: IconButton(
+      //             icon: const Icon(
+      //               Icons.edit_outlined,
+      //               color: AppColors.primary,
+      //               size: 20,
+      //             ),
+      //             onPressed: () {},
+      //           ),
+      //         ),
+      //       ], // volunteers see no action icon
       title: const Text(
         'Opportunity Details',
         style: TextStyle(

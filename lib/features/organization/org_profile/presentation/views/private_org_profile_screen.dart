@@ -116,7 +116,7 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
         // print(widget.data.organizationLogo);
         return PostCard(
           wantOrgPhoto: true, // 🔥 أهم سطر
-
+          applyButton: false,
           orgLogo: widget.data.organizationLogo,
           orgName: _safeValue(
             opportunity.organizationName,
