@@ -39,22 +39,39 @@ class ApplicantCard extends StatelessWidget {
               children: [
                 Text(
                   applicantName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
                 ),
-                Text(jobTitle, style: const TextStyle(fontSize: 14)),
+                Text(
+                  jobTitle,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 14),
+                ),
                 Text(dateText, style: const TextStyle(fontSize: 12)),
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    _buildActionBtn(rejectedBtnText, AppColors.red, onReject),
+                    Expanded(
+                      // ← بدل width ثابت
+                      child: _buildActionBtn(
+                        rejectedBtnText,
+                        AppColors.red,
+                        onReject,
+                      ),
+                    ),
                     const SizedBox(width: 10),
-                    _buildActionBtn(
-                      acceptedBtnText,
-                      AppColors.lightGreen,
-                      onAccept,
+                    Expanded(
+                      // ← بدل width ثابت
+                      child: _buildActionBtn(
+                        acceptedBtnText,
+                        AppColors.lightGreen,
+                        onAccept,
+                      ),
                     ),
                   ],
                 ),
@@ -71,12 +88,13 @@ class ApplicantCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         height: 30,
-        width: 135,
-        padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 4),
+        // ← شيل الـ width الثابت
+        padding: const EdgeInsets.symmetric(vertical: 4),
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(10),
         ),
+        alignment: Alignment.center, // ← عشان النص يتوسط
         child: Text(
           text,
           style: const TextStyle(
