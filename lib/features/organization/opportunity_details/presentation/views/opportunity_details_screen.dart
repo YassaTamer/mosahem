@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/core/helpers/app_snackbar_helper.dart';
 import 'package:mosahem/core/helpers/date_helper.dart';
+import 'package:mosahem/features/admin/profile/data/models/opportunity_model.dart';
 import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_cubit.dart';
 import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_state.dart';
 import 'package:mosahem/features/organization/opportunity_details/presentation/views/application_questions_screen.dart';
@@ -22,103 +24,170 @@ class OpportunityDetailsScreen extends StatefulWidget {
 }
 
 class _OpportunityDetailsScreenState extends State<OpportunityDetailsScreen> {
+  void _handleApplyPressed() {
+    final cubit = context.read<OpportunityCubit>();
+    final opp = cubit.selectedOpportunity;
+
+    if (opp == null) return;
+
+    final questions = opp.questions ?? [];
+    if (questions.isEmpty) {
+      _applyDirectly(opp.id);
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ApplicationQuestionsScreen(
+          questions: questions,
+          opportunityId: opp.id,
+        ),
+      ),
+    );
+  }
+
+  // void _applyDirectly(String opportunityId) {
+  //   AppSnackBarHelper.success(context, 'Applied successfully');
+  // }
+  void _applyDirectly(String opportunityId) {
+    context.read<OpportunityCubit>().applyToOpportunity(opportunityId);
+  }
+
   @override
   void initState() {
     super.initState();
-    context.read<OpportunityCubit>().getOpportunityDetails(
-      widget.opportunityId,
-    );
+    final cubit = context.read<OpportunityCubit>();
+
+    if (cubit.selectedOpportunity?.id != widget.opportunityId) {
+      cubit.getOpportunityDetails(widget.opportunityId);
+    } else {
+      final current = cubit.selectedOpportunity!;
+      cubit.emit(OpportunityDetailsLoaded(current, cubit.currentOpportunities));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.white,
+    return BlocListener<OpportunityCubit, OpportunityState>(
+      listener: (context, state) {
+        if (state is OpportunityApplySuccess) {
+          AppSnackBarHelper.success(context, state.message);
+        }
 
-      bottomNavigationBar: widget.isOrganization
-          ? null
-          : SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ApplicationQuestionsScreen(),
+        if (state is OpportunityError) {
+          AppSnackBarHelper.error(context, state.message);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.white,
+
+        bottomNavigationBar: widget.isOrganization
+            ? null
+            : BlocBuilder<OpportunityCubit, OpportunityState>(
+                builder: (context, state) {
+                  final cubit = context.read<OpportunityCubit>();
+                  final opp = cubit.selectedOpportunity;
+                  final hasQuestions = (opp?.questions?.isNotEmpty ?? false);
+                  final isApplied =
+                      cubit.selectedOpportunity?.isApplied ?? false;
+                  return SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: ElevatedButton(
+                          onPressed:
+                              (state is OpportunityApplyLoading || isApplied)
+                              ? null
+                              : _handleApplyPressed,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryDark,
+                            foregroundColor: AppColors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                          child: state is OpportunityApplyLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Text(
+                                  isApplied
+                                      ? 'Applied ✅'
+                                      : (hasQuestions
+                                            ? 'Continue to Apply'
+                                            : 'Apply'),
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.3,
+                                  ),
+                                ),
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryDark,
-                      foregroundColor: AppColors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    child: const Text(
-                      'Continue to Apply',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.3,
-                      ),
+                  );
+                },
+              ),
+
+        body: BlocBuilder<OpportunityCubit, OpportunityState>(
+          builder: (context, state) {
+            if (state is OpportunityLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (state is OpportunityError) {
+              return Center(child: Text(state.message));
+            }
+
+            final cubit = context.read<OpportunityCubit>();
+            final opp = cubit.selectedOpportunity;
+
+            if (opp == null) {
+              return const SizedBox();
+            }
+
+            return CustomScrollView(
+              slivers: [
+                _buildSliverAppBar(context, opp.opportunityPhotoUrl),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildTitleSection(opp.name),
+                        const SizedBox(height: 8),
+                        _buildOrgRow(opp.organizationName, opp.logoUrl),
+                        const SizedBox(height: 16),
+                        _buildVolunteerStatsCard(opp),
+                        const SizedBox(height: 16),
+                        _buildVolunteerFieldCard(),
+                        const SizedBox(height: 20),
+                        _buildAboutSection(opp.description ?? ""),
+                        const SizedBox(height: 20),
+                        _buildKeyDetailsSection(opp),
+                        const SizedBox(height: 20),
+                        _buildSkillsMustHaveSection(opp.requiredSkills),
+                        const SizedBox(height: 20),
+                        _buildSkillsWillAcquireSection(opp.providedSkills),
+                        const SizedBox(height: 30),
+                      ],
                     ),
                   ),
                 ),
-              ),
-            ),
-
-      body: BlocBuilder<OpportunityCubit, OpportunityState>(
-        builder: (context, state) {
-          if (state is OpportunityLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (state is OpportunityError) {
-            return Center(child: Text(state.message));
-          }
-          final cubit = context.read<OpportunityCubit>();
-          final opp = cubit.selectedOpportunity;
-
-          if (opp == null) {
-            return const SizedBox();
-          }
-          return CustomScrollView(
-            slivers: [
-              _buildSliverAppBar(context, opp.opportunityPhotoUrl),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildTitleSection(opp.name),
-                      const SizedBox(height: 8),
-                      _buildOrgRow(opp.organizationName, opp.logoUrl),
-                      const SizedBox(height: 16),
-                      _buildVolunteerStatsCard(opp),
-                      const SizedBox(height: 16),
-                      _buildVolunteerFieldCard(),
-                      const SizedBox(height: 20),
-                      _buildAboutSection(opp.description ?? ""),
-                      const SizedBox(height: 20),
-                      _buildKeyDetailsSection(opp),
-                      const SizedBox(height: 20),
-                      _buildSkillsMustHaveSection(opp.requiredSkills),
-                      const SizedBox(height: 20),
-                      _buildSkillsWillAcquireSection(opp.providedSkills),
-                      const SizedBox(height: 30),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -145,7 +214,8 @@ class _OpportunityDetailsScreenState extends State<OpportunityDetailsScreen> {
       ),
 
       actions: !widget.isOrganization
-          ? [
+          ? null
+          : [
               Container(
                 margin: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -161,8 +231,7 @@ class _OpportunityDetailsScreenState extends State<OpportunityDetailsScreen> {
                   onPressed: () {},
                 ),
               ),
-            ]
-          : null, // volunteers see no action icon
+            ], // volunteers see no action icon
 
       title: const Text(
         'Opportunity Details',
@@ -236,7 +305,7 @@ class _OpportunityDetailsScreenState extends State<OpportunityDetailsScreen> {
     );
   }
 
-  Widget _buildVolunteerStatsCard(opp) {
+  Widget _buildVolunteerStatsCard(OpportunityModel opp) {
     final total = opp.numberOfVolunteers ?? 0;
     final joined = opp.applicantsCount ?? 0;
 
@@ -415,7 +484,7 @@ class _OpportunityDetailsScreenState extends State<OpportunityDetailsScreen> {
     );
   }
 
-  Widget _buildKeyDetailsSection(opp) {
+  Widget _buildKeyDetailsSection(OpportunityModel opp) {
     final location = opp.location ?? "Unknown";
 
     return Column(

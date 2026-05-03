@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:mosahem/core/helpers/cache_helper.dart';
+import 'package:mosahem/features/admin/profile/data/models/apply_request.dart';
 import 'package:mosahem/features/admin/profile/data/models/opportunity_model.dart';
 
 class OpportunitiesApiService {
@@ -68,5 +69,50 @@ class OpportunitiesApiService {
     final data = response.data['Data'];
 
     return OpportunityModel.fromJson(data);
+  }
+
+  Future<String> applyToOpportunity(String opportunityId) async {
+    final response = await dio.post(
+      '/api/v1/opportunities/$opportunityId/apply',
+    );
+
+    return _successMessage(response.data);
+  }
+
+  Future<String> applyWithAnswers(
+    String opportunityId,
+    ApplyRequest request,
+  ) async {
+    print(request.toJson());
+    try {
+      final response = await dio.post(
+        '/api/v1/opportunities/$opportunityId/apply',
+        data: request.toJson(),
+      );
+
+      return _successMessage(response.data);
+    } on DioException catch (e) {
+      print(e.response?.data);
+
+      final statusCode = e.response?.statusCode;
+      if (statusCode != 404 && statusCode != 405) rethrow;
+
+      final response = await dio.post(
+        '/api/v1/opportunities/$opportunityId/apply-with-answers',
+        data: request.toJson(),
+      );
+
+      return _successMessage(response.data);
+    }
+  }
+
+  String _successMessage(dynamic data) {
+    if (data is Map<String, dynamic>) {
+      return data['Data']?.toString() ??
+          data['Message']?.toString() ??
+          'Applied successfully';
+    }
+
+    return 'Applied successfully';
   }
 }

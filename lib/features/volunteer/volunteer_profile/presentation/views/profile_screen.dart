@@ -167,7 +167,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SectionCard(
                     title: 'Bio',
                     isVolunteer: true,
-                    child: Text(profile.bio ?? ""),
+                    child: Text(
+                      profile.bio?.isNotEmpty == true
+                          ? profile.bio!
+                          : "No bio added yet",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        height: 1.6, // spacing بين السطور
+                        color: Colors.grey.shade800,
+                      ),
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(

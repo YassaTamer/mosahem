@@ -1,5 +1,3 @@
-import 'package:mosahem/features/organization/createOpp/data/models/skill_model.dart';
-
 class OpportunityModel {
   final String id;
   final String name;
@@ -23,6 +21,9 @@ class OpportunityModel {
   final int? rejectedApplicantsCount;
   final int? pendingApplicantsCount;
   final String? createdAt;
+  final List<OpportunityQuestionModel>? questions;
+  final bool isApplied;
+
   OpportunityModel({
     required this.id,
     required this.name,
@@ -46,6 +47,8 @@ class OpportunityModel {
     this.rejectedApplicantsCount,
     this.pendingApplicantsCount,
     this.createdAt,
+    this.questions,
+    this.isApplied = false,
   });
 
   static String _stringValue(dynamic value) {
@@ -88,6 +91,73 @@ class OpportunityModel {
     if (value is int) return value;
     if (value is num) return value.toInt();
     return int.tryParse(value.toString());
+  }
+
+  static bool _boolValue(dynamic value) {
+    if (value is bool) return value;
+    if (value is num) return value != 0;
+    if (value is String) {
+      final text = value.trim().toLowerCase();
+      return text == 'true' || text == '1' || text == 'yes';
+    }
+    return false;
+  }
+
+  OpportunityModel copyWith({
+    String? id,
+    String? name,
+    String? organizationName,
+    String? startDate,
+    String? endDate,
+    String? logoUrl,
+    String? status,
+    String? opportunityPhotoUrl,
+    String? description,
+    String? location,
+    String? workType,
+    String? timeType,
+    int? likesCount,
+    int? commentsCount,
+    List<SkillModel>? requiredSkills,
+    List<SkillModel>? providedSkills,
+    int? applicantsCount,
+    int? numberOfVolunteers,
+    int? acceptedApplicantsCount,
+    int? rejectedApplicantsCount,
+    int? pendingApplicantsCount,
+    String? createdAt,
+    List<OpportunityQuestionModel>? questions,
+    bool? isApplied,
+  }) {
+    return OpportunityModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      organizationName: organizationName ?? this.organizationName,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      logoUrl: logoUrl ?? this.logoUrl,
+      status: status ?? this.status,
+      opportunityPhotoUrl: opportunityPhotoUrl ?? this.opportunityPhotoUrl,
+      description: description ?? this.description,
+      location: location ?? this.location,
+      workType: workType ?? this.workType,
+      timeType: timeType ?? this.timeType,
+      likesCount: likesCount ?? this.likesCount,
+      commentsCount: commentsCount ?? this.commentsCount,
+      requiredSkills: requiredSkills ?? this.requiredSkills,
+      providedSkills: providedSkills ?? this.providedSkills,
+      applicantsCount: applicantsCount ?? this.applicantsCount,
+      numberOfVolunteers: numberOfVolunteers ?? this.numberOfVolunteers,
+      acceptedApplicantsCount:
+          acceptedApplicantsCount ?? this.acceptedApplicantsCount,
+      rejectedApplicantsCount:
+          rejectedApplicantsCount ?? this.rejectedApplicantsCount,
+      pendingApplicantsCount:
+          pendingApplicantsCount ?? this.pendingApplicantsCount,
+      createdAt: createdAt ?? this.createdAt,
+      questions: questions ?? this.questions,
+      isApplied: isApplied ?? this.isApplied,
+    );
   }
 
   factory OpportunityModel.fromJson(Map<String, dynamic> json) {
@@ -133,6 +203,82 @@ class OpportunityModel {
       rejectedApplicantsCount: _intValue(json['RejectedApplicantsCount']),
       pendingApplicantsCount: _intValue(json['PendingApplicantsCount']),
       createdAt: _nullableStringValue(json['CreatedAt']),
+      questions: (json['Questions'] as List?)
+          ?.map((question) => OpportunityQuestionModel.fromJson(question))
+          .toList(),
+      isApplied: _boolValue(
+        json['IsApplied'] ??
+            json['isApplied'] ??
+            json['Applied'] ??
+            json['HasApplied'] ??
+            json['IsVolunteerApplied'],
+      ),
+    );
+  }
+}
+
+class OpportunityQuestionModel {
+  final String id;
+  final int order;
+  final String description;
+  final String answerType;
+  final bool isRequired;
+  final List<String> options;
+
+  OpportunityQuestionModel({
+    required this.id,
+    required this.order,
+    required this.description,
+    required this.answerType,
+    required this.isRequired,
+    required this.options,
+  });
+
+  static String _stringValue(dynamic value) {
+    if (value == null) return '';
+    if (value is String) return value;
+    return value.toString();
+  }
+
+  static int _intValue(dynamic value) {
+    if (value == null) return 0;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    return int.tryParse(value.toString()) ?? 0;
+  }
+
+  static bool _boolValue(dynamic value) {
+    if (value is bool) return value;
+    if (value is num) return value != 0;
+    if (value is String) return value.toLowerCase() == 'true';
+    return false;
+  }
+
+  static List<String> _optionsValue(dynamic value) {
+    if (value is! List) return const [];
+    return value
+        .map(_stringValue)
+        .where((option) => option.trim().isNotEmpty)
+        .toList();
+  }
+
+  factory OpportunityQuestionModel.fromJson(dynamic json) {
+    final Map<String, dynamic> map;
+    if (json is Map<String, dynamic>) {
+      map = json;
+    } else if (json is Map) {
+      map = Map<String, dynamic>.from(json);
+    } else {
+      map = <String, dynamic>{};
+    }
+
+    return OpportunityQuestionModel(
+      id: _stringValue(map['QuestionId']),
+      order: _intValue(map['Order']),
+      description: _stringValue(map['Description']),
+      answerType: _stringValue(map['AnswerType']),
+      isRequired: _boolValue(map['IsRequired']),
+      options: _optionsValue(map['Options']),
     );
   }
 }

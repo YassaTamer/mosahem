@@ -38,17 +38,17 @@ class SectionCard extends StatelessWidget {
                   color: AppColors.primary,
                 ),
               ),
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProfileEditScreen(),
-                    ),
-                  );
-                },
-                icon: Icon(Icons.edit, size: 18, color: AppColors.primary),
-              ),
+              // IconButton(
+              //   onPressed: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (context) => ProfileEditScreen(),
+              //       ),
+              //     );
+              //   },
+              //   icon: Icon(Icons.edit, size: 18, color: AppColors.primary),
+              // ),
             ],
           ),
           const SizedBox(height: 2),
