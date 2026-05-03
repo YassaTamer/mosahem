@@ -62,3 +62,12 @@ class OrgVolunteersError extends OrgProfileState {
   final String message;
   OrgVolunteersError(this.message);
 }
+
+class OrgUnratedVolunteersLoading extends OrgProfileState {}
+
+class OrgUnratedVolunteersSuccess extends OrgProfileState {}
+
+class OrgUnratedVolunteersError extends OrgProfileState {
+  final String message;
+  OrgUnratedVolunteersError(this.message);
+}

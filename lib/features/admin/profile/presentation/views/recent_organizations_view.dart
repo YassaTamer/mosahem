@@ -113,7 +113,7 @@ class _RecentOrganizationsViewState extends State<RecentOrganizationsView> {
 
               isInitialized = true;
             }
-  
+
             final orgs = state.organizations;
 
             /// 🔥 فلترة pending بس

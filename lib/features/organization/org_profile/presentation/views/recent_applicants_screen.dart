@@ -4,7 +4,6 @@ import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/features/admin/profile/data/models/volunteer_model.dart';
 import 'package:mosahem/features/organization/org_profile/logic/cubit/org_profile_cubit.dart';
 import 'package:mosahem/features/organization/org_profile/logic/cubit/org_profile_state.dart';
-import 'package:mosahem/features/organization/org_profile/presentation/views/search_screen.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/widgets/applicant_card.dart';
 
 class RecentApplicantsScreen extends StatefulWidget {

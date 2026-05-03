@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/features/admin/profile/data/models/opportunity_model.dart';
+import 'package:mosahem/features/admin/profile/data/models/unrated_volunteer_model.dart';
 import 'package:mosahem/features/admin/profile/data/models/volunteer_model.dart';
 import 'package:mosahem/features/organization/org_profile/data/models/org_profile_model.dart';
 import 'org_profile_state.dart';
@@ -151,5 +152,27 @@ class OrgProfileCubit extends Cubit<OrgProfileState> {
     volunteersMap.remove(normalized);
     _loadingVolunteerStatuses.remove(normalized);
     getVolunteers(status);
+  } // في أول الـ class بعد volunteersMap
+
+  final List<UnratedVolunteerModel> unratedVolunteers = [];
+  bool _loadingUnrated = false;
+
+  bool get isLoadingUnrated => _loadingUnrated;
+
+  Future<void> getUnratedVolunteers() async {
+    if (unratedVolunteers.isNotEmpty || _loadingUnrated) return;
+
+    _loadingUnrated = true;
+    emit(OrgUnratedVolunteersLoading());
+
+    try {
+      final result = await repository.getUnratedVolunteers();
+      unratedVolunteers.addAll(result);
+      _loadingUnrated = false;
+      emit(OrgUnratedVolunteersSuccess());
+    } catch (e) {
+      _loadingUnrated = false;
+      emit(OrgUnratedVolunteersError(e.toString()));
+    }
   }
 }

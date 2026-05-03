@@ -39,6 +39,7 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
     );
     context.read<OrgProfileCubit>().getVolunteers("accepted");
     context.read<OrgProfileCubit>().getVolunteers("pending"); // ← أضف ده
+    context.read<OrgProfileCubit>().getUnratedVolunteers();
   }
 
   Widget statItem(String number, String title) {
@@ -153,8 +154,9 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
             buildWhen: (previous, current) =>
                 (current is OrgOpportunitiesState &&
                     current.status == "Active") ||
-                current is OrgVolunteersSuccess || // ← أضف ده
-                current is OrgVolunteersLoading, // ← وده
+                current is OrgVolunteersSuccess ||
+                current is OrgVolunteersLoading ||
+                current is OrgUnratedVolunteersSuccess, // ← أضف ده// ← وده
             builder: (context, _) {
               final opportunitiesCount = context
                   .read<OrgProfileCubit>()
@@ -287,8 +289,7 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        RecentApplicantsScreen(),
+                                    builder: (context) => RatingScreen(),
                                   ),
                                 );
                               },
@@ -301,11 +302,17 @@ class _PrivateOrgProfileScreenState extends State<PrivateOrgProfileScreen> {
                                 ),
                               ),
                               child: Text(
-                                'Recent Applicdent',
+                                'Rating Volunteer ',
                                 style: const TextStyle(fontSize: 12),
                               ),
                             ),
-                            _buildBadge("12"),
+                            _buildBadge(
+                              context
+                                  .read<OrgProfileCubit>()
+                                  .unratedVolunteers
+                                  .length
+                                  .toString(),
+                            ),
                           ],
                         ),
                       ],
