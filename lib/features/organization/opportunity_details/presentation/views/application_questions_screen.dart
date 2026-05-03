@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+import 'package:mosahem/core/helpers/app_snackbar_helper.dart';
+import 'package:mosahem/features/admin/profile/data/models/apply_request.dart';
 import 'package:mosahem/features/admin/profile/data/models/opportunity_model.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_cubit.dart';
+import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_state.dart';
 
 enum QuestionType { text, multiChoice, singleChoice }
 
@@ -435,52 +440,124 @@ class _ApplicationQuestionsScreenState
   // ── Submit bar ────────────────────────────────────────────────────────────
 
   Widget _buildSubmitBar() {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton.icon(
-                onPressed: _allAnswered
-                    ? () {
-                        // TODO: submit application
-                      }
-                    : null,
-                icon: const Icon(Icons.send_rounded, size: 18),
-                label: const Text(
-                  'Submit Application',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.3,
+    return BlocConsumer<OpportunityCubit, OpportunityState>(
+      listener: (context, state) {
+        if (state is ApplyWithAnswersSuccess) {
+          AppSnackBarHelper.success(context, state.message);
+          // ← شيل Navigator.pop من هنا
+        }
+
+        // ← أضف ده: لما الـ details يتحدث، امشي
+        if (state is OpportunityDetailsLoaded) {
+          Navigator.pop(context); // ← ده هيرجعك للـ OpportunityDetailsScreen
+        }
+
+        if (state is ApplyWithAnswersError) {
+          AppSnackBarHelper.error(context, state.message);
+        }
+      },
+      builder: (context, state) {
+        final isLoading = state is ApplyWithAnswersLoading;
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton.icon(
+                    onPressed: (_allAnswered && !isLoading)
+                        ? _submitApplication
+                        : null,
+                    icon: isLoading
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Icon(Icons.send_rounded, size: 18),
+                    label: Text(
+                      isLoading ? 'Submitting...' : 'Submit Application',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryDark,
+                      foregroundColor: AppColors.white,
+                      disabledBackgroundColor: AppColors.disabledButton,
+                      disabledForegroundColor: AppColors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
                   ),
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryDark,
-                  foregroundColor: AppColors.white,
-                  disabledBackgroundColor: AppColors.disabledButton,
-                  disabledForegroundColor: AppColors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
+                if (!_allAnswered && !isLoading) ...[
+                  const SizedBox(height: 6),
+                  const Text(
+                    'Please answer all questions to submit',
+                    style: TextStyle(fontSize: 12, color: AppColors.textGrey),
                   ),
-                ),
-              ),
+                ],
+              ],
             ),
-            if (!_allAnswered) ...[
-              const SizedBox(height: 6),
-              const Text(
-                'Please answer all questions to submit',
-                style: TextStyle(fontSize: 12, color: AppColors.textGrey),
-              ),
-            ],
-          ],
-        ),
-      ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _submitApplication() {
+    final answers = <AnswerModel>[];
+
+    for (int i = 0; i < _questions.length; i++) {
+      final q = _questions[i];
+      final originalQ = widget.questions[i];
+
+      switch (q.type) {
+        case QuestionType.text:
+          answers.add(
+            AnswerModel(
+              questionId: originalQ.id,
+              answerText: _textAnswers[i] ?? '',
+            ),
+          );
+          break;
+
+        case QuestionType.singleChoice:
+          final selectedText = _singleAnswers[i] ?? '';
+          final choiceIndex = q.options.indexOf(selectedText);
+          answers.add(
+            AnswerModel(
+              questionId: originalQ.id,
+              choiceKey: choiceIndex >= 0 ? choiceIndex : 0,
+            ),
+          );
+          break;
+
+        case QuestionType.multiChoice:
+          answers.add(
+            AnswerModel(
+              questionId: originalQ.id,
+              selectedChoices: (_multiAnswers[i] ?? {}).toList(),
+            ),
+          );
+          break;
+      }
+    }
+
+    context.read<OpportunityCubit>().applyWithAnswers(
+      widget.opportunityId,
+      ApplyRequest(answers: answers),
     );
   }
 }

@@ -22,6 +22,8 @@ class OpportunityModel {
   final int? pendingApplicantsCount;
   final String? createdAt;
   final List<OpportunityQuestionModel>? questions;
+  final bool isApplied;
+
   OpportunityModel({
     required this.id,
     required this.name,
@@ -46,6 +48,7 @@ class OpportunityModel {
     this.pendingApplicantsCount,
     this.createdAt,
     this.questions,
+    this.isApplied = false,
   });
 
   static String _stringValue(dynamic value) {
@@ -88,6 +91,73 @@ class OpportunityModel {
     if (value is int) return value;
     if (value is num) return value.toInt();
     return int.tryParse(value.toString());
+  }
+
+  static bool _boolValue(dynamic value) {
+    if (value is bool) return value;
+    if (value is num) return value != 0;
+    if (value is String) {
+      final text = value.trim().toLowerCase();
+      return text == 'true' || text == '1' || text == 'yes';
+    }
+    return false;
+  }
+
+  OpportunityModel copyWith({
+    String? id,
+    String? name,
+    String? organizationName,
+    String? startDate,
+    String? endDate,
+    String? logoUrl,
+    String? status,
+    String? opportunityPhotoUrl,
+    String? description,
+    String? location,
+    String? workType,
+    String? timeType,
+    int? likesCount,
+    int? commentsCount,
+    List<SkillModel>? requiredSkills,
+    List<SkillModel>? providedSkills,
+    int? applicantsCount,
+    int? numberOfVolunteers,
+    int? acceptedApplicantsCount,
+    int? rejectedApplicantsCount,
+    int? pendingApplicantsCount,
+    String? createdAt,
+    List<OpportunityQuestionModel>? questions,
+    bool? isApplied,
+  }) {
+    return OpportunityModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      organizationName: organizationName ?? this.organizationName,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      logoUrl: logoUrl ?? this.logoUrl,
+      status: status ?? this.status,
+      opportunityPhotoUrl: opportunityPhotoUrl ?? this.opportunityPhotoUrl,
+      description: description ?? this.description,
+      location: location ?? this.location,
+      workType: workType ?? this.workType,
+      timeType: timeType ?? this.timeType,
+      likesCount: likesCount ?? this.likesCount,
+      commentsCount: commentsCount ?? this.commentsCount,
+      requiredSkills: requiredSkills ?? this.requiredSkills,
+      providedSkills: providedSkills ?? this.providedSkills,
+      applicantsCount: applicantsCount ?? this.applicantsCount,
+      numberOfVolunteers: numberOfVolunteers ?? this.numberOfVolunteers,
+      acceptedApplicantsCount:
+          acceptedApplicantsCount ?? this.acceptedApplicantsCount,
+      rejectedApplicantsCount:
+          rejectedApplicantsCount ?? this.rejectedApplicantsCount,
+      pendingApplicantsCount:
+          pendingApplicantsCount ?? this.pendingApplicantsCount,
+      createdAt: createdAt ?? this.createdAt,
+      questions: questions ?? this.questions,
+      isApplied: isApplied ?? this.isApplied,
+    );
   }
 
   factory OpportunityModel.fromJson(Map<String, dynamic> json) {
@@ -136,6 +206,13 @@ class OpportunityModel {
       questions: (json['Questions'] as List?)
           ?.map((question) => OpportunityQuestionModel.fromJson(question))
           .toList(),
+      isApplied: _boolValue(
+        json['IsApplied'] ??
+            json['isApplied'] ??
+            json['Applied'] ??
+            json['HasApplied'] ??
+            json['IsVolunteerApplied'],
+      ),
     );
   }
 }
