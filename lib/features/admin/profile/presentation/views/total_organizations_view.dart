@@ -91,24 +91,24 @@ class _TotalOrganizationsViewState extends State<TotalOrganizationsView>
                 color: AppColors.primary,
               ),
 
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: IconButton(
-              onPressed: () {
-                setState(() {
-                  if (isSearching) {
-                    searchController.clear();
-                  }
-                  isSearching = !isSearching;
-                });
-              },
-              icon: isSearching
-                  ? const Icon(Icons.close)
-                  : Image.asset(AppAssets.searchIcon, width: 40, height: 40),
-            ),
-          ),
-        ],
+        // actions: [
+        //   Padding(
+        //     padding: const EdgeInsets.only(right: 10),
+        //     child: IconButton(
+        //       onPressed: () {
+        //         setState(() {
+        //           if (isSearching) {
+        //             searchController.clear();
+        //           }
+        //           isSearching = !isSearching;
+        //         });
+        //       },
+        //       icon: isSearching
+        //           ? const Icon(Icons.close)
+        //           : Image.asset(AppAssets.searchIcon, width: 40, height: 40),
+        //     ),
+        //   ),
+        // ],
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: indicatorColor,
