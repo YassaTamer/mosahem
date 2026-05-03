@@ -10,22 +10,30 @@ class CustomContainer extends StatelessWidget {
     this.image,
     this.widthBetweenTextImage,
     this.ontap,
+    this.onTapCallback, // ← أضف ده
   });
   final String? title;
   final String? description;
   final String? image;
   final double? widthBetweenTextImage;
   final Widget? ontap;
+  final VoidCallback? onTapCallback; // ← أضف ده
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 15, left: 3),
       child: GestureDetector(
-        onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => ontap!));
-        },
+        onTap:
+            onTapCallback ?? // ← لو في callback استخدمه
+            () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => ontap!),
+              );
+            },
         child: Container(
-          padding: EdgeInsets.only(top: 15, left: 10),
+          padding: const EdgeInsets.only(top: 15, left: 10),
           height: 100,
           width: 355,
           decoration: BoxDecoration(
@@ -38,7 +46,7 @@ class CustomContainer extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomText(title!, fontWeight: FontWeight.bold, fontSize: 15),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   CustomText(
                     description!,
                     color: AppColors.primary,
