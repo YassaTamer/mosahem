@@ -6,6 +6,7 @@ import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/features/admin/profile/logic/cubit/volunteer_cubit.dart';
 import 'package:mosahem/features/admin/profile/logic/cubit/volunteer_state.dart';
 import 'package:mosahem/features/admin/profile/presentation/widgets/custom_container_total_volunteer.dart';
+import 'package:mosahem/features/organization/org_profile/data/models/volunteer_model.dart';
 
 class TotalVolunteersView extends StatefulWidget {
   const TotalVolunteersView({super.key});
@@ -39,8 +40,8 @@ class _TotalVolunteersViewState extends State<TotalVolunteersView> {
     AppAssets.profilePhotoIcon,
     AppAssets.profilePhotoIcon,
   ];
-  List volunteersList = [];
-  bool isInitialized = false;
+  // List volunteersList = [];
+  // bool isInitialized = false;
   @override
   void initState() {
     super.initState();
@@ -106,27 +107,23 @@ class _TotalVolunteersViewState extends State<TotalVolunteersView> {
           if (state is VolunteerLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is VolunteerSuccess) {
-            if (!isInitialized) {
-              volunteersList = state.volunteers;
-              isInitialized = true;
-            }
+            print(state.volunteers.length);
             final volunteers = state.volunteers;
+
             return ListView.builder(
-              itemCount: volunteersList.length,
+              itemCount: volunteers.length,
               itemBuilder: (context, index) {
-                final volunteer = volunteersList[index];
+                final volunteer = volunteers[index];
+
                 return CustomContainerTotalVolunteer(
-                  volunteerName: volunteer.fullName,
+                  volunteerName: volunteer.name,
                   bio: volunteer.bio ?? "No bio",
                   profilePhoto:
-                      (volunteer.profileImage != null &&
-                          volunteer.profileImage!.isNotEmpty)
-                      ? volunteer.profileImage!
+                      (volunteer.image != null && volunteer.image!.isNotEmpty)
+                      ? volunteer.image!
                       : AppAssets.profilePhotoIcon,
                   onDelete: () {
-                    setState(() {
-                      volunteersList.removeAt(index);
-                    });
+                    context.read<VolunteerCubit>().getVolunteers();
                   },
                 );
               },

@@ -87,97 +87,97 @@ class _AdminHomeViewState extends State<AdminHomeView> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      isSearching = true;
-                    });
-                  },
-                  child: isSearching
-                      ? Container(
-                          width: 300,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryLightBlue,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: TextField(
-                            controller: searchController,
-                            autofocus: true,
-                            onSubmitted: (_) {
-                              setState(() {
-                                isSearching = false;
-                              });
-                            },
-                            decoration: InputDecoration(
-                              hintText: "Search",
-                              hintStyle: TextStyle(
-                                color: AppColors.primary.withAlpha(
-                                  (255 * 0.5).toInt(),
-                                ),
-                              ),
-                              border: InputBorder.none,
-                              prefixIcon: Image.asset(AppAssets.searchIcon),
-                              suffixIcon: IconButton(
-                                icon: Icon(Icons.close),
-                                onPressed: () {
-                                  setState(() {
-                                    isSearching = false;
-                                    searchController.clear();
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
-                        )
-                      : Container(
-                          width: 280,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryLightBlue,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10),
-                                child: CustomText(
-                                  "Search",
-                                  fontSize: 20,
-                                  color: AppColors.primary.withAlpha(
-                                    (255 * 0.5).toInt(),
-                                  ),
-                                ),
-                              ),
-                              Spacer(),
-                              //SizedBox(width: 190),
-                              Image.asset(AppAssets.searchIcon),
-                              Gap(10),
-                            ],
-                          ),
-                        ),
-                ),
+                //   GestureDetector(
+                //     onTap: () {
+                //       setState(() {
+                //         isSearching = true;
+                //       });
+                //     },
+                //     child: isSearching
+                //         ? Container(
+                //             width: 300,
+                //             height: 50,
+                //             decoration: BoxDecoration(
+                //               color: AppColors.primaryLightBlue,
+                //               borderRadius: BorderRadius.circular(16),
+                //             ),
+                //             child: TextField(
+                //               controller: searchController,
+                //               autofocus: true,
+                //               onSubmitted: (_) {
+                //                 setState(() {
+                //                   isSearching = false;
+                //                 });
+                //               },
+                //               decoration: InputDecoration(
+                //                 hintText: "Search",
+                //                 hintStyle: TextStyle(
+                //                   color: AppColors.primary.withAlpha(
+                //                     (255 * 0.5).toInt(),
+                //                   ),
+                //                 ),
+                //                 border: InputBorder.none,
+                //                 prefixIcon: Image.asset(AppAssets.searchIcon),
+                //                 suffixIcon: IconButton(
+                //                   icon: Icon(Icons.close),
+                //                   onPressed: () {
+                //                     setState(() {
+                //                       isSearching = false;
+                //                       searchController.clear();
+                //                     });
+                //                   },
+                //                 ),
+                //               ),
+                //             ),
+                //           )
+                //         : Container(
+                //             width: 280,
+                //             height: 50,
+                //             decoration: BoxDecoration(
+                //               color: AppColors.primaryLightBlue,
+                //               borderRadius: BorderRadius.circular(16),
+                //             ),
+                //             child: Row(
+                //               children: [
+                //                 Padding(
+                //                   padding: const EdgeInsets.only(left: 10),
+                //                   child: CustomText(
+                //                     "Search",
+                //                     fontSize: 20,
+                //                     color: AppColors.primary.withAlpha(
+                //                       (255 * 0.5).toInt(),
+                //                     ),
+                //                   ),
+                //                 ),
+                //                 Spacer(),
+                //                 //SizedBox(width: 190),
+                //                 Image.asset(AppAssets.searchIcon),
+                //                 Gap(10),
+                //               ],
+                //             ),
+                //           ),
+                //   ),
 
-                SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FilterViewAdmin(),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryLightBlue,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Image.asset(AppAssets.filterIconDark),
-                  ),
-                ),
+                //   SizedBox(width: 10),
+                //   GestureDetector(
+                //     onTap: () {
+                //       Navigator.push(
+                //         context,
+                //         MaterialPageRoute(
+                //           builder: (context) => FilterViewAdmin(),
+                //         ),
+                //       );
+                //     },
+                //     child: Container(
+                //       height: 50,
+                //       width: 50,
+                //       decoration: BoxDecoration(
+                //         color: AppColors.primaryLightBlue,
+                //         borderRadius: BorderRadius.circular(16),
+                //       ),
+                //       child: Image.asset(AppAssets.filterIconDark),
+                //     ),
+                //   ),
               ],
             ),
           ),
