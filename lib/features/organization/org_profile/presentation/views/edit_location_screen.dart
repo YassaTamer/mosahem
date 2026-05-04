@@ -76,9 +76,9 @@ class _AddBranchLocationViewState extends State<EditLocationScreen> {
   String? cityError;
   bool isCitiesLoading = false;
 
-  BranchLocationModel? branch;
   final TextEditingController addressController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+
   @override
   void dispose() {
     addressController.dispose();
@@ -122,8 +122,6 @@ class _AddBranchLocationViewState extends State<EditLocationScreen> {
                   fontWeight: FontWeight.w600,
                 ),
                 Gap(6),
-
-                Gap(6),
                 Divider(color: AppColors.greyLight, thickness: 1.2),
                 Gap(6),
                 Row(
@@ -159,7 +157,6 @@ class _AddBranchLocationViewState extends State<EditLocationScreen> {
                             hint: selectedGovernorate ?? 'Select Governorate',
                             isRequired: true,
                             items: governorates.map((e) => e.name).toList(),
-
                             onSelect: (values) {
                               if (values.isEmpty || governorates.isEmpty) {
                                 setState(() {
@@ -201,7 +198,7 @@ class _AddBranchLocationViewState extends State<EditLocationScreen> {
                             },
                             selectedItems: selectedGovernorate == null
                                 ? []
-                                : [selectedGovernorate!], // selectedItems: [],
+                                : [selectedGovernorate!],
                           ),
                           if (governorateError != null)
                             Padding(
@@ -225,7 +222,6 @@ class _AddBranchLocationViewState extends State<EditLocationScreen> {
                                 : selectedCity ?? "Select City",
                             isRequired: true,
                             items: cities.map((e) => e.name).toList(),
-
                             onSelect: (values) {
                               if (values.isEmpty || cities.isEmpty) {
                                 setState(() {
@@ -272,7 +268,6 @@ class _AddBranchLocationViewState extends State<EditLocationScreen> {
                       Gap(6),
                       LabeledTextFieldRow(
                         controller: addressController,
-
                         label: 'Branch Address:',
                         hint: 'enter full address',
                         isRequired: true,
@@ -326,9 +321,9 @@ class _AddBranchLocationViewState extends State<EditLocationScreen> {
                       Row(
                         children: [
                           Gap(12),
-
                           Expanded(
                             child: CustomButton(
+                              onTap: () => Navigator.pop(context),
                               text: 'Cancel',
                               height: 32,
                               fontSize: 12,
@@ -353,6 +348,7 @@ class _AddBranchLocationViewState extends State<EditLocationScreen> {
 
                                 setState(() {});
                                 if (!isValid) return;
+
                                 final newBranch = BranchLocationModel(
                                   governorateId: selectedGovernorateModel!.id,
                                   cityId: selectedCityModel!.id,
@@ -362,23 +358,19 @@ class _AddBranchLocationViewState extends State<EditLocationScreen> {
                                   address: addressController.text,
                                 );
 
+                                // الإضافة في الكيوبت
                                 context.read<AuthCubit>().locations.add(
                                   newBranch,
                                 );
 
-                                setState(() {
-                                  branch = newBranch;
-
-                                  addressController.clear();
-                                  descriptionController.clear();
-                                  selectedGovernorate = null;
-                                  selectedCity = null;
-                                  selectedGovernorateModel = null;
-                                  selectedCityModel = null;
-                                  cities = [];
+                                // -- التعديل هنا --
+                                // نرجع للشاشة اللي برا ونبعت معاها الداتا في شكل Map
+                                Navigator.pop(context, {
+                                  "title":
+                                      "${newBranch.governorateName}, ${newBranch.cityName}",
+                                  "subtitle": newBranch.address,
                                 });
                               },
-
                               fontSize: 12,
                               color: Colors.green,
                               text: 'Save Location',
@@ -391,67 +383,6 @@ class _AddBranchLocationViewState extends State<EditLocationScreen> {
                     ],
                   ),
                 ),
-                Gap(6),
-                if (branch != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: const Color(0xffD8B50C)),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CustomText(
-                                  branch!.governorateName,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w800,
-                                  color: AppColors.primaryDark,
-                                ),
-                                CustomText(
-                                  branch!.cityName,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w800,
-                                  color: AppColors.primaryDark,
-                                ),
-                                CustomText(
-                                  branch!.address,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w800,
-                                  color: AppColors.primaryDark,
-                                ),
-                                CustomText(
-                                  branch!.details,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.primaryDark,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              setState(() {
-                                branch = null;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                 Gap(4),
               ],
             ),
