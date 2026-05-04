@@ -51,19 +51,18 @@ class SettingScreenVol extends StatelessWidget {
                 );
               },
             ),
-            const SizedBox(height: 16),
-
-            _buildSettingItem(
-              icon: Icons.lock_outline,
-              title: 'Privacy',
-              onTap: () {
-                // Navigator.pushAndRemoveUntil(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => ProfileEditScreen()),
-                //   (route) => false,
-                // );
-              },
-            ),
+            // const SizedBox(height: 16),
+            // _buildSettingItem(
+            //   icon: Icons.lock_outline,
+            //   title: 'Privacy',
+            //   onTap: () {
+            //     // Navigator.pushAndRemoveUntil(
+            //     //   context,
+            //     //   MaterialPageRoute(builder: (context) => ProfileEditScreen()),
+            //     //   (route) => false,
+            //     // );
+            //   },
+            // ),
             const SizedBox(height: 16),
 
             _buildSettingItem(
