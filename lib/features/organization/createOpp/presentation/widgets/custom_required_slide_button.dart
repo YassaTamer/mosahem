@@ -3,14 +3,16 @@ import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 
 class CustomRequiredButton extends StatefulWidget {
-  const CustomRequiredButton({super.key});
+  final Function(bool) onChanged;
+  const CustomRequiredButton({super.key, required this.onChanged});
 
   @override
   State<CustomRequiredButton> createState() => _CustomRequiredButtonState();
 }
 
 class _CustomRequiredButtonState extends State<CustomRequiredButton> {
-  bool isrequired = false;
+  bool isRequired = false;
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -24,13 +26,12 @@ class _CustomRequiredButtonState extends State<CustomRequiredButton> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(width: 5),
+        const SizedBox(width: 5),
         Switch(
-          value: isrequired,
+          value: isRequired,
           onChanged: (value) {
-            setState(() {
-              isrequired = value;
-            });
+            setState(() => isRequired = value);
+            widget.onChanged(value);
           },
           inactiveTrackColor: Colors.grey,
           inactiveThumbColor: AppColors.white,

@@ -1,27 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
-import 'package:mosahem/features/organization/org_profile/presentation/widgets/bulid_tracks.dart';
+// تم الاستغناء عن الـ import بتاع bulid_tracks لأننا عملنا واحد تفاعلي داخل الشاشة
+// import 'package:mosahem/features/organization/org_profile/presentation/widgets/bulid_tracks.dart';
 
-class AddTracksScreen extends StatelessWidget {
+class AddTracksScreen extends StatefulWidget {
   const AddTracksScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    List<String> allTracks = [
-      "Environment",
-      "Youth Development",
-      "Animal Welfare",
-      "Healthcare",
-      "Career Development",
-      "Graphic Design",
-      "Human Rights",
-      "Content Creation",
-      "Women Empowerment",
-      "Technology",
-      "Data Entry",
-      "Child Care",
-    ];
+  State<AddTracksScreen> createState() => _AddTracksScreenState();
+}
 
+class _AddTracksScreenState extends State<AddTracksScreen> {
+  // متغير لحفظ التراك اللي اليوزر اختاره
+  String? selectedTrack;
+
+  final List<String> allTracks = [
+    "Environment",
+    "Youth Development",
+    "Animal Welfare",
+    "Healthcare",
+    "Career Development",
+    "Graphic Design",
+    "Human Rights",
+    "Content Creation",
+    "Women Empowerment",
+    "Technology",
+    "Data Entry",
+    "Child Care",
+    "ُEducation",
+  ];
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -49,8 +59,9 @@ class AddTracksScreen extends StatelessWidget {
                   spacing: 10,
                   runSpacing: 10,
                   alignment: WrapAlignment.start,
+                  // استخدام الويدجت التفاعلي الجديد
                   children: allTracks
-                      .map((track) => bulidTracks(track))
+                      .map((track) => _buildTrackChip(track))
                       .toList(),
                 ),
               ),
@@ -66,7 +77,14 @@ class AddTracksScreen extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  Navigator.pop(context);
+                  // ---- التعديل هنا ----
+                  // بنعمل Pop ونرجع التراك اللي اليوزر اختاره
+                  if (selectedTrack != null) {
+                    Navigator.pop(context, selectedTrack);
+                  } else {
+                    // لو داس حفظ من غير ما يختار حاجة، نرجع عادي من غير داتا
+                    Navigator.pop(context);
+                  }
                 },
                 child: const Text(
                   "Save",
@@ -79,6 +97,40 @@ class AddTracksScreen extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  // ويدجت تفاعلي للـ Track
+  Widget _buildTrackChip(String title) {
+    bool isSelected =
+        selectedTrack == title; // بنشوف هل ده التراك المختار ولا لأ
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          // لو داس على تراك مختاره بالفعل، بيلغي اختياره.. ولو تراك جديد بيختاره
+          selectedTrack = isSelected ? null : title;
+        });
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primary : Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? AppColors.primary : Colors.grey.shade300,
+          ),
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+            color: isSelected ? Colors.white : Colors.black87,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            fontSize: 14,
+          ),
         ),
       ),
     );

@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
+// تأكد من مسار الـ AppSnackBar
+import 'package:mosahem/core/widgets/app_snackbar.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/views/add_new_location_screen.dart';
 import 'package:mosahem/features/organization/org_profile/presentation/views/edit_location_screen.dart';
 
-class LocationsSection extends StatelessWidget {
-  final bool showAddIcon; // أيقونة الزائد (Add)
-  final bool showEditIcon; // أيقونة القلم (Edit)
-  final bool showDeleteIcon; // أيقونة السلة (Delete)
+class LocationsSection extends StatefulWidget {
+  final bool showAddIcon;
+  final bool showEditIcon;
+  final bool showDeleteIcon;
 
   const LocationsSection({
     super.key,
@@ -17,10 +19,22 @@ class LocationsSection extends StatelessWidget {
     this.showDeleteIcon = true,
   });
 
-  void _showDeleteDialog(BuildContext context, String locationName) {
+  @override
+  State<LocationsSection> createState() => _LocationsSectionState();
+}
+
+class _LocationsSectionState extends State<LocationsSection> {
+  // اللستة اللي هيتضاف فيها العناوين
+  List<Map<String, String>> locations = [
+    {"title": "Cairo, Nasr City", "subtitle": "Abbas El Akkad Street"},
+    {"title": "Sohag, Sohag city", "subtitle": "Elzhra Street"},
+  ];
+
+  void _showDeleteDialog(BuildContext context, Map<String, String> location) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         title: const Text(
           "Delete Location",
           style: TextStyle(
@@ -33,19 +47,37 @@ class LocationsSection extends StatelessWidget {
           children: [
             SvgPicture.asset(AppAssets.waring),
             const SizedBox(height: 10),
-            Text("Are you sure you want to delete '$locationName'?"),
+            Text("Are you sure you want to delete '${location['title']}'?"),
           ],
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text("Cancel", style: TextStyle(color: Colors.grey)),
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(dialogContext);
+
+              setState(() {
+                locations.remove(location);
+              });
+
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Deleted Successfully")),
+                SnackBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  behavior: SnackBarBehavior.floating,
+                  padding: const EdgeInsets.only(
+                    bottom: 20,
+                    left: 20,
+                    right: 20,
+                  ),
+                  content: AppSnackBar(
+                    message:
+                        "Location '${location['title']}' deleted successfully",
+                  ),
+                ),
               );
             },
             child: const Text("Confirm", style: TextStyle(color: Colors.red)),
@@ -62,7 +94,7 @@ class LocationsSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            if (showAddIcon) const SizedBox(width: 48),
+            if (widget.showAddIcon) const SizedBox(width: 48),
 
             Expanded(
               child: Center(
@@ -77,15 +109,26 @@ class LocationsSection extends StatelessWidget {
               ),
             ),
 
-            if (showAddIcon)
+            // ---- التعديل الأساسي هنا ----
+            // زرار الإضافة اللي فوق هو اللي بيستنى الداتا
+            if (widget.showAddIcon)
               IconButton(
-                onPressed: () {
-                  Navigator.push(
+                onPressed: () async {
+                  // استدعاء شاشة الإضافة أو التعديل (على حسب المسمى عندك)
+                  final newLocation = await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const AddNewLocationScreen(),
+                      builder: (context) => const EditLocationScreen(),
                     ),
                   );
+
+                  // لو الداتا رجعت، نضيفها في اللستة
+                  if (newLocation != null &&
+                      newLocation is Map<String, String>) {
+                    setState(() {
+                      locations.add(newLocation);
+                    });
+                  }
                 },
                 icon: SvgPicture.asset(
                   AppAssets.addNewLocation,
@@ -98,28 +141,32 @@ class LocationsSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 15),
-        _buildLocationCard(
-          context,
-          "Cairo, Nasr City",
-          "Abbas El Akkad Street",
-        ),
-        _buildLocationCard(context, "Sohag, Sohag city", "Elzhra Street"),
+
+        // عرض العناوين من اللستة
+        ...locations.map((loc) => _buildLocationCard(context, loc)).toList(),
       ],
     );
   }
 
   Widget _buildLocationCard(
     BuildContext context,
-    String title,
-    String subtitle,
+    Map<String, String> location,
   ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.primary, width: 1.5),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            spreadRadius: 1,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        border: Border.all(color: AppColors.primary.withOpacity(0.1)),
       ),
       child: Row(
         children: [
@@ -129,30 +176,33 @@ class LocationsSection extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  title,
+                  location['title']!,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                    fontSize: 15,
                     color: AppColors.primary,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(
-                  subtitle,
-                  style: const TextStyle(color: Colors.black87, fontSize: 12),
+                  location['subtitle']!,
+                  style: const TextStyle(color: Colors.black87, fontSize: 13),
                 ),
               ],
             ),
           ),
 
-          if (showDeleteIcon)
+          // ---- إرجاع زراير الحذف والتعديل مكانهم الصحيح ----
+          if (widget.showDeleteIcon)
             IconButton(
-              onPressed: () => _showDeleteDialog(context, title),
-              icon: Image.asset(AppAssets.removeTrashIcon),
+              onPressed: () => _showDeleteDialog(context, location),
+              icon: Image.asset(AppAssets.removeTrashIcon, width: 22),
             ),
-          if (showEditIcon)
+
+          if (widget.showEditIcon)
             IconButton(
               onPressed: () {
+                // هنا بتفتح شاشة التعديل للوكيشن موجود بالفعل
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -160,7 +210,7 @@ class LocationsSection extends StatelessWidget {
                   ),
                 );
               },
-              icon: SvgPicture.asset(AppAssets.editPen, width: 18, height: 18),
+              icon: SvgPicture.asset(AppAssets.editPen, width: 20, height: 20),
             ),
         ],
       ),

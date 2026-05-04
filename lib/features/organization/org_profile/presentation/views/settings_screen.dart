@@ -62,13 +62,12 @@ class SettingsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            _buildSettingItem(
-              icon: Icons.lock_outline,
-              title: 'Privacy',
-              onTap: () {},
-            ),
-            const SizedBox(height: 16),
-
+            // _buildSettingItem(
+            //   icon: Icons.lock_outline,
+            //   title: 'Privacy',
+            //   onTap: () {},
+            // ),
+            //const SizedBox(height: 2),
             _buildSettingItem(
               icon: Icons.logout_outlined,
               title: 'Log out',

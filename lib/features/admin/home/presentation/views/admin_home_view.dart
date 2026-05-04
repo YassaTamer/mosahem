@@ -1,11 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gap/gap.dart';
-import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
-import 'package:mosahem/core/widgets/custom_text.dart';
-import 'package:mosahem/features/admin/home/presentation/views/filter_view_admin.dart';
 import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_cubit.dart';
 import 'package:mosahem/features/admin/profile/logic/cubit/opportunity_state.dart';
 import 'package:mosahem/features/organization/opportunity_details/presentation/views/opportunity_details_screen.dart';

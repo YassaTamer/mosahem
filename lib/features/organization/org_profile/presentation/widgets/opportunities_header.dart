@@ -47,18 +47,17 @@ class OpportunitiesHeader extends StatelessWidget {
                   ),
                 ),
                 const Spacer(flex: 3),
-                IconButton(
-                  icon: const Icon(Icons.search, color: Colors.grey, size: 26),
-                  onPressed: () {},
-                ),
+                // IconButton(
+                //   icon: const Icon(Icons.search, color: Colors.grey, size: 26),
+                //   onPressed: () {},
+                // ),
               ],
             ),
           ),
 
           TabBar(
             controller: controller,
-            indicatorSize:
-                TabBarIndicatorSize.label, 
+            indicatorSize: TabBarIndicatorSize.label,
             labelColor: Color(0xFF4CAF50),
             unselectedLabelColor: Colors.grey,
             indicatorColor: Color(0xFF4CAF50),

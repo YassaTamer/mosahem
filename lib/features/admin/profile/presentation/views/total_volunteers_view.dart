@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/app_assets.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
+import 'package:mosahem/features/admin/profile/data/models/volunteer_model.dart';
 import 'package:mosahem/features/admin/profile/logic/cubit/volunteer_cubit.dart';
 import 'package:mosahem/features/admin/profile/logic/cubit/volunteer_state.dart';
 import 'package:mosahem/features/admin/profile/presentation/widgets/custom_container_total_volunteer.dart';
@@ -40,8 +41,8 @@ class _TotalVolunteersViewState extends State<TotalVolunteersView> {
     AppAssets.profilePhotoIcon,
     AppAssets.profilePhotoIcon,
   ];
-  // List volunteersList = [];
-  // bool isInitialized = false;
+  List<VolunteerModel> localVolunteers = [];
+  bool isInitialized = false;
   @override
   void initState() {
     super.initState();
@@ -82,24 +83,24 @@ class _TotalVolunteersViewState extends State<TotalVolunteersView> {
                 color: AppColors.primary,
               ),
 
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: IconButton(
-              onPressed: () {
-                setState(() {
-                  if (isSearching) {
-                    searchController.clear();
-                  }
-                  isSearching = !isSearching;
-                });
-              },
-              icon: isSearching
-                  ? const Icon(Icons.close)
-                  : Image.asset(AppAssets.searchIcon, width: 40, height: 40),
-            ),
-          ),
-        ],
+        // actions: [
+        //   Padding(
+        //     padding: const EdgeInsets.only(right: 10),
+        //     child: IconButton(
+        //       onPressed: () {
+        //         setState(() {
+        //           if (isSearching) {
+        //             searchController.clear();
+        //           }
+        //           isSearching = !isSearching;
+        //         });
+        //       },
+        //       icon: isSearching
+        //           ? const Icon(Icons.close)
+        //           : Image.asset(AppAssets.searchIcon, width: 40, height: 40),
+        //     ),
+        //   ),
+        // ],
       ),
 
       body: BlocBuilder<VolunteerCubit, VolunteerState>(
@@ -107,6 +108,10 @@ class _TotalVolunteersViewState extends State<TotalVolunteersView> {
           if (state is VolunteerLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is VolunteerSuccess) {
+            if (!isInitialized) {
+              localVolunteers = state.volunteers;
+              isInitialized = true;
+            }
             print(state.volunteers.length);
             final volunteers = state.volunteers;
 
@@ -123,7 +128,10 @@ class _TotalVolunteersViewState extends State<TotalVolunteersView> {
                       ? volunteer.image!
                       : AppAssets.profilePhotoIcon,
                   onDelete: () {
-                    context.read<VolunteerCubit>().getVolunteers();
+                    setState(() {
+                      localVolunteers.removeAt(index);
+                    });
+                    //context.read<VolunteerCubit>().getVolunteers();
                   },
                 );
               },

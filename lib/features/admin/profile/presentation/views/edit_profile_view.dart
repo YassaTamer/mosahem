@@ -13,13 +13,13 @@ class EditProfileView extends StatefulWidget {
 
 class _EditProfileViewState extends State<EditProfileView> {
   TextEditingController nameController = TextEditingController(
-    text: "Betty Bassem",
+    text: "Mosahem Admin",
   );
   TextEditingController phoneController = TextEditingController(
-    text: "01225256162",
+    text: "010000000000",
   );
-  String originalName = "Betty Bassem";
-  String originalPhone = "01225256162";
+  String originalName = "Mosahem Admin";
+  String originalPhone = "01000000000";
   bool isButtonEnabled = false;
   void checkIfChanged() {
     bool nameChanged = nameController.text.trim() != originalName;

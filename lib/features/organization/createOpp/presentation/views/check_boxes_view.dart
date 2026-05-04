@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mosahem/core/constants/app_colors.dart';
 import 'package:mosahem/core/widgets/custom_text.dart';
 import 'package:mosahem/core/widgets/custom_text_field.dart';
-import 'package:mosahem/features/organization/createOpp/presentation/widgets/custom_dynamic_option.dart';
 import 'package:mosahem/core/widgets/custom_enabled_disabled_button.dart';
+import 'package:mosahem/features/organization/createOpp/data/models/create_opportunity_request_model.dart';
+import 'package:mosahem/features/organization/createOpp/logic/cubit/create_opportunity_cubit.dart';
+import 'package:mosahem/features/organization/createOpp/presentation/widgets/custom_dynamic_option.dart';
 import 'package:mosahem/features/organization/createOpp/presentation/widgets/custom_required_slide_button.dart';
 
 class CheckBoxesView extends StatefulWidget {
@@ -17,6 +20,15 @@ class _CheckBoxesViewState extends State<CheckBoxesView> {
   final TextEditingController _controller = TextEditingController();
   bool hasOptions = false;
   bool isButtonEnabled = false;
+  bool isRequired = false;
+  List<String> currentOptions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(checkIfCanSave);
+  }
+
   @override
   void dispose() {
     _controller.dispose();
@@ -27,12 +39,6 @@ class _CheckBoxesViewState extends State<CheckBoxesView> {
     setState(() {
       isButtonEnabled = _controller.text.trim().isNotEmpty && hasOptions;
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _controller.addListener(checkIfCanSave);
   }
 
   @override
@@ -57,21 +63,21 @@ class _CheckBoxesViewState extends State<CheckBoxesView> {
           Padding(
             padding: const EdgeInsets.only(top: 20, left: 25, right: 250),
             child: CustomText(
-              "question",
+              "Question",
               fontWeight: FontWeight.bold,
               fontSize: 15,
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: CustomTextField(
               textEditingController: _controller,
               numberOfLines: 3,
-              hintText: "type your question here...",
+              hintText: "Type your question here...",
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.only(left: 20),
             child: CustomDynamicOption(
@@ -80,16 +86,34 @@ class _CheckBoxesViewState extends State<CheckBoxesView> {
                 hasOptions = value;
                 checkIfCanSave();
               },
+              onOptionsUpdated: (options) {
+                currentOptions = options;
+              },
             ),
           ),
-          SizedBox(height: 5),
-          CustomRequiredButton(),
-          SizedBox(height: 330),
+          const SizedBox(height: 5),
+          CustomRequiredButton(
+            onChanged: (value) => isRequired = value,
+          ),
+          const SizedBox(height: 330),
           CustomEnabledDisabledButton(
             isEnabled: isButtonEnabled,
-            buttonName: "Save question",
+            buttonName: "Save Question",
             enabledColor: AppColors.primary,
             disabledColor: AppColors.disabledButton,
+            onTap: isButtonEnabled
+                ? () {
+                    context.read<CreateOpportunityCubit>().addQuestion(
+                      QuestionModel(
+                        description: _controller.text.trim(),
+                        answerType: 3, // ← MultipleChoice
+                        isRequired: isRequired,
+                        options: currentOptions,
+                      ),
+                    );
+                    Navigator.pop(context);
+                  }
+                : null,
           ),
         ],
       ),

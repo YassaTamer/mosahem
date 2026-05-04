@@ -63,6 +63,8 @@ class _RecentOpportunitiesViewState extends State<RecentOpportunitiesView> {
     context.read<OpportunityCubit>().getOpportunities("pending");
   }
 
+  List opportunitiesList = [];
+  bool isInitialized = false;
   bool isSearching = false;
   TextEditingController searchController = TextEditingController();
   @override
@@ -98,24 +100,24 @@ class _RecentOpportunitiesViewState extends State<RecentOpportunitiesView> {
                 color: AppColors.primary,
               ),
 
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: IconButton(
-              onPressed: () {
-                setState(() {
-                  if (isSearching) {
-                    searchController.clear();
-                  }
-                  isSearching = !isSearching;
-                });
-              },
-              icon: isSearching
-                  ? const Icon(Icons.close)
-                  : Image.asset(AppAssets.searchIcon, width: 40, height: 40),
-            ),
-          ),
-        ],
+        // actions: [
+        //   Padding(
+        //     padding: const EdgeInsets.only(right: 10),
+        //     child: IconButton(
+        //       onPressed: () {
+        //         setState(() {
+        //           if (isSearching) {
+        //             searchController.clear();
+        //           }
+        //           isSearching = !isSearching;
+        //         });
+        //       },
+        //       icon: isSearching
+        //           ? const Icon(Icons.close)
+        //           : Image.asset(AppAssets.searchIcon, width: 40, height: 40),
+        //     ),
+        //   ),
+        // ],
       ),
 
       body: BlocBuilder<OpportunityCubit, OpportunityState>(
@@ -129,12 +131,16 @@ class _RecentOpportunitiesViewState extends State<RecentOpportunitiesView> {
           }
 
           if (state is OpportunitySuccess) {
+            if (!isInitialized) {
+              opportunitiesList = state.opportunities;
+              isInitialized = true;
+            }
             final opportunities = state.opportunities;
             return ListView.builder(
-              itemCount: opportunities.length,
+              itemCount: opportunitiesList.length,
               itemBuilder: (context, index) {
-                final opp = opportunities[index];
-
+                // final opp = opportunities[index];
+                final opp = opportunitiesList[index];
                 return CustomContainerRecentOpp(
                   orgLogo: (opp.logoUrl != null && opp.logoUrl!.isNotEmpty)
                       ? opp.logoUrl!
@@ -143,6 +149,17 @@ class _RecentOpportunitiesViewState extends State<RecentOpportunitiesView> {
                   oppName: opp.name,
                   startDate: DateHelper.format(opp.startDate),
                   endDate: DateHelper.format(opp.endDate),
+                  onAccept: () {
+                    setState(() {
+                      opportunitiesList.removeAt(index);
+                    });
+                  },
+
+                  onReject: () {
+                    setState(() {
+                      opportunitiesList.removeAt(index);
+                    });
+                  },
                 );
               },
             );

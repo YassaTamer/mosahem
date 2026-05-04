@@ -12,6 +12,8 @@ class CustomContainerRecentOpp extends StatelessWidget {
     required this.oppName,
     required this.startDate,
     required this.endDate,
+    this.onAccept,
+    this.onReject,
   });
 
   final String orgLogo;
@@ -19,6 +21,8 @@ class CustomContainerRecentOpp extends StatelessWidget {
   final String oppName;
   final String startDate;
   final String endDate;
+  final VoidCallback? onAccept;
+  final VoidCallback? onReject;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -94,15 +98,16 @@ class CustomContainerRecentOpp extends StatelessWidget {
                   color: AppColors.red,
                   width: 150,
                   height: 40,
-                  onTap: () {},
+                  onTap: onReject,
                 ),
                 SizedBox(width: 10),
                 CustomButton(
+                  
                   text: "Accepted",
                   color: AppColors.lightGreen,
                   width: 150,
                   height: 40,
-                  onTap: () {},
+                  onTap:onAccept,
                 ),
               ],
             ),

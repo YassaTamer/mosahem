@@ -1,4 +1,3 @@
-
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
@@ -143,8 +142,8 @@ class CreateOpportunityCubit extends Cubit<CreateOpportunityState> {
     }
 
     //print("HEADERS: ${dio.options.headers}");
-   // print(opportunity.toJson());
-   // print(jsonEncode(opportunity.toJson()));
+    // print(opportunity.toJson());
+    // print(jsonEncode(opportunity.toJson()));
     try {
       emit(
         state.copyWith(
@@ -171,13 +170,13 @@ class CreateOpportunityCubit extends Cubit<CreateOpportunityState> {
         );
       }
     } catch (error) {
-     // print("❌ ERROR: $error");
+      // print("❌ ERROR: $error");
 
       String errorMessage = _extractErrorMessage(error);
 
       if (error is DioException) {
-      //  print("📡 STATUS CODE: ${error.response?.statusCode}");
-     //   print("📩 RESPONSE DATA: ${error.response?.data}");
+        //  print("📡 STATUS CODE: ${error.response?.statusCode}");
+        //   print("📩 RESPONSE DATA: ${error.response?.data}");
 
         final data = error.response?.data;
 
@@ -204,7 +203,7 @@ class CreateOpportunityCubit extends Cubit<CreateOpportunityState> {
         }
       }
 
-     // print("📌 STACK TRACE: $stackTrace");
+      // print("📌 STACK TRACE: $stackTrace");
 
       /// 🔥 أهم سطر
       emit(
@@ -258,5 +257,10 @@ class CreateOpportunityCubit extends Cubit<CreateOpportunityState> {
     }
 
     return message;
+  }
+
+  void addQuestion(QuestionModel question) {
+    opportunity.questions ??= [];
+    opportunity.questions!.add(question);
   }
 }
